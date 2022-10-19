@@ -11,6 +11,7 @@ import static com.deone.extrmtasks.tools.Other.checkBeforeFormatData;
 import static com.deone.extrmtasks.tools.Other.formatLaDate;
 import static com.deone.extrmtasks.tools.Other.gotoadetails;
 import static com.deone.extrmtasks.tools.Other.gotohome;
+import static com.deone.extrmtasks.tools.Other.gotosettings;
 import static com.deone.extrmtasks.tools.Other.initLLanguage;
 import static com.deone.extrmtasks.tools.Other.initThemeMode;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
@@ -268,6 +269,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             shareProcess();
         else if (id == R.id.ibSendComment)
             verifDataBeforeSendComment();
+        else if (id == R.id.ivAvatarUser||id == R.id.tvUsername&&!currentUid.equals(taches.getUid()))
+            gotosettings(this, currentUid);
     }
 
 }

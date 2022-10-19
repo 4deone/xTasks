@@ -74,6 +74,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private TextView tvFavoris;
     private TextView tvTelephone;
     private TextView tvDescription;
+    private TextView tvBloquer;
     private User user;
     private Uri imageUri;
     private String idIntent;
@@ -143,6 +144,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         tvFavoris = findViewById(R.id.tvFavoris);
         tvTelephone = findViewById(R.id.tvTelephone);
         tvDescription = findViewById(R.id.tvDescription);
+        tvBloquer = findViewById(R.id.tvBloquer);
+        tvBloquer.setVisibility(idIntent.equals(fbtools.userId())?View.GONE:View.VISIBLE);
         ivtools.setSomeActivityResultLauncher(someActivityResultLauncher);
         fbtools.specificUser(vUser);
         tvDisplayMode.setOnClickListener(this);
@@ -152,11 +155,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         findViewById(R.id.tvAbout).setOnClickListener(this);
         findViewById(R.id.tvSignOut).setOnClickListener(this);
         findViewById(R.id.tvDeleteAccount).setOnClickListener(this);
-        findViewById(R.id.tvBloquer).setOnClickListener(this);
         findViewById(R.id.tvSignaler).setOnClickListener(this);
         findViewById(R.id.tvSave).setOnClickListener(this);
         findViewById(R.id.tvCall).setOnClickListener(this);
         findViewById(R.id.tvSendMessage).setOnClickListener(this);
+        tvBloquer.setOnClickListener(this);
         tvTasks.setOnClickListener(this);
         tvFavoris.setOnClickListener(this);
         tvLikes.setOnClickListener(this);
