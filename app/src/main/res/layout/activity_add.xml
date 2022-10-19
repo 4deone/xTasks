@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/bg_color"
+    tools:context=".AddActivity">
+
+    <ImageView
+        android:id="@+id/ivTachesLogo"
+        android:layout_width="match_parent"
+        android:layout_height="450dp"
+        android:contentDescription="@string/item_avatar_image"
+        android:scaleType="centerCrop"
+        android:src="@drawable/wild" />
+
+    <ImageView
+        android:id="@+id/ivAddImage"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:contentDescription="@string/item_avatar_image"
+        android:src="@drawable/ic_action_ajouter" />
+
+    <RelativeLayout
+        android:layout_above="@+id/rlTask"
+        android:padding="10dp"
+        android:background="@color/gris_transparent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/tvWindowTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/nouvelle_tache"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvWindowSubtitle"
+            android:layout_below="@+id/tvWindowTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/remplissez_les_champs_ci_dessous"
+            android:textColor="@color/black" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlTask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/titre_de_la_tache"
+            android:textColor="@color/black" />
+
+        <EditText
+            android:id="@+id/etvTitre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvTitle"
+            android:hint="@string/enter_titre_de_la_tache"
+            android:inputType="textCapWords"
+            android:padding="20dp" />
+
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/etvTitre"
+            android:layout_marginTop="10dp"
+            android:text="@string/description_de_la_tache"
+            android:textColor="@color/black" />
+
+        <EditText
+            android:id="@+id/etvDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvDescription"
+            android:gravity="top"
+            android:hint="@string/enter_description_de_la_tache"
+            android:inputType="textCapSentences|textMultiLine"
+            android:minHeight="150dp"
+            android:padding="20dp" />
+
+        <Button
+            android:id="@+id/btAddTask"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/etvDescription"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/main_rounder"
+            android:text="@string/add_task" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

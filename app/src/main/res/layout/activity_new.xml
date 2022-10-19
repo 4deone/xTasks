@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/bg_color"
+    tools:context=".NewActivity">
+
+    <ImageView
+        android:id="@+id/ivLogo"
+        android:layout_width="200dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:contentDescription="@string/deone_corporation"
+        android:src="@drawable/logo" />
+
+    <TextView
+        android:id="@+id/tvBonjour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ivLogo"
+        android:layout_centerHorizontal="true"
+        android:text="@string/bienvenue"
+        android:textColor="@color/black"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvBonjourTwo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvBonjour"
+        android:layout_centerHorizontal="true"
+        android:text="@string/entrez_vos_informations"
+        android:textColor="@color/black" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvBonjourTwo"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/main_rounder_top"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/tvEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/email"
+            android:textColor="@color/black" />
+
+        <EditText
+            android:id="@+id/etvLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:layout_below="@+id/tvEmail"
+            android:drawableEnd="@drawable/ic_action_login"
+            android:hint="@string/enter_email"
+            android:padding="20dp" />
+
+        <TextView
+            android:id="@+id/tvMotdepasse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/etvLogin"
+            android:layout_marginTop="10dp"
+            android:text="@string/motdepasse"
+            android:textColor="@color/black" />
+
+        <EditText
+            android:id="@+id/etvMotdepasse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvMotdepasse"
+            android:inputType="textPassword"
+            android:drawableEnd="@drawable/ic_action_motdepasse"
+            android:hint="@string/enter_password"
+            android:padding="20dp" />
+
+        <TextView
+            android:id="@+id/tvFullName"
+            android:layout_below="@+id/etvMotdepasse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/full_name"
+            android:textColor="@color/black" />
+
+        <EditText
+            android:id="@+id/etvFullName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvFullName"
+            android:hint="@string/enter_full_name"
+            android:inputType="textPersonName"
+            android:padding="20dp" />
+
+        <TextView
+            android:id="@+id/tvTelephone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/etvFullName"
+            android:layout_marginTop="10dp"
+            android:text="@string/telephone"
+            android:textColor="@color/black" />
+
+        <EditText
+            android:id="@+id/etvTelephone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvTelephone"
+            android:hint="@string/enter_telephone"
+            android:inputType="phone"
+            android:padding="20dp" />
+
+        <CheckBox
+            android:id="@+id/cbAcceptRules"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/etvTelephone"
+            android:text="@string/accept_conditions_utilisation"
+            android:textColor="@color/black" />
+
+        <Button
+            android:id="@+id/btCreateAccount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cbAcceptRules"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/main_rounder"
+            android:text="@string/create" />
+
+        <RelativeLayout
+            android:gravity="center"
+            android:id="@+id/rlRegister"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/btCreateAccount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/tvRegisterOne"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:text="@string/have_an_account"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/tvSignIn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@+id/tvRegisterOne"
+                android:gravity="center"
+                android:text="@string/sign_in"
+                android:textColor="@color/purple_700"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

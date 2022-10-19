@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "352811830547",
+    "project_id": "extrm-tasks",
+    "storage_bucket": "extrm-tasks.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:352811830547:android:0ba57c35473c60f2c9dee6",
+        "android_client_info": {
+          "package_name": "com.deone.extrmtasks"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "352811830547-nlv3kcghsag8afcc04pe4anl5p8e5o26.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANxx3lgd41vpOSC9OMpp_GpBc5LHkoEKA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "352811830547-nlv3kcghsag8afcc04pe4anl5p8e5o26.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

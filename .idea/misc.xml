@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="app/src/main/res/drawable-anydpi/ic_action_signout.xml" value="0.191" />
+        <entry key="app/src/main/res/drawable-v24/main_circle.xml" value="0.168" />
+        <entry key="app/src/main/res/drawable-xxhdpi/main_border.xml" value="0.191" />
+        <entry key="app/src/main/res/drawable/main_border.xml" value="0.191" />
+        <entry key="app/src/main/res/drawable/main_circle.xml" value="0.168" />
+        <entry key="app/src/main/res/drawable/main_rounder.xml" value="0.168" />
+        <entry key="app/src/main/res/drawable/main_rounder_top.xml" value="0.191" />
+        <entry key="app/src/main/res/drawable/main_roundertop.xml" value="0.168" />
+        <entry key="app/src/main/res/layout/activity_add.xml" value="0.24048913043478262" />
+        <entry key="app/src/main/res/layout/activity_details.xml" value="0.151268115942029" />
+        <entry key="app/src/main/res/layout/activity_home.xml" value="0.24048913043478262" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_new.xml" value="0.24048913043478262" />
+        <entry key="app/src/main/res/layout/activity_new_user.xml" value="0.18" />
+        <entry key="app/src/main/res/layout/activity_settings.xml" value="0.24048913043478262" />
+        <entry key="app/src/main/res/layout/activity_task.xml" value="0.1866306027820711" />
+        <entry key="app/src/main/res/layout/dialod_edit.xml" value="0.24048913043478262" />
+        <entry key="app/src/main/res/layout/item_comment.xml" value="0.24048913043478262" />
+        <entry key="app/src/main/res/layout/item_taches.xml" value="0.24048913043478262" />
+        <entry key="app/src/main/res/menu/home_menu.xml" value="0.2515625" />
+        <entry key="app/src/main/res/menu/settings_menu.xml" value="0.2515625" />
+        <entry key="app/src/main/res/menu/task_menu.xml" value="0.2515625" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

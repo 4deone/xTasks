@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="modes">
+        <item>@string/dark</item>
+        <item>@string/light</item>
+    </array>
+    <array name="langues">
+        <item>@string/anglais</item>
+        <item>@string/arabe</item>
+        <item>@string/francais</item>
+    </array>
+    <array name="user_item">
+        <item>@string/profile_photo</item>
+        <item>@string/cover_photo</item>
+        <item>@string/full_name</item>
+        <item>@string/telephone</item>
+        <item>@string/description</item>
+    </array>
+    <array name="select_place">
+        <item>@string/camera</item>
+        <item>@string/gallery</item>
+    </array>
+</resources>
