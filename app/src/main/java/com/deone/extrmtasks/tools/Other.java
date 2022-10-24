@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.deone.extrmtasks.AccountActivity;
 import com.deone.extrmtasks.AddActivity;
 import com.deone.extrmtasks.DetailsActivity;
 import com.deone.extrmtasks.HomeActivity;
@@ -137,11 +138,15 @@ public class Other {
      *
      * @param appContext
      */
-    public static void gotosettings(Context appContext, String myuid) {
-        Intent intent = new Intent(appContext, SettingsActivity.class);
+    public static void gotosettings(Context appContext) {
+        appContext.startActivity(new Intent(appContext, SettingsActivity.class));
+        ((Activity) appContext).finish();
+    }
+
+    public static void gotoaccount(Context appContext, String myuid) {
+        Intent intent = new Intent(appContext, AccountActivity.class);
         intent.putExtra(UID, myuid);
         appContext.startActivity(intent);
-        ((Activity) appContext).finish();
     }
 
     /**

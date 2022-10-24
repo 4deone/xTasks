@@ -13,9 +13,34 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize" />
+        android:minHeight="?attr/actionBarSize" >
 
-    <ScrollView
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/russia" />
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@+id/ivAvatar"
+                android:text="@string/_12_nov_2022"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.core.widget.NestedScrollView
         android:layout_below="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -25,196 +50,112 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/ivCoverUser"
+                android:id="@+id/ivCover"
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
                 android:contentDescription="@string/item_avatar_image"
                 android:scaleType="centerCrop"
                 android:src="@drawable/lions" />
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/ivAvatarUser"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_above="@+id/rlInfos"
-                android:layout_centerHorizontal="true"
-                android:src="@drawable/russia" />
-
             <RelativeLayout
-                android:id="@+id/rlInfos"
-                android:padding="5dp"
-                android:background="@color/gris_transparent"
-                android:layout_above="@+id/llTask"
+                android:id="@+id/rlAcount"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ivCover"
+                android:layout_marginTop="3dp"
+                android:background="@color/white"
+                android:padding="20dp">
 
                 <TextView
-                    android:id="@+id/tvfullname"
+                    android:id="@+id/tvCompteTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/full_name"
+                    android:layout_marginTop="5dp"
+                    android:drawablePadding="10dp"
+                    android:text="@string/mon_compte"
                     android:textColor="@color/black"
-                    android:textSize="30sp"
-                    android:textStyle="bold" />
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    app:drawableStartCompat="@drawable/ic_action_account" />
 
                 <TextView
-                    android:id="@+id/tvTelephone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tvfullname"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="5dp"
-                    android:text="@string/_237_6_77_81_40_03"
-                    android:textColor="@color/black" />
-
-                <LinearLayout
-                    android:id="@+id/llItemAction"
-                    android:layout_below="@+id/tvTelephone"
-                    android:padding="10dp"
-                    android:orientation="horizontal"
+                    android:id="@+id/tvCompteName"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvCompteTitle"
+                    android:layout_marginStart="35dp"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/user_name"
+                    android:textColor="@color/black"
+                    android:textSize="17sp" />
 
-                    <TextView
-                        android:id="@+id/tvTasks"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:gravity="center"
-                        android:maxLines="1"
-                        android:textColor="@color/black"
-                        android:textSize="11sp"
-                        android:text="@string/_0"
-                        app:drawableEndCompat="@drawable/ic_action_task" />
-
-                    <TextView
-                        android:id="@+id/tvFavoris"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:gravity="center"
-                        android:maxLines="1"
-                        android:text="@string/_0"
-                        android:textColor="@color/black"
-                        android:textSize="11sp"
-                        app:drawableEndCompat="@drawable/ic_action_favoris" />
-
-                    <TextView
-                        android:id="@+id/tvLikes"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:gravity="center"
-                        android:maxLines="1"
-                        android:text="@string/_0"
-                        android:textColor="@color/black"
-                        android:textSize="11sp"
-                        app:drawableEndCompat="@drawable/ic_action_jaime" />
-
-                    <TextView
-                        android:id="@+id/tvComments"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:gravity="center"
-                        android:maxLines="1"
-                        android:text="@string/_0"
-                        android:textColor="@color/black"
-                        android:textSize="11sp"
-                        app:drawableEndCompat="@drawable/ic_action_comment" />
-
-                    <TextView
-                        android:id="@+id/tvGroups"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:gravity="center"
-                        android:maxLines="1"
-                        android:text="@string/_0"
-                        android:textColor="@color/black"
-                        android:textSize="11sp"
-                        app:drawableEndCompat="@drawable/ic_action_groupe" />
-
-                </LinearLayout>
+                <TextView
+                    android:id="@+id/tvComptePhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvCompteName"
+                    android:layout_marginStart="35dp"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/telephone"
+                    android:textColor="@color/black"
+                    android:textSize="17sp" />
 
             </RelativeLayout>
 
-            <LinearLayout
-                android:id="@+id/llTask"
+            <RelativeLayout
+                android:id="@+id/rlKeywords"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/ivCoverUser"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="5dp">
+                android:layout_below="@+id/rlAcount"
+                android:layout_marginTop="3dp"
+                android:background="@color/white"
+                android:padding="20dp">
 
-                <TextView
-                    android:id="@+id/tvSendMessage"
-                    android:layout_width="wrap_content"
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/swKey"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="20dp"
-                    android:text="@string/message"
+                    android:drawablePadding="10dp"
+                    android:text="@string/taches_key_words"
                     android:textColor="@color/black"
                     android:textSize="17sp"
                     android:textStyle="bold"
-                    app:drawableTopCompat="@drawable/ic_action_send_message" />
+                    app:drawableStartCompat="@drawable/ic_action_key" />
 
                 <TextView
-                    android:id="@+id/tvCall"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tvKeyList"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="20dp"
-                    android:text="@string/appel"
+                    android:layout_below="@+id/swKey"
+                    android:layout_marginTop="5dp"
+                    android:drawablePadding="10dp"
+                    android:text="@string/liste_des_mots_cle"
                     android:textColor="@color/black"
                     android:textSize="17sp"
-                    android:textStyle="bold"
-                    app:drawableTopCompat="@drawable/ic_action_appel" />
+                    app:drawableStartCompat="@drawable/ic_action_key_list" />
 
-                <TextView
-                    android:id="@+id/tvSave"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="20dp"
-                    android:text="@string/enregistrer"
-                    android:textColor="@color/black"
-                    android:textSize="17sp"
-                    android:textStyle="bold"
-                    app:drawableTopCompat="@drawable/ic_action_add_contact" />
-
-            </LinearLayout>
+            </RelativeLayout>
 
             <TextView
-                android:id="@+id/tvDescription"
+                android:id="@+id/tvNotification"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/llTask"
-                android:gravity="center"
-                android:text="@string/description_de_l_utilisation"
+                android:layout_below="@+id/rlKeywords"
+                android:layout_marginTop="3dp"
+                android:background="@color/white"
+                android:drawablePadding="10dp"
+                android:padding="20dp"
+                android:text="@string/notifications"
                 android:textColor="@color/black"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/tvDateCreateAccount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tvDescription"
-                android:gravity="center"
-                android:layout_marginBottom="10dp"
-                android:text="@string/date_de_cr_ation"
-                android:textColor="@color/black"
-                android:textSize="17sp" />
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/ic_action_notification" />
 
             <TextView
                 android:id="@+id/tvDisplayMode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvDateCreateAccount"
+                android:layout_below="@+id/tvNotification"
                 android:layout_marginTop="3dp"
                 android:background="@color/white"
                 android:drawablePadding="10dp"
@@ -223,7 +164,6 @@
                 android:textColor="@color/black"
                 android:textSize="17sp"
                 android:textStyle="bold"
-                app:drawableEndCompat="@drawable/ic_action_next"
                 app:drawableStartCompat="@drawable/ic_action_jour" />
 
             <TextView
@@ -239,14 +179,43 @@
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:drawablePadding="10dp"
-                app:drawableEndCompat="@drawable/ic_action_next"
                 app:drawableStartCompat="@drawable/ic_action_language" />
+
+            <TextView
+                android:id="@+id/tvConfidentialite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvLanguage"
+                android:layout_marginTop="3dp"
+                android:background="@color/white"
+                android:drawablePadding="10dp"
+                android:padding="20dp"
+                android:text="@string/confidentialit_et_securit"
+                android:textColor="@color/black"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/ic_action_key_security" />
+
+            <TextView
+                android:id="@+id/tvDataStockage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvConfidentialite"
+                android:layout_marginTop="3dp"
+                android:background="@color/white"
+                android:drawablePadding="10dp"
+                android:padding="20dp"
+                android:text="@string/donn_es_et_stockage"
+                android:textColor="@color/black"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/ic_action_stockage" />
 
             <TextView
                 android:id="@+id/tvGroupe"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvLanguage"
+                android:layout_below="@+id/tvDataStockage"
                 android:layout_marginTop="3dp"
                 android:background="@color/white"
                 android:drawablePadding="10dp"
@@ -255,30 +224,43 @@
                 android:textColor="@color/black"
                 android:textSize="17sp"
                 android:textStyle="bold"
-                app:drawableEndCompat="@drawable/ic_action_next"
                 app:drawableStartCompat="@drawable/ic_action_groupe" />
 
             <TextView
-                android:id="@+id/tvUserInfo"
+                android:id="@+id/tvFaq"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvGroupe"
+                android:layout_below="@+id/tvDataStockage"
                 android:layout_marginTop="3dp"
                 android:background="@color/white"
                 android:drawablePadding="10dp"
                 android:padding="20dp"
-                android:text="@string/user_info"
+                android:text="@string/faq"
                 android:textColor="@color/black"
                 android:textSize="17sp"
                 android:textStyle="bold"
-                app:drawableEndCompat="@drawable/ic_action_next"
-                app:drawableStartCompat="@drawable/ic_action_infos" />
+                app:drawableStartCompat="@drawable/ic_action_faq" />
+
+            <TextView
+                android:id="@+id/tvAbout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvFaq"
+                android:layout_marginTop="3dp"
+                android:background="@color/white"
+                android:drawablePadding="10dp"
+                android:padding="20dp"
+                android:text="@string/a_propos"
+                android:textColor="@color/black"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/ic_action_about" />
 
             <TextView
                 android:id="@+id/tvSignOut"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvUserInfo"
+                android:layout_below="@+id/tvAbout"
                 android:layout_marginTop="3dp"
                 android:background="@color/white"
                 android:drawablePadding="10dp"
@@ -289,70 +271,8 @@
                 android:textStyle="bold"
                 app:drawableStartCompat="@drawable/ic_action_signout" />
 
-            <TextView
-                android:id="@+id/tvDeleteAccount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tvSignOut"
-                android:layout_marginTop="3dp"
-                android:background="@color/white"
-                android:drawablePadding="10dp"
-                android:padding="20dp"
-                android:text="@string/delete_account"
-                android:textColor="@color/black"
-                android:textSize="17sp"
-                android:textStyle="bold"
-                app:drawableEndCompat="@drawable/ic_action_next"
-                app:drawableStartCompat="@drawable/ic_action_delete" />
-
-            <TextView
-                android:id="@+id/tvSignaler"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tvSignOut"
-                android:layout_marginTop="3dp"
-                android:background="@color/white"
-                android:drawablePadding="10dp"
-                android:padding="20dp"
-                android:text="@string/signaler_utilisateur"
-                android:textColor="@color/red"
-                android:textSize="17sp"
-                android:textStyle="bold"
-                app:drawableStartCompat="@drawable/ic_action_signaler" />
-
-            <TextView
-                android:id="@+id/tvBloquer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tvSignaler"
-                android:layout_marginTop="3dp"
-                android:background="@color/white"
-                android:drawablePadding="10dp"
-                android:padding="20dp"
-                android:text="@string/bloquer_utilisateur"
-                android:textColor="@color/red"
-                android:textSize="17sp"
-                android:textStyle="bold"
-                app:drawableStartCompat="@drawable/ic_action_bloquer" />
-
-            <TextView
-                android:id="@+id/tvAbout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tvBloquer"
-                android:drawablePadding="10dp"
-                android:layout_marginTop="3dp"
-                android:background="@color/white"
-                android:padding="20dp"
-                android:text="@string/a_propos"
-                android:textColor="@color/black"
-                android:textSize="17sp"
-                android:textStyle="bold"
-                app:drawableEndCompat="@drawable/ic_action_next"
-                app:drawableStartCompat="@drawable/ic_action_about" />
-
         </RelativeLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </RelativeLayout>

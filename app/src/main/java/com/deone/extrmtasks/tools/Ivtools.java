@@ -165,6 +165,17 @@ public class Ivtools {
 
     /**
      *
+     * @param iv
+     * @param draw
+     * @param image
+     */
+    public static void loadingImageWithPath(ImageView iv, int draw, String image) {
+        if (!isStringEmpty(image))
+            Picasso.get().load(image).placeholder(draw).into(iv);
+    }
+
+    /**
+     *
      * @param requestCode
      * @param grantResults
      * @param imageUri

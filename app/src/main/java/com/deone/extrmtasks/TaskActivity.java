@@ -9,6 +9,7 @@ import static com.deone.extrmtasks.tools.Other.buildAlertDialog;
 import static com.deone.extrmtasks.tools.Other.buildProgressDialog;
 import static com.deone.extrmtasks.tools.Other.checkBeforeFormatData;
 import static com.deone.extrmtasks.tools.Other.formatLaDate;
+import static com.deone.extrmtasks.tools.Other.gotoaccount;
 import static com.deone.extrmtasks.tools.Other.gotoadetails;
 import static com.deone.extrmtasks.tools.Other.gotohome;
 import static com.deone.extrmtasks.tools.Other.gotosettings;
@@ -53,7 +54,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
 
     private Fbtools fbtools;
     private Sptools sptools;
-    private ImageView ivUser;
+    private ImageView ivAvatarUser;
     private ImageView ivTachesLogo;
     private ProgressBar pbTaskLoading;
     private ProgressBar pbUserLoading;
@@ -119,7 +120,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_task);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ivUser = findViewById(R.id.ivAvatarUser);
+        ivAvatarUser = findViewById(R.id.ivAvatarUser);
         tvUsername = findViewById(R.id.tvUsername);
         tvPublicationDate = findViewById(R.id.tvPublicationDate);
         tvTitle = findViewById(R.id.tvTitle);
@@ -138,6 +139,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.ibFavorite).setOnClickListener(this);
         findViewById(R.id.ibShare).setOnClickListener(this);
         findViewById(R.id.ibSendComment).setOnClickListener(this);
+        ivAvatarUser.setOnClickListener(this);
     }
 
     private void likeProcess() {
@@ -186,7 +188,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             tvNcomment.setText(checkBeforeFormatData(getString(R.string.comments), taches.getTncomment()));
             tvNjaime.setText(checkBeforeFormatData(getString(R.string.like), taches.getTnlike()));
             loadingImageWithPath(ivTachesLogo, pbTaskLoading, R.drawable.wild, taches.getTcover());
-            loadingImageWithPath(ivUser, pbUserLoading, R.drawable.russia, taches.getUavatar());
+            loadingImageWithPath(ivAvatarUser, pbUserLoading, R.drawable.russia, taches.getUavatar());
         }
     }
 
@@ -269,8 +271,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             shareProcess();
         else if (id == R.id.ibSendComment)
             verifDataBeforeSendComment();
-        else if (id == R.id.ivAvatarUser||id == R.id.tvUsername&&!currentUid.equals(taches.getUid()))
-            gotosettings(this, currentUid);
+        else if (id == R.id.ivAvatarUser || id == R.id.tvUsername)
+            gotoaccount(this, currentUid);
     }
 
 }

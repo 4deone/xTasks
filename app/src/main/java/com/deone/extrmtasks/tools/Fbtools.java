@@ -20,6 +20,7 @@ import static com.deone.extrmtasks.tools.Other.genHashMapTask;
 import static com.deone.extrmtasks.tools.Other.genHashMapUser;
 import static com.deone.extrmtasks.tools.Other.getXtimestamp;
 import static com.deone.extrmtasks.tools.Other.gotohome;
+import static com.deone.extrmtasks.tools.Other.gotomain;
 import static com.deone.extrmtasks.tools.Other.gotonew;
 import static com.deone.extrmtasks.tools.Other.incrementValue;
 import static com.deone.extrmtasks.tools.Other.isNewAccountMain;
@@ -42,7 +43,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -295,6 +298,10 @@ public class Fbtools {
         query.addValueEventListener(valueEventListener);
     }
 
+    public void toutesLesTaches(final ValueEventListener valueEventListener) {
+        ref.child(TACHES).addValueEventListener(valueEventListener);
+    }
+
     /**
      *
      * @param valueEventListener
@@ -521,6 +528,20 @@ public class Fbtools {
         ref.child(buildPathWithSlash(USERS, userId(), field)).setValue(value)
                 .addOnCompleteListener(task -> pd.dismiss())
                 .addOnFailureListener(e -> pd.dismiss());
+    }
+
+    public void deleteUserAccount(ProgressDialog pd, String email, String motdepasse) {
+        final FirebaseUser user = auth.getCurrentUser();
+        AuthCredential credential = EmailAuthProvider.getCredential(""+email, ""+motdepasse);
+        assert user != null;
+        user.reauthenticate(credential)
+                .addOnCompleteListener(task -> user.delete().addOnCompleteListener(task1 -> {
+                    pd.dismiss();
+                    if (task1.isSuccessful()) {
+                        Toast.makeText(appContext, ""+appContext.getString(R.string.account_deleted_ok), Toast.LENGTH_SHORT).show();
+                        gotomain(appContext);
+                    }
+                }));
     }
 
 }

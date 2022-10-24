@@ -46,8 +46,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView rvTaches;
     private List<Taches> tachesList;
     private String ma_recherche;
-    private String myuid;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         initApp();
@@ -67,7 +65,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.itParametres){
-            gotosettings(this, myuid);
+            gotosettings(this);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -86,8 +84,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      *
      */
     private void checkUser() {
-        myuid = fbtools.userId();
-        if(isStringEmpty(myuid)){
+        if(isStringEmpty(fbtools.userId())){
             gotomain(this);
         }else {
             initViews();
@@ -104,7 +101,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         rvTaches = findViewById(R.id.rvTaches);
         rvTaches.setLayoutManager(rvLayoutManager(this, 0));
         tachesList = new ArrayList<>();
-        fbtools.toutesMesTaches(vTaches);
+        fbtools.toutesLesTaches(vTaches);
         findViewById(R.id.fabAddTaches).setOnClickListener(this);
     }
 
@@ -144,9 +141,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private void makeAndFindYourSearch(String query) {
         if (!TextUtils.isEmpty(query)){
             ma_recherche = query;
-            fbtools.toutesMesTaches(vSearchTaches);
+            fbtools.toutesLesTaches(vSearchTaches);
         }else {
-            fbtools.toutesMesTaches(vTaches);
+            fbtools.toutesLesTaches(vTaches);
         }
     }
 

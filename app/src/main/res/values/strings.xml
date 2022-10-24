@@ -134,4 +134,21 @@
     <string name="new_value">New value</string>
     <string name="dialog_title">New value for {0}</string>
     <string name="value_error">Erreur lors de la saisie de la valeur!</string>
+    <string name="settings_item">Settings items</string>
+    <string name="notifications_personnalisees">Notifications personnalisées</string>
+    <string name="liste_des_taches">Liste des taches</string>
+    <string name="_142">142</string>
+    <string name="taches_notification">Tâches notiification</string>
+    <string name="localise_la_tache">Localise la tâche</string>
+    <string name="liste_signalements">Liste des signalements</string>
+    <string name="_4">4</string>
+    <string name="description_du_signalement">Description du signalement</string>
+    <string name="mon_compte">Mon compte</string>
+    <string name="notifications">Notifications</string>
+    <string name="liste_des_mots_cle">Liste des mots clé</string>
+    <string name="taches_key_words">Taches key words</string>
+    <string name="donn_es_et_stockage">Données et stockage</string>
+    <string name="confidentialit_et_securit">Confidentialité et sécurité</string>
+    <string name="faq">FAQ</string>
+    <string name="account_deleted_ok">Suppression du compte de l\'utilisateur!</string>
 </resources>

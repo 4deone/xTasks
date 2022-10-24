@@ -98,11 +98,23 @@
             android:minHeight="150dp"
             android:padding="20dp" />
 
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/swLocate"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/etvDescription"
+            android:drawablePadding="10dp"
+            android:text="@string/localise_la_tache"
+            android:textColor="@color/black"
+            android:textSize="17sp"
+            app:drawableStartCompat="@drawable/ic_action_localise" />
+
         <Button
             android:id="@+id/btAddTask"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/etvDescription"
+            android:layout_below="@+id/swLocate"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
