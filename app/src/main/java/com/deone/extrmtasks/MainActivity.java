@@ -16,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import android.app.ProgressDialog;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -58,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      *
      */
     private void checkUser() {
-        if(isStringEmpty(fbtools.userId())){
+        if(isStringEmpty(fbtools.getId())){
             initViews();
         }else {
             gotohome(this);
@@ -94,18 +93,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      *
      */
     private void signInProcess() {
+        ProgressDialog pd = buildProgressDialog(this, getString(R.string.app_name), getString(R.string.verif_entries));
+        pd.show();
         String email = etvLogin.getText().toString().trim();
         if (isStringEmpty(email)){
+            pd.dismiss();
             Toast.makeText(this, getString(R.string.email_error), Toast.LENGTH_SHORT).show();
             return;
         }
         String motdepasse = etvMotdepasse.getText().toString().trim();
         if (isStringEmpty(motdepasse)){
+            pd.dismiss();
             Toast.makeText(this, getString(R.string.motdepasse_error), Toast.LENGTH_SHORT).show();
             return;
         }
-        ProgressDialog pd = buildProgressDialog(this, getString(R.string.app_name), getString(R.string.traitement_encours));
-        pd.show();
         fbtools.checkEmailStatus(pd, email, motdepasse);
     }
 

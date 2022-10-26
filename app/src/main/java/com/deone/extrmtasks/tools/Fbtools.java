@@ -14,6 +14,7 @@ import static com.deone.extrmtasks.tools.Constants.UNCOMMENTS;
 import static com.deone.extrmtasks.tools.Constants.UNTASK;
 import static com.deone.extrmtasks.tools.Constants.USERS;
 import static com.deone.extrmtasks.tools.Other.buildPathWithSlash;
+import static com.deone.extrmtasks.tools.Other.buildProgressDialog;
 import static com.deone.extrmtasks.tools.Other.decrementValue;
 import static com.deone.extrmtasks.tools.Other.genHashMapComment;
 import static com.deone.extrmtasks.tools.Other.genHashMapTask;
@@ -39,6 +40,7 @@ import androidx.annotation.NonNull;
 import com.deone.extrmtasks.HomeActivity;
 import com.deone.extrmtasks.R;
 import com.deone.extrmtasks.TaskActivity;
+import com.deone.extrmtasks.modeles.Taches;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -57,12 +59,16 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.Objects;
+
 public class Fbtools {
     private static DatabaseReference ref;
     private static FirebaseAuth auth;
     private static FirebaseUser fUser;
     private static Context appContext;
     private static Fbtools instance;
+    private String id;
+    private String email;
 
     /**
      *
@@ -83,7 +89,27 @@ public class Fbtools {
         appContext = applicationContext;
         auth = FirebaseAuth.getInstance();
         fUser = auth.getCurrentUser();
+        if (fUser != null){
+            this.id = fUser.getUid();
+            this.email = fUser.getEmail();
+        }
         ref = FirebaseDatabase.getInstance().getReference(DATABASE);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     /**
@@ -92,26 +118,6 @@ public class Fbtools {
      */
     public static void setfUser(FirebaseUser fUser) {
         Fbtools.fUser = fUser;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String userId(){
-        if (fUser != null)
-            return fUser.getUid();
-        return null;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String userEmail(){
-        if (fUser != null)
-            return fUser.getEmail();
-        return null;
     }
 
     /**
@@ -132,6 +138,7 @@ public class Fbtools {
                         .create()
                         .show();
             } else {
+                pd.setMessage(appContext.getString(R.string.user_auth));
                 signin(pd, email, motdepasse);
             }
         });
@@ -145,10 +152,12 @@ public class Fbtools {
      * @param fullname
      * @param telephone
      */
-    public void checkEmailStatus(ProgressDialog pd, Uri imageUri, String email, String motdepasse, String fullname, String telephone){
+    public void checkEmailStatus(ProgressDialog pd, Uri imageUri, String email, String motdepasse, String fullname, String telephone, String ville, String pays){
+        pd.setMessage(appContext.getString(R.string.verif_if_account_exist));
         auth.fetchSignInMethodsForEmail(email).addOnCompleteListener(task -> {
             if (isNewAccountMain(task)){
-                createUserAccount(pd, imageUri, email, motdepasse, fullname, telephone);
+                pd.setMessage(appContext.getString(R.string.mep_creating_account));
+                createUserAccount(pd, imageUri, email, motdepasse, fullname, telephone, ville, pays);
             }else {
                 pd.dismiss();
                 showDialog(
@@ -172,11 +181,11 @@ public class Fbtools {
      * @param telephone
      */
     public void createUserAccount(ProgressDialog pd, Uri imageUri, String email, String motdepasse,
-                                   String fullname, String telephone) {
+                                  String fullname, String telephone, String ville, String pays) {
         auth.createUserWithEmailAndPassword(email, motdepasse)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        checkUser(pd, imageUri, email, fullname, telephone);
+                        checkUser(pd, imageUri, email, fullname, telephone, ville, pays);
                     } else {
                         pd.dismiss();
                         Toast.makeText(appContext, appContext.getString(R.string.create_account_error), Toast.LENGTH_SHORT).show();
@@ -192,10 +201,10 @@ public class Fbtools {
      * @param fullname
      * @param telephone
      */
-    public void checkUser(ProgressDialog pd, Uri imageUri, String email, String fullname, String telephone) {
+    public void checkUser(ProgressDialog pd, Uri imageUri, String email, String fullname, String telephone, String ville, String pays) {
         setfUser(auth.getCurrentUser());
         if (fUser != null) {
-            createUserProfile(pd, imageUri, fUser.getUid(), email, fullname, telephone);
+            createUserProfile(pd, imageUri, fUser.getUid(), email, fullname, telephone, ville, pays);
         } else {
             Toast.makeText(appContext, appContext.getString(R.string.no_user), Toast.LENGTH_SHORT).show();
             gotohome(appContext);
@@ -211,11 +220,11 @@ public class Fbtools {
      * @param fullname
      * @param telephone
      */
-    public void createUserProfile(ProgressDialog pd, Uri imageUri, String uid, String email, String fullname, String telephone) {
+    public void createUserProfile(ProgressDialog pd, Uri imageUri, String uid, String email, String fullname, String telephone, String ville, String pays) {
         if (imageUri != null)
-            ajouterUserProfileImage(pd, imageUri, uid, fullname, telephone, email);
+            ajouterUserProfileImage(pd, imageUri, uid, fullname, telephone, email, ville, pays);
         else
-            ajouterUnUtilisateur(pd, uid, fullname, "", telephone, email);
+            ajouterUnUtilisateur(pd, uid, fullname, "", telephone, email, ville, pays);
     }
 
     /**
@@ -227,7 +236,7 @@ public class Fbtools {
      * @param telephone
      * @param email
      */
-    private void ajouterUserProfileImage(ProgressDialog pd, Uri imageUri, String uid, String fullname, String telephone, String email) {
+    private void ajouterUserProfileImage(ProgressDialog pd, Uri imageUri, String uid, String fullname, String telephone, String email, String ville, String pays) {
         StorageReference storageReference = FirebaseStorage.getInstance().getReference(buildPathWithSlash(USERS, AVATAR, uid));
         storageReference.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
             Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
@@ -236,7 +245,7 @@ public class Fbtools {
             String downloadUri = uriTask.getResult().toString();
             if (uriTask.isSuccessful()){
                 pd.dismiss();
-                ajouterUnUtilisateur(pd, uid, fullname, downloadUri, telephone, email);
+                ajouterUnUtilisateur(pd, uid, fullname, downloadUri, telephone, email, ville, pays);
             }else
                 pd.dismiss();
         }).addOnFailureListener(e -> {
@@ -254,8 +263,8 @@ public class Fbtools {
      * @param telephone
      * @param email
      */
-    private void ajouterUnUtilisateur(ProgressDialog pd, String uid, String fullname, String avatar, String telephone, String email) {
-        ref.child(buildPathWithSlash(USERS, uid)).setValue(genHashMapUser(uid, fullname, avatar, telephone, email, getXtimestamp()))
+    private void ajouterUnUtilisateur(ProgressDialog pd, String uid, String fullname, String avatar, String telephone, String email, String ville, String pays) {
+        ref.child(buildPathWithSlash(USERS, uid)).setValue(genHashMapUser(uid, fullname, avatar, telephone, email, getXtimestamp(), ville, pays))
                 .addOnSuccessListener(unused -> {
                     pd.dismiss();
                     Toast.makeText(appContext, appContext.getString(R.string.save_user_info_ok), Toast.LENGTH_SHORT).show();
@@ -273,17 +282,15 @@ public class Fbtools {
      * @param motdepasse
      */
     public void signin(ProgressDialog pd, String email, String motdepasse) {
-        auth.signInWithEmailAndPassword(email, motdepasse).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    pd.dismiss();
-                    appContext.startActivity(new Intent(appContext, HomeActivity.class));
-                    ((Activity) appContext).finish();
-                }else{
-                    pd.dismiss();
-                    Toast.makeText(appContext, appContext.getString(R.string.authentication_failed), Toast.LENGTH_SHORT).show();
-                }
+        auth.signInWithEmailAndPassword(email, motdepasse).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                pd.dismiss();
+                this.id = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+                this.email = Objects.requireNonNull(auth.getCurrentUser()).getEmail();
+                gotohome(appContext);
+            }else{
+                pd.dismiss();
+                Toast.makeText(appContext, appContext.getString(R.string.authentication_failed), Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(e ->
                 Toast.makeText(appContext, appContext.getString(R.string.connexion_error), Toast.LENGTH_SHORT).show());
@@ -294,7 +301,7 @@ public class Fbtools {
      * @param valueEventListener
      */
     public void toutesMesTaches(final ValueEventListener valueEventListener) {
-        Query query = ref.child(TACHES).orderByChild(UID).equalTo(userId());
+        Query query = ref.child(TACHES).orderByChild(UID).equalTo(this.id);
         query.addValueEventListener(valueEventListener);
     }
 
@@ -307,7 +314,7 @@ public class Fbtools {
      * @param valueEventListener
      */
     public void specificUser(final ValueEventListener valueEventListener) {
-        Query query = ref.child(USERS).orderByKey().equalTo(userId());
+        Query query = ref.child(USERS).orderByKey().equalTo(this.id);
         query.addValueEventListener(valueEventListener);
     }
 
@@ -334,13 +341,14 @@ public class Fbtools {
     /**
      *
      * @param pd
-     * @param title
-     * @param description
+     * @param taches
+     * @param ntask
      */
-    public void addTaskInSpecificUserAccount(ProgressDialog pd, String tcover, String title, String description, String timestamp, String uid, String unoms, String uavatar, String ntask) {
-        ref.child(buildPathWithSlash(TACHES, timestamp)).setValue(genHashMapTask(uid, tcover, title, description, unoms, uavatar, timestamp))
+    public void addTaskInSpecificUserAccount(ProgressDialog pd, Taches taches, String ntask) {
+        pd.setMessage(appContext.getString(R.string.save_task_data));
+        ref.child(buildPathWithSlash(TACHES, taches.getTdate())).setValue(taches)
                 .addOnSuccessListener(unused -> {
-                    ref.child(buildPathWithSlash(USERS, uid, UNTASK)).setValue(incrementValue(ntask))
+                    ref.child(buildPathWithSlash(USERS, taches.getUid(), UNTASK)).setValue(incrementValue(ntask))
                             .addOnCompleteListener(task -> {
                                 pd.dismiss();
                                 Toast.makeText(appContext, appContext.getString(R.string.add_task_ok), Toast.LENGTH_SHORT).show();
@@ -357,16 +365,15 @@ public class Fbtools {
      *
      * @param pd
      * @param imageUri
-     * @param title
-     * @param description
-     * @param timestamp
-     * @param uid
-     * @param unoms
-     * @param uavatar
+     * @param taches
      * @param ntask
      */
-    public void addPictureInSpecificTask(ProgressDialog pd, Uri imageUri, String title, String description, String timestamp, String uid, String unoms, String uavatar, String ntask) {
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference(buildPathWithSlash(TACHES, uid, timestamp));
+    public void addPictureInSpecificTask(ProgressDialog pd, Uri imageUri, Taches taches, String ntask) {
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference(buildPathWithSlash(
+                TACHES,
+                taches.getUid(),
+                taches.getTdate()
+        ));
         storageReference.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
             Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
             while (!uriTask.isSuccessful());
@@ -374,7 +381,8 @@ public class Fbtools {
             String downloadUri = uriTask.getResult().toString();
             if (uriTask.isSuccessful()){
                 pd.dismiss();
-                addTaskInSpecificUserAccount(pd, downloadUri, title, description, timestamp, uid, unoms, uavatar, ntask);
+                taches.setTcover(downloadUri);
+                addTaskInSpecificUserAccount(pd, taches, ntask);
             }else
                 pd.dismiss();
         }).addOnFailureListener(e -> {
@@ -471,10 +479,10 @@ public class Fbtools {
      */
     public void deleteOldImage(ProgressDialog pd, Uri imageUri, boolean iscover, String oldPath) {
         if (isStringEmpty(oldPath)){
-            saveImage(pd, imageUri, iscover, userId());
+            saveImage(pd, imageUri, iscover, this.id);
         }else {
             StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(oldPath);
-            storageReference.delete().addOnSuccessListener(unused -> saveImage(pd, imageUri, iscover, userId())).addOnFailureListener(e -> {
+            storageReference.delete().addOnSuccessListener(unused -> saveImage(pd, imageUri, iscover, this.id)).addOnFailureListener(e -> {
                 pd.dismiss();
                 Toast.makeText(appContext, appContext.getString(R.string.delete_image_error), Toast.LENGTH_SHORT).show();
             });
@@ -489,7 +497,7 @@ public class Fbtools {
      * @param uid
      */
     public void saveImage(ProgressDialog pd, Uri imageUri, boolean iscover, String uid) {
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference(buildPathWithSlash(USERS, iscover?COVER:AVATAR, userId()));
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference(buildPathWithSlash(USERS, iscover?COVER:AVATAR, this.id));
         storageReference.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
             Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
             while (!uriTask.isSuccessful());
@@ -525,7 +533,7 @@ public class Fbtools {
      * @param value
      */
     public void updateStringWithFieldAndValue(ProgressDialog pd, String field, String value) {
-        ref.child(buildPathWithSlash(USERS, userId(), field)).setValue(value)
+        ref.child(buildPathWithSlash(USERS, this.id, field)).setValue(value)
                 .addOnCompleteListener(task -> pd.dismiss())
                 .addOnFailureListener(e -> pd.dismiss());
     }

@@ -20,4 +20,10 @@
         <item>@string/camera</item>
         <item>@string/gallery</item>
     </array>
+    <array name="edit_task">
+        <item>@string/cover</item>
+        <item>@string/titre</item>
+        <item>@string/description</item>
+        <item>@string/localisation</item>
+    </array>
 </resources>

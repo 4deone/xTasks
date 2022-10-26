@@ -32,6 +32,8 @@ import com.deone.extrmtasks.modeles.Taches;
 import com.deone.extrmtasks.tools.Fbtools;
 import com.deone.extrmtasks.tools.Sptools;
 import com.deone.extrmtasks.tools.Xlistener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -74,8 +76,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      *
      */
     private void initApp() {
-        sptools = Sptools.getInstance(this);
         fbtools = Fbtools.getInstance(this);
+        sptools = Sptools.getInstance(this);
         initThemeMode(sptools.readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
         initLLanguage(this, sptools.readStringData(APP_PREFS_LANGUE, EN));
     }
@@ -84,7 +86,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      *
      */
     private void checkUser() {
-        if(isStringEmpty(fbtools.userId())){
+        if(isStringEmpty(fbtools.getId())){
             gotomain(this);
         }else {
             initViews();
@@ -162,7 +164,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onCancelled(@NonNull DatabaseError error) {
-            Toast.makeText(HomeActivity.this, getString(R.string.database_error), Toast.LENGTH_SHORT).show();
+            Toast.makeText(HomeActivity.this, ""+error.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -174,7 +176,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onCancelled(@NonNull DatabaseError error) {
-            Toast.makeText(HomeActivity.this, getString(R.string.database_error), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(HomeActivity.this, getString(R.string.database_error), Toast.LENGTH_SHORT).show();
+            Toast.makeText(HomeActivity.this, ""+error.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
 

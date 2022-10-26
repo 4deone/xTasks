@@ -1,6 +1,9 @@
 package com.deone.extrmtasks.tools;
 
+import static com.deone.extrmtasks.tools.Constants.APP;
+import static com.deone.extrmtasks.tools.Constants.CONDITIONS;
 import static com.deone.extrmtasks.tools.Constants.FORMAT_DATE;
+import static com.deone.extrmtasks.tools.Constants.TID;
 import static com.deone.extrmtasks.tools.Constants.UDESCRIPTION;
 import static com.deone.extrmtasks.tools.Constants.UID;
 import static com.deone.extrmtasks.tools.Constants.UNOMS;
@@ -22,7 +25,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.deone.extrmtasks.AccountActivity;
 import com.deone.extrmtasks.AddActivity;
-import com.deone.extrmtasks.DetailsActivity;
 import com.deone.extrmtasks.HomeActivity;
 import com.deone.extrmtasks.MainActivity;
 import com.deone.extrmtasks.NewActivity;
@@ -31,6 +33,9 @@ import com.deone.extrmtasks.SettingsActivity;
 import com.deone.extrmtasks.TaskActivity;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.SignInMethodQueryResult;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -130,14 +135,6 @@ public class Other {
      *
      * @param appContext
      */
-    public static void gotoadetails(Context appContext) {
-        appContext.startActivity(new Intent(appContext, DetailsActivity.class));
-    }
-
-    /**
-     *
-     * @param appContext
-     */
     public static void gotosettings(Context appContext) {
         appContext.startActivity(new Intent(appContext, SettingsActivity.class));
         ((Activity) appContext).finish();
@@ -219,7 +216,9 @@ public class Other {
             String avatar,
             String telephone,
             String email,
-            String timestamp) {
+            String timestamp,
+            String ville,
+            String pays) {
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("uid", uid);
         hashMap.put("unoms", fullname);
@@ -228,6 +227,8 @@ public class Other {
         hashMap.put("utelephone", telephone);
         hashMap.put("uemail", email);
         hashMap.put("udate", timestamp);
+        hashMap.put("ucity", ville);
+        hashMap.put("ucountry", pays);
         return hashMap;
     }
 
@@ -246,7 +247,8 @@ public class Other {
             String description,
             String unoms,
             String uavatar,
-            String timestamp) {
+            String timestamp,
+            String tpays) {
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("tid", timestamp);
         hashMap.put("tcover", tcover);
@@ -256,6 +258,7 @@ public class Other {
         hashMap.put("uid", uid);
         hashMap.put("unoms", unoms);
         hashMap.put("uavatar", uavatar);
+        hashMap.put("tpays", tpays);
         return hashMap;
     }
 
@@ -451,6 +454,11 @@ public class Other {
                 return MessageFormat.format(appContext.getString(R.string.dialog_title), appContext.getString(R.string.description));
         }
         return null;
+    }
+
+    public static void toutesLesConditions(ValueEventListener vConditions) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(APP);
+        ref.child(CONDITIONS).addValueEventListener(vConditions);
     }
 
 }

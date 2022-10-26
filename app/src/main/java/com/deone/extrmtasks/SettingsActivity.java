@@ -3,17 +3,11 @@ package com.deone.extrmtasks;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_LANGUE;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_MODE;
 import static com.deone.extrmtasks.tools.Constants.EN;
-import static com.deone.extrmtasks.tools.Constants.UDESCRIPTION;
 import static com.deone.extrmtasks.tools.Constants.UID;
-import static com.deone.extrmtasks.tools.Constants.UNOMS;
-import static com.deone.extrmtasks.tools.Constants.UTELEPHONE;
 import static com.deone.extrmtasks.tools.Ivtools.loadingImageWithPath;
 import static com.deone.extrmtasks.tools.Other.buildAlertDialog;
-import static com.deone.extrmtasks.tools.Other.buildAlertDialogForSelectOption;
 import static com.deone.extrmtasks.tools.Other.buildAlertDialogForSingleSelectOption;
-import static com.deone.extrmtasks.tools.Other.buildProgressDialog;
 import static com.deone.extrmtasks.tools.Other.chooseDrawable;
-import static com.deone.extrmtasks.tools.Other.createTitle;
 import static com.deone.extrmtasks.tools.Other.formatLaDate;
 import static com.deone.extrmtasks.tools.Other.gotohome;
 import static com.deone.extrmtasks.tools.Other.gotomain;
@@ -23,28 +17,17 @@ import static com.deone.extrmtasks.tools.Other.isStringEmpty;
 import static com.deone.extrmtasks.tools.Other.safeShowValue;
 import static com.deone.extrmtasks.tools.Other.selectedLangue;
 
-import android.app.Activity;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -58,9 +41,6 @@ import com.deone.extrmtasks.tools.Sptools;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
-
-import java.text.MessageFormat;
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
@@ -74,6 +54,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private TextView tvComptePhone;
     private SwitchCompat swKey;
     private TextView tvKeyList;
+    private TextView tvAutorisation;
     private TextView tvNotification;
     private TextView tvDisplayMode;
     private TextView tvLanguage;
@@ -84,6 +65,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private TextView tvAbout;
     private TextView tvSignOut;
     private User user;
+    private String myuid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,12 +83,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.itAccount){
-            //
+            Intent intent = new Intent(this, AccountActivity.class);
+            intent.putExtra(UID, myuid);
+            startActivity(intent);
         }
-        /*if (item.getItemId() == R.id.itEditer){
-            buildAlertDialogForSelectOption(this, getString(R.string.choisir_option),
-                    optionListener, getResources().getStringArray(R.array.user_item)).create().show();
-        }*/
         return super.onOptionsItemSelected(item);
     }
 
@@ -125,7 +105,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
      *
      */
     private void checkUser() {
-        if(isStringEmpty(fbtools.userId())){
+        myuid = fbtools.getId();
+        if(isStringEmpty(myuid)){
             gotomain(this);
         }else {
             initViews();
@@ -147,6 +128,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         tvComptePhone = findViewById(R.id.tvComptePhone);
         swKey = findViewById(R.id.swKey);
         tvKeyList = findViewById(R.id.tvKeyList);
+        tvAutorisation = findViewById(R.id.tvAutorisation);
         tvNotification = findViewById(R.id.tvNotification);
         tvDisplayMode = findViewById(R.id.tvDisplayMode);
         tvLanguage = findViewById(R.id.tvLanguage);
@@ -162,6 +144,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         ivAvatar.setOnClickListener(this);
         ivCover.setOnClickListener(this);
         tvKeyList.setOnClickListener(this);
+        tvAutorisation.setOnClickListener(this);
         tvNotification.setOnClickListener(this);
         tvDisplayMode.setOnClickListener(this);
         tvLanguage.setOnClickListener(this);
@@ -250,6 +233,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             showDialogUserInfo();
         else if (id == R.id.tvKeyList)
             showKeyList();
+        else if (id == R.id.tvAutorisation)
+            showAutorisationList();
         else if (id == R.id.tvNotification)
             showNotification();
         else if (id == R.id.tvDisplayMode)
@@ -276,6 +261,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void showKeyList() {
+    }
+
+    private void showAutorisationList() {
     }
 
     private void showNotification() {

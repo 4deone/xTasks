@@ -151,4 +151,26 @@
     <string name="confidentialit_et_securit">Confidentialité et sécurité</string>
     <string name="faq">FAQ</string>
     <string name="account_deleted_ok">Suppression du compte de l\'utilisateur!</string>
+    <string name="enter_your_country">Enter your country</string>
+    <string name="country">country</string>
+    <string name="enter_your_city">Enter your city</string>
+    <string name="city">City</string>
+    <string name="ville_error">Erreur lors de la saisie de la ville!</string>
+    <string name="pays_error">Erreur lors de la saisie du pays!</string>
+    <string name="conditions_utilisation">Conditions d\'utilisation</string>
+    <string name="titre_de_la_condition">titre de la condition</string>
+    <string name="description_de_la_condition">description de la condition</string>
+    <string name="autorisations">Autorisations</string>
+    <string name="verif_entries">Vérification des donées saisies, Patientez!</string>
+    <string name="user_auth">Authentification de l\'utilisateur, Patientez!</string>
+    <string name="mep_creating_account">Mise en place des élément de création du compte de l\'utilisateur, Patientez!</string>
+    <string name="verif_if_account_exist">Vérification de l\'existance de l\'utilisateur dans le système, Patientez!</string>
+    <string name="init_task_id">Intialisation de l\'identifiant de la tâche</string>
+    <string name="locate_task">Localisation de la tâche</string>
+    <string name="save_task_image">Sauvegarde de l\'image de la tâche</string>
+    <string name="save_task_data">Sauvegarde des données de la tâche</string>
+    <string name="adresse_de_la_tache">Adresse de la tache</string>
+    <string name="cover">Cover</string>
+    <string name="titre">Titre</string>
+    <string name="localisation">Localisation</string>
 </resources>

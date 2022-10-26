@@ -92,6 +92,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tvDescription"
+            android:maxLines="5"
+            android:scrollbarStyle="insideInset"
+            android:scrollbars="vertical"
+            android:overScrollMode="always"
             android:gravity="top"
             android:hint="@string/enter_description_de_la_tache"
             android:inputType="textCapSentences|textMultiLine"
@@ -100,10 +104,10 @@
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/swLocate"
-            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/etvDescription"
+            android:layout_marginTop="10dp"
             android:drawablePadding="10dp"
             android:text="@string/localise_la_tache"
             android:textColor="@color/black"

@@ -16,15 +16,16 @@
         <entry key="app/src/main/res/drawable/main_roundertop.xml" value="0.168" />
         <entry key="app/src/main/res/layout/activity_account.xml" value="0.2515625" />
         <entry key="app/src/main/res/layout/activity_add.xml" value="0.24048913043478262" />
-        <entry key="app/src/main/res/layout/activity_details.xml" value="0.151268115942029" />
+        <entry key="app/src/main/res/layout/activity_details.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.24048913043478262" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/activity_new.xml" value="0.24048913043478262" />
+        <entry key="app/src/main/res/layout/activity_new.xml" value="0.1866306027820711" />
         <entry key="app/src/main/res/layout/activity_new_user.xml" value="0.18" />
         <entry key="app/src/main/res/layout/activity_settings.xml" value="0.24048913043478262" />
-        <entry key="app/src/main/res/layout/activity_task.xml" value="0.1866306027820711" />
+        <entry key="app/src/main/res/layout/activity_task.xml" value="0.25" />
         <entry key="app/src/main/res/layout/dialod_edit.xml" value="0.24048913043478262" />
         <entry key="app/src/main/res/layout/item_comment.xml" value="0.24048913043478262" />
+        <entry key="app/src/main/res/layout/item_condition.xml" value="0.2515625" />
         <entry key="app/src/main/res/layout/item_taches.xml" value="0.24048913043478262" />
         <entry key="app/src/main/res/layout/item_taches_list.xml" value="0.2515625" />
         <entry key="app/src/main/res/layout/item_taches_signalement.xml" value="0.2515625" />

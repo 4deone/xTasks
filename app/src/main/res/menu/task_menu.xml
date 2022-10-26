@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/itDetails"
-        android:title="@string/details"
+        android:id="@+id/itEditer"
+        android:title="@string/editer"
         android:icon="@drawable/ic_action_infos"/>
 
     <item

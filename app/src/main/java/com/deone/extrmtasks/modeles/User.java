@@ -8,6 +8,8 @@ public class User implements Comparable<User>{
     private  String utelephone;
     private  String udescription;
     private  String uemail;
+    private  String ucity;
+    private  String ucountry;
     private  String udate;
     private  String untask;
     private  String unfavoris;
@@ -18,7 +20,7 @@ public class User implements Comparable<User>{
     public User() {
     }
 
-    public User(String uid, String unoms, String ucover, String uavatar, String utelephone, String udescription, String uemail, String udate, String untask, String unfavoris, String unlikes, String uncomments, String ungroups) {
+    public User(String uid, String unoms, String ucover, String uavatar, String utelephone, String udescription, String uemail, String ucity, String ucountry, String udate, String untask, String unfavoris, String unlikes, String uncomments, String ungroups) {
         this.uid = uid;
         this.unoms = unoms;
         this.ucover = ucover;
@@ -26,6 +28,8 @@ public class User implements Comparable<User>{
         this.utelephone = utelephone;
         this.udescription = udescription;
         this.uemail = uemail;
+        this.ucity = ucity;
+        this.ucountry = ucountry;
         this.udate = udate;
         this.untask = untask;
         this.unfavoris = unfavoris;
@@ -88,6 +92,22 @@ public class User implements Comparable<User>{
 
     public void setUemail(String uemail) {
         this.uemail = uemail;
+    }
+
+    public String getUcity() {
+        return ucity;
+    }
+
+    public void setUcity(String ucity) {
+        this.ucity = ucity;
+    }
+
+    public String getUcountry() {
+        return ucountry;
+    }
+
+    public void setUcountry(String ucountry) {
+        this.ucountry = ucountry;
     }
 
     public String getUdate() {

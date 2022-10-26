@@ -1,24 +1,26 @@
 package com.deone.extrmtasks;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_LANGUE;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_MODE;
 import static com.deone.extrmtasks.tools.Constants.EN;
 import static com.deone.extrmtasks.tools.Constants.TID;
 import static com.deone.extrmtasks.tools.Ivtools.loadingImageWithPath;
 import static com.deone.extrmtasks.tools.Other.buildAlertDialog;
+import static com.deone.extrmtasks.tools.Other.buildAlertDialogForSingleSelectOption;
 import static com.deone.extrmtasks.tools.Other.buildProgressDialog;
 import static com.deone.extrmtasks.tools.Other.checkBeforeFormatData;
 import static com.deone.extrmtasks.tools.Other.formatLaDate;
 import static com.deone.extrmtasks.tools.Other.gotoaccount;
-import static com.deone.extrmtasks.tools.Other.gotoadetails;
 import static com.deone.extrmtasks.tools.Other.gotohome;
-import static com.deone.extrmtasks.tools.Other.gotosettings;
 import static com.deone.extrmtasks.tools.Other.initLLanguage;
 import static com.deone.extrmtasks.tools.Other.initThemeMode;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
 import static com.deone.extrmtasks.tools.Other.rvLayoutManager;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
@@ -56,12 +58,11 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private Sptools sptools;
     private ImageView ivAvatarUser;
     private ImageView ivTachesLogo;
-    private ProgressBar pbTaskLoading;
-    private ProgressBar pbUserLoading;
     private TextView tvUsername;
     private TextView tvPublicationDate;
     private TextView tvTitle;
     private TextView tvDescription;
+    private TextView tvAdresse;
     private TextView tvNcomment;
     private TextView tvNjaime;
     private RecyclerView rvComments;
@@ -93,8 +94,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                     getString(R.string.delete_task_message),
                     null, getString(R.string.non),
                     adListener, getString(R.string.oui)).create().show();
-        } else if (item.getItemId() == R.id.itDetails){
-            gotoadetails(this);
+        } else if (item.getItemId() == R.id.itEditer){
+            showEditDialog();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -103,13 +104,13 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         sptools = Sptools.getInstance(this);
         fbtools = Fbtools.getInstance(this);
         tid = getIntent().getStringExtra(TID);
-        currentUid = fbtools.userId();
+        currentUid = fbtools.getId();
         initThemeMode(sptools.readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
         initLLanguage(this, sptools.readStringData(APP_PREFS_LANGUE, EN));
     }
 
     private void checkUser() {
-        if(isStringEmpty(fbtools.userId())||isStringEmpty(tid)){
+        if(isStringEmpty(currentUid)||isStringEmpty(tid)){
             gotohome(this);
         }else {
             initViews();
@@ -125,6 +126,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         tvPublicationDate = findViewById(R.id.tvPublicationDate);
         tvTitle = findViewById(R.id.tvTitle);
         tvDescription = findViewById(R.id.tvDescription);
+        tvAdresse = findViewById(R.id.tvAdresse);
         ivTachesLogo = findViewById(R.id.ivTachesLogo);
         tvNcomment = findViewById(R.id.tvNcomment);
         tvNjaime = findViewById(R.id.tvNjaime);
@@ -132,14 +134,23 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         rvComments.setLayoutManager(rvLayoutManager(this, 0));
         commentList = new ArrayList<>();
         etvComment = findViewById(R.id.etvComment);
-        pbTaskLoading = findViewById(R.id.pbTaskLoading);
-        pbUserLoading = findViewById(R.id.pbUserLoading);
         fbtools.specificTask(vCurrentUser, currentUid, vTask, vComment, tid);
         findViewById(R.id.ibJaime).setOnClickListener(this);
         findViewById(R.id.ibFavorite).setOnClickListener(this);
         findViewById(R.id.ibShare).setOnClickListener(this);
         findViewById(R.id.ibSendComment).setOnClickListener(this);
         ivAvatarUser.setOnClickListener(this);
+        tvAdresse.setOnClickListener(this);
+    }
+
+    private void showEditDialog() {
+        buildAlertDialogForSingleSelectOption(
+                this,
+                getString(R.string.app_name_lite),
+                optionListener,
+                getResources().getStringArray(R.array.edit_task),
+                0
+        );
     }
 
     private void likeProcess() {
@@ -149,6 +160,9 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void shareProcess() {
+    }
+
+    private void showAdresseDialog() {
     }
 
     private void verifDataBeforeSendComment() {
@@ -185,10 +199,12 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             tvPublicationDate.setText(formatLaDate(taches.getTdate()));
             tvTitle.setText(taches.getTtitre());
             tvDescription.setText(taches.getTdescription());
+            tvAdresse.setVisibility(isStringEmpty(taches.getTadresse())?GONE:VISIBLE);
+            tvAdresse.setText(isStringEmpty(taches.getTadresse())?"":""+taches.getTville()+", "+taches.getTpays());
             tvNcomment.setText(checkBeforeFormatData(getString(R.string.comments), taches.getTncomment()));
             tvNjaime.setText(checkBeforeFormatData(getString(R.string.like), taches.getTnlike()));
-            loadingImageWithPath(ivTachesLogo, pbTaskLoading, R.drawable.wild, taches.getTcover());
-            loadingImageWithPath(ivAvatarUser, pbUserLoading, R.drawable.russia, taches.getUavatar());
+            loadingImageWithPath(ivTachesLogo, R.drawable.wild, taches.getTcover());
+            loadingImageWithPath(ivAvatarUser, R.drawable.russia, taches.getUavatar());
         }
     }
 
@@ -223,7 +239,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onCancelled(@NonNull DatabaseError error) {
-            Toast.makeText(TaskActivity.this, getString(R.string.database_error), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(TaskActivity.this, getString(R.string.database_error), Toast.LENGTH_SHORT).show();
+            Toast.makeText(TaskActivity.this, ""+error.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -260,6 +277,19 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
+    private final DialogInterface.OnClickListener optionListener = (dialogInterface, i) -> {
+        switch (i) {
+            case 0: // cover
+                break;
+            case 1: // titre
+                break;
+            case 2: // description
+                break;
+            case 3: // localisation
+                break;
+        }
+    };
+
     @Override
     public void onClick(View view) {
         int id = view.getId();
@@ -273,6 +303,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             verifDataBeforeSendComment();
         else if (id == R.id.ivAvatarUser || id == R.id.tvUsername)
             gotoaccount(this, currentUid);
+        else if (id == R.id.tvAdresse)
+            showAdresseDialog();
     }
 
 }

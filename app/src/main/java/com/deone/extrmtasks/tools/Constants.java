@@ -11,6 +11,8 @@ public class Constants {
     public static final String DESCRIPTION = "description";
     public static final String AVATAR = "avatar";
     public static final String COVER = "cover";
+    public static final String APP = "App";
+    public static final String CONDITIONS = "Conditions";
     public static final String DATABASE = "Xtasks";
     public static final String TACHES = "Taches";
     public static final String USERS = "Users";
@@ -27,6 +29,10 @@ public class Constants {
     public static final String TID = "tid";
     public static final String FORMAT_DATE = "EEEE dd MMM yyyy";
     public static final String EN = "en";
+    public static final int LOCATION_REQUEST_CODE_ACCESS_COARSE_LOCATION = 101;
+    public static final int LOCATION_REQUEST_CODE_ACCESS_FINE_LOCATION = 102;
     public static final int CAMERA_REQUEST_CODE = 200;
     public static final int STORAGE_REQUEST_CODE = 300;
+    public static final int MINIMUM_TIME = 10000;
+    public static final int MINIMUM_DISTANCE = 50;
 }

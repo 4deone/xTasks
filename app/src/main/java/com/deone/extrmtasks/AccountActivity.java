@@ -98,7 +98,7 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void checkUser() {
-        if(isStringEmpty(fbtools.userId())){
+        if(isStringEmpty(fbtools.getId())){
             gotomain(this);
         }else {
             initViews();
@@ -154,6 +154,12 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
                 break;
         }*/
     };
+
+
+        /*if (item.getItemId() == R.id.itEditer){
+            buildAlertDialogForSelectOption(this, getString(R.string.choisir_option),
+                    optionListener, getResources().getStringArray(R.array.user_item)).create().show();
+        }*/
 
     private final DialogInterface.OnClickListener itListener = new DialogInterface.OnClickListener() {
         @Override
