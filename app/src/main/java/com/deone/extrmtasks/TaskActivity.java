@@ -192,6 +192,17 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void showAdresseDialog() {
+        AlertDialog.Builder alertDialog=new AlertDialog.Builder(this);
+        alertDialog.setTitle(getString(R.string.position_tache));
+        alertDialog.setMessage(
+                "city = "+taches.getTville() + ",\n state = "+taches.getTstate()+
+                ",\n country = "+taches.getTpays()+ ",\n codepostal = "+taches.getTcodepostal()+
+                        ",\n adresse = "+taches.getTadresse()
+        );
+        alertDialog.setPositiveButton("OK", (dialog, which) -> dialog.cancel());
+        alertDialog.setCancelable(false);
+        AlertDialog alert=alertDialog.create();
+        alert.show();
     }
 
     private void verifDataBeforeSendComment() {

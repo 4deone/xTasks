@@ -178,4 +178,5 @@
     <string name="title_update">Mise à jour - {0}</string>
     <string name="not_auth_to_do">Pas autoriser à éffectuer cette opération</string>
     <string name="loc_message">Changement de la position de la tâche.</string>
+    <string name="position_tache">Position actuelle de la tâche</string>
 </resources>
