@@ -7,6 +7,8 @@ import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_LANGUE;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_MODE;
 import static com.deone.extrmtasks.tools.Constants.EN;
+import static com.deone.extrmtasks.tools.Constants.LOCATION_REQUEST_CODE_ACCESS_COARSE_LOCATION;
+import static com.deone.extrmtasks.tools.Constants.LOCATION_REQUEST_CODE_ACCESS_FINE_LOCATION;
 import static com.deone.extrmtasks.tools.Constants.TACHES;
 import static com.deone.extrmtasks.tools.Constants.TADRESSE;
 import static com.deone.extrmtasks.tools.Constants.TCODEPOSTAL;
@@ -33,9 +35,12 @@ import static com.deone.extrmtasks.tools.Other.initThemeMode;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
 import static com.deone.extrmtasks.tools.Other.rvLayoutManager;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.method.ScrollingMovementMethod;
@@ -51,6 +56,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -63,6 +72,7 @@ import com.deone.extrmtasks.modeles.Comment;
 import com.deone.extrmtasks.modeles.Taches;
 import com.deone.extrmtasks.modeles.User;
 import com.deone.extrmtasks.tools.Fbtools;
+import com.deone.extrmtasks.tools.Ivtools;
 import com.deone.extrmtasks.tools.Lctools;
 import com.deone.extrmtasks.tools.Sptools;
 import com.deone.extrmtasks.tools.Xlistener;
@@ -79,6 +89,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private Fbtools fbtools;
     private Sptools sptools;
     private Lctools lctools;
+    private Ivtools ivtools;
+    private Uri imageUri;
     private ImageView ivAvatarUser;
     private ImageView ivTachesLogo;
     private TextView tvUsername;
@@ -164,6 +176,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         rvComments.setLayoutManager(rvLayoutManager(this, 0));
         commentList = new ArrayList<>();
         etvComment = findViewById(R.id.etvComment);
+        ivtools.setSomeActivityResultLauncher(someActivityResultLauncher);
         fbtools.specificTask(vCurrentUser, currentUid, vTask, vComment, tid);
         findViewById(R.id.ibJaime).setOnClickListener(this);
         findViewById(R.id.ibFavorite).setOnClickListener(this);
@@ -317,9 +330,35 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
+    private final DialogInterface.OnClickListener coverListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+            switch(i){
+                case 0 :
+                    if (!ivtools.checkCameraPermissions()){
+                        ivtools.requestCameraPermissions();
+                    }else{
+                        ivtools.pickFromCamera(imageUri);
+                    }
+                    break;
+                case 1 :
+                    if (!ivtools.checkStoragePermissions()){
+                        ivtools.requestStoragePermissions();
+                    }else{
+                        ivtools.pickFromGallery();
+                    }
+                    break;
+                default:
+            }
+        }
+    };
+
     private final DialogInterface.OnClickListener optionListener = (dialogInterface, i) -> {
         switch (i) {
             case 0: // cover
+                buildAlertDialogForSelectOption(
+                        this, getString(R.string.app_name_lite),
+                        coverListener, getResources().getStringArray(R.array.select_place)).create().show();
                 break;
             case 1: // titre
                 updateString(getString(R.string.titre), i);
@@ -426,4 +465,33 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             showAdresseDialog();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == LOCATION_REQUEST_CODE_ACCESS_COARSE_LOCATION || requestCode == LOCATION_REQUEST_CODE_ACCESS_FINE_LOCATION)
+            lctools.requestLoccationPermissionsResults(requestCode, grantResults);
+        else
+            ivtools.requestCameraAndGalleryPermissions(requestCode, grantResults, imageUri);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private final ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null){
+                            imageUri = data.getData();
+                        }
+                        updateTaskCoverImage();
+                    }
+                }
+            });
+
+    private void updateTaskCoverImage() {
+        ProgressDialog pd = buildProgressDialog(this, getString(R.string.app_name), getString(R.string.task_image_path));
+        pd.show();
+        fbtools.deleteOldImage(pd, imageUri, ""+taches.getTcover(), "");
+    }
 }

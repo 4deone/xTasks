@@ -179,4 +179,8 @@
     <string name="not_auth_to_do">Pas autoriser à éffectuer cette opération</string>
     <string name="loc_message">Changement de la position de la tâche.</string>
     <string name="position_tache">Position actuelle de la tâche</string>
+    <string name="task_image_delete">Suppression de la couverture de la tâche</string>
+    <string name="task_image_path">Vérification du chemin de la tâche</string>
+    <string name="task_image_save_storage">Enregistrement de l\'image dans la banque à image</string>
+    <string name="task_image_realtime_path">Mise à jour des informations de la tâche</string>
 </resources>

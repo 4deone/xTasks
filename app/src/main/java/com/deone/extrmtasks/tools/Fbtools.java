@@ -489,6 +489,21 @@ public class Fbtools {
         }
     }
 
+    public void deleteOldImage(ProgressDialog pd, Uri imageUri, String pathStorage, String pathRealtime) {
+        if (isStringEmpty(pathStorage)){
+            saveImage(pd, imageUri, pathStorage, pathRealtime);
+        }else {
+            pd.setMessage(appContext.getString(R.string.task_image_delete));
+            StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(pathStorage);
+            storageReference.delete().addOnSuccessListener(unused ->
+                    saveImage(pd, imageUri, pathStorage, pathRealtime))
+                    .addOnFailureListener(e -> {
+                pd.dismiss();
+                Toast.makeText(appContext, appContext.getString(R.string.delete_image_error), Toast.LENGTH_SHORT).show();
+            });
+        }
+    }
+
     /**
      *
      * @param pd
@@ -505,6 +520,25 @@ public class Fbtools {
             String downloadUri = uriTask.getResult().toString();
             if (uriTask.isSuccessful()){
                 updateUserAvatarOrCover(pd, uid, downloadUri, iscover?UCOVER:UAVATAR);
+            }else
+                pd.dismiss();
+        }).addOnFailureListener(e -> {
+            pd.dismiss();
+            Toast.makeText(appContext, appContext.getString(R.string.save_image_error), Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    public void saveImage(ProgressDialog pd, Uri imageUri, String pathStorage, String pathRealtime) {
+        pd.setMessage(appContext.getString(R.string.task_image_save_storage));
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference(pathStorage);
+        storageReference.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
+            Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+            while (!uriTask.isSuccessful());
+
+            String downloadUri = uriTask.getResult().toString();
+            if (uriTask.isSuccessful()){
+                pd.setMessage(appContext.getString(R.string.task_image_realtime_path));
+                writeStringInDb(pathRealtime, downloadUri);
             }else
                 pd.dismiss();
         }).addOnFailureListener(e -> {
