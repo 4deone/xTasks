@@ -538,6 +538,17 @@ public class Fbtools {
                 .addOnFailureListener(e -> pd.dismiss());
     }
 
+    public void writeStringInDb(String path, String value) {
+        ref.child(path).setValue(value)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful())
+                        Toast.makeText(appContext, appContext.getString(R.string.updated_ok), Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(appContext, appContext.getString(R.string.not_auth_to_do), Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> Toast.makeText(appContext, appContext.getString(R.string.updated_not_ok), Toast.LENGTH_SHORT).show());
+    }
+
     public void deleteUserAccount(ProgressDialog pd, String email, String motdepasse) {
         final FirebaseUser user = auth.getCurrentUser();
         AuthCredential credential = EmailAuthProvider.getCredential(""+email, ""+motdepasse);

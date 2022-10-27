@@ -8,26 +8,29 @@
 
     <TextView
         android:id="@+id/tvTitle"
-        android:textColor="@color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/new_value"/>
+        android:text="@string/new_value"
+        android:textColor="@color/black" />
 
     <EditText
         android:id="@+id/edtValue"
-        android:layout_below="@+id/tvTitle"
-        android:padding="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/enter_the_new_value"/>
+        android:layout_below="@+id/tvTitle"
+        android:hint="@string/enter_the_new_value"
+        android:padding="20dp" />
 
     <Button
         android:id="@+id/btUpdate"
-        android:layout_below="@+id/edtValue"
-        android:layout_margin="10dp"
-        android:layout_alignParentEnd="true"
-        android:text="@string/update"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edtValue"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/update" />
 
 </RelativeLayout>

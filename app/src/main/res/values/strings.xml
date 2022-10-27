@@ -130,6 +130,8 @@
     <string name="loading_user_image_error">Erreur lors du chargement de l\'image de l\'utilisateur!</string>
     <string name="delete_image_error">Erreur lors de la suppression de l\'image!</string>
     <string name="update">Update</string>
+    <string name="updated_ok">Updated success</string>
+    <string name="updated_not_ok">Updated error</string>
     <string name="enter_the_new_value">Enter the new value</string>
     <string name="new_value">New value</string>
     <string name="dialog_title">New value for {0}</string>
@@ -173,4 +175,7 @@
     <string name="cover">Cover</string>
     <string name="titre">Titre</string>
     <string name="localisation">Localisation</string>
+    <string name="title_update">Mise à jour - {0}</string>
+    <string name="not_auth_to_do">Pas autoriser à éffectuer cette opération</string>
+    <string name="loc_message">Changement de la position de la tâche.</string>
 </resources>

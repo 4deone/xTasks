@@ -4,6 +4,7 @@ import static com.deone.extrmtasks.tools.Constants.APP_PREFS_LANGUE;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_MODE;
 import static com.deone.extrmtasks.tools.Constants.EN;
 import static com.deone.extrmtasks.tools.Constants.TID;
+import static com.deone.extrmtasks.tools.Constants.UID;
 import static com.deone.extrmtasks.tools.Other.gotoTask;
 import static com.deone.extrmtasks.tools.Other.gotoaddtask;
 import static com.deone.extrmtasks.tools.Other.gotomain;
@@ -184,7 +185,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private final Xlistener xListener = new Xlistener() {
         @Override
         public void onItemClick(View view, int position) {
-            gotoTask(HomeActivity.this, TID, tachesList.get(position).getTid());
+            gotoTask(HomeActivity.this, TID, tachesList.get(position).getTid(), UID, tachesList.get(position).getUid());
         }
 
         @Override

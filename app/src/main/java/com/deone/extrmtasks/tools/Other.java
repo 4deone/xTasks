@@ -149,12 +149,15 @@ public class Other {
     /**
      *
      * @param appContext
-     * @param name
-     * @param value
+     * @param nameTui
+     * @param valueTui
+     * @param nameUid
+     * @param valueUid
      */
-    public static void gotoTask(Context appContext, String name, String value) {
+    public static void gotoTask(Context appContext, String nameTui, String valueTui, String nameUid, String valueUid) {
         Intent intent = new Intent(appContext, TaskActivity.class);
-        intent.putExtra(name, value);
+        intent.putExtra(nameTui, valueTui);
+        intent.putExtra(nameUid, valueUid);
         appContext.startActivity(intent);
     }
 

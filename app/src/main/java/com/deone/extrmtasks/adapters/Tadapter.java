@@ -3,10 +3,8 @@ package com.deone.extrmtasks.adapters;
 import static com.deone.extrmtasks.tools.Ivtools.loadingImageWithPath;
 import static com.deone.extrmtasks.tools.Other.checkBeforeFormatData;
 import static com.deone.extrmtasks.tools.Other.formatLaDate;
-import static com.deone.extrmtasks.tools.Other.isStringEmpty;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.deone.extrmtasks.R;
 import com.deone.extrmtasks.modeles.Taches;
 import com.deone.extrmtasks.tools.Xlistener;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 

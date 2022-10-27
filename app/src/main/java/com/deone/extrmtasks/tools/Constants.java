@@ -27,6 +27,15 @@ public class Constants {
     public static final String UNTASK = "untask";
     public static final String UID = "uid";
     public static final String TID = "tid";
+    public static final String TTITRE = "ttitre";
+    public static final String TPAYS = "tpays";
+    public static final String TVILLE = "tville";
+    public static final String TADRESSE = "tadresse";
+    public static final String TCODEPOSTAL = "tcodepostal";
+    public static final String TSTATE = "tstate";
+    public static final String TLONGITUDE = "tlongitude";
+    public static final String TLATITUDE = "tlatitude";
+    public static final String TDESCRIPTION = "tdescription";
     public static final String FORMAT_DATE = "EEEE dd MMM yyyy";
     public static final String EN = "en";
     public static final int LOCATION_REQUEST_CODE_ACCESS_COARSE_LOCATION = 101;
