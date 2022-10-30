@@ -1,7 +1,9 @@
 package com.deone.extrmtasks.tools;
 
+import static com.deone.extrmtasks.tools.Constants.LOCATION_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.LOCATION_REQUEST_CODE_ACCESS_COARSE_LOCATION;
 import static com.deone.extrmtasks.tools.Constants.LOCATION_REQUEST_CODE_ACCESS_FINE_LOCATION;
+import static com.deone.extrmtasks.tools.Other.formatAdresse;
 
 import android.Manifest;
 import android.app.Activity;
@@ -20,6 +22,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.deone.extrmtasks.R;
 
 import java.io.IOException;
 import java.util.List;
@@ -93,8 +97,6 @@ public class Lctools {
      *
      */
 
-
-
     public void initLocation() {
         //https://stackoverflow.com/questions/33327984/call-requires-permissions-that-may-be-rejected-by-user
         Criteria criteria = new Criteria();
@@ -139,22 +141,13 @@ public class Lctools {
     }
 
     public void requestLoccationPermissionsResults(int requestCode, int[] grantResults) {
-        switch (requestCode) {
-            case LOCATION_REQUEST_CODE_ACCESS_COARSE_LOCATION:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == LOCATION_REQUEST_CODE) {
+            if (grantResults.length > 0) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted
                 } else {
                     // permission denied
                 }
-                break;
-
-            case LOCATION_REQUEST_CODE_ACCESS_FINE_LOCATION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted
-                } else {
-                    // permission denied
-                }
-                break;
             }
         }
     }
@@ -173,8 +166,14 @@ public class Lctools {
 
             AlertDialog.Builder alertDialog=new AlertDialog.Builder(appContext);
             alertDialog.setTitle("Votre position actuelle");
-            alertDialog.setMessage("city = "+city + ",\n state = "+state+
-                    ",\n country = "+country+ ",\n codepostal = "+codepostal+ ",\n adresse = "+adresse);
+            alertDialog.setMessage(
+                    formatAdresse(
+                            appContext.getString(R.string.ville) + " : " + city,
+                            appContext.getString(R.string.state) + " : " + state,
+                            appContext.getString(R.string.pays) + " : " + country,
+                            appContext.getString(R.string.codepostal) + " : " + codepostal,
+                            appContext.getString(R.string.adresse) + " : " + adresse)
+            );
             alertDialog.setPositiveButton("OK", (dialog, which) -> dialog.cancel());
             alertDialog.setCancelable(false);
             AlertDialog alert=alertDialog.create();

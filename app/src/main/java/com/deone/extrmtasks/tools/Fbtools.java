@@ -4,9 +4,11 @@ import static com.deone.extrmtasks.tools.Constants.AVATAR;
 import static com.deone.extrmtasks.tools.Constants.COMMENTS;
 import static com.deone.extrmtasks.tools.Constants.COVER;
 import static com.deone.extrmtasks.tools.Constants.DATABASE;
+import static com.deone.extrmtasks.tools.Constants.SIGNALES;
 import static com.deone.extrmtasks.tools.Constants.TACHES;
 import static com.deone.extrmtasks.tools.Constants.TID;
 import static com.deone.extrmtasks.tools.Constants.TNCOMMENTS;
+import static com.deone.extrmtasks.tools.Constants.TPAYS;
 import static com.deone.extrmtasks.tools.Constants.UAVATAR;
 import static com.deone.extrmtasks.tools.Constants.UCOVER;
 import static com.deone.extrmtasks.tools.Constants.UID;
@@ -14,39 +16,29 @@ import static com.deone.extrmtasks.tools.Constants.UNCOMMENTS;
 import static com.deone.extrmtasks.tools.Constants.UNTASK;
 import static com.deone.extrmtasks.tools.Constants.USERS;
 import static com.deone.extrmtasks.tools.Other.buildPathWithSlash;
-import static com.deone.extrmtasks.tools.Other.buildProgressDialog;
 import static com.deone.extrmtasks.tools.Other.decrementValue;
 import static com.deone.extrmtasks.tools.Other.genHashMapComment;
-import static com.deone.extrmtasks.tools.Other.genHashMapTask;
-import static com.deone.extrmtasks.tools.Other.genHashMapUser;
 import static com.deone.extrmtasks.tools.Other.getXtimestamp;
 import static com.deone.extrmtasks.tools.Other.gotohome;
 import static com.deone.extrmtasks.tools.Other.gotomain;
-import static com.deone.extrmtasks.tools.Other.gotonew;
 import static com.deone.extrmtasks.tools.Other.incrementValue;
-import static com.deone.extrmtasks.tools.Other.isNewAccountMain;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
-import static com.deone.extrmtasks.tools.Other.showDialog;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.deone.extrmtasks.HomeActivity;
 import com.deone.extrmtasks.R;
-import com.deone.extrmtasks.TaskActivity;
-import com.deone.extrmtasks.modeles.Taches;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.deone.extrmtasks.modeles.Commentaire;
+import com.deone.extrmtasks.modeles.Signale;
+import com.deone.extrmtasks.modeles.Tache;
+import com.deone.extrmtasks.modeles.User;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -59,8 +51,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.Objects;
-
 public class Fbtools {
     private static DatabaseReference ref;
     private static FirebaseAuth auth;
@@ -72,8 +62,8 @@ public class Fbtools {
 
     /**
      *
-     * @param applicationContext
-     * @return
+     * @param applicationContext applicationContext Context de l'application qui appelle cette instance
+     * @return Renvoie une instance unique de l'objet Signtools
      */
     public static synchronized Fbtools getInstance(Context applicationContext) {
         if (instance == null)
@@ -83,7 +73,7 @@ public class Fbtools {
 
     /**
      *
-     * @param applicationContext
+     * @param applicationContext applicationContext applicationContext Context de l'application qui appelle cette instance
      */
     private Fbtools (Context applicationContext) {
         appContext = applicationContext;
@@ -100,222 +90,32 @@ public class Fbtools {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    //Toutes les requetes permettant à l'utilisateur ou meme le système de lire les éléments contenu dans la base de données
 
     /**
      *
-     * @param fUser
+     * @param valueEventListener L'écouteur permettant de récupérer les élémnents dans la base de données
      */
-    public static void setfUser(FirebaseUser fUser) {
-        Fbtools.fUser = fUser;
-    }
-
-    /**
-     *
-     * @param pd
-     * @param email
-     * @param motdepasse
-     */
-    public void checkEmailStatus(ProgressDialog pd, String email, String motdepasse){
-        auth.fetchSignInMethodsForEmail(email).addOnCompleteListener(task -> {
-            if (isNewAccountMain(task)){
-                pd.dismiss();
-                showDialog(
-                        appContext,
-                        appContext.getString(R.string.app_name),
-                        appContext.getString(R.string.account_not_exist))
-                        .setPositiveButton(appContext.getString(R.string.ok), (dialogInterface, i) -> gotonew(appContext))
-                        .create()
-                        .show();
-            } else {
-                pd.setMessage(appContext.getString(R.string.user_auth));
-                signin(pd, email, motdepasse);
-            }
-        });
-    }
-
-    /**
-     *
-     * @param imageUri
-     * @param email
-     * @param motdepasse
-     * @param fullname
-     * @param telephone
-     */
-    public void checkEmailStatus(ProgressDialog pd, Uri imageUri, String email, String motdepasse, String fullname, String telephone, String ville, String pays){
-        pd.setMessage(appContext.getString(R.string.verif_if_account_exist));
-        auth.fetchSignInMethodsForEmail(email).addOnCompleteListener(task -> {
-            if (isNewAccountMain(task)){
-                pd.setMessage(appContext.getString(R.string.mep_creating_account));
-                createUserAccount(pd, imageUri, email, motdepasse, fullname, telephone, ville, pays);
-            }else {
-                pd.dismiss();
-                showDialog(
-                        appContext,
-                        appContext.getString(R.string.app_name),
-                        appContext.getString(R.string.account_exist))
-                        .setPositiveButton(appContext.getString(R.string.ok), (dialogInterface, i) -> gotohome(appContext))
-                        .create()
-                        .show();
-            }
-        });
-    }
-
-    /**
-     *
-     * @param pd
-     * @param imageUri
-     * @param email
-     * @param motdepasse
-     * @param fullname
-     * @param telephone
-     */
-    public void createUserAccount(ProgressDialog pd, Uri imageUri, String email, String motdepasse,
-                                  String fullname, String telephone, String ville, String pays) {
-        auth.createUserWithEmailAndPassword(email, motdepasse)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        checkUser(pd, imageUri, email, fullname, telephone, ville, pays);
-                    } else {
-                        pd.dismiss();
-                        Toast.makeText(appContext, appContext.getString(R.string.create_account_error), Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    /**
-     *
-     * @param pd
-     * @param imageUri
-     * @param email
-     * @param fullname
-     * @param telephone
-     */
-    public void checkUser(ProgressDialog pd, Uri imageUri, String email, String fullname, String telephone, String ville, String pays) {
-        setfUser(auth.getCurrentUser());
-        if (fUser != null) {
-            createUserProfile(pd, imageUri, fUser.getUid(), email, fullname, telephone, ville, pays);
-        } else {
-            Toast.makeText(appContext, appContext.getString(R.string.no_user), Toast.LENGTH_SHORT).show();
-            gotohome(appContext);
-        }
-    }
-
-    /**
-     *
-     * @param pd
-     * @param imageUri
-     * @param uid
-     * @param email
-     * @param fullname
-     * @param telephone
-     */
-    public void createUserProfile(ProgressDialog pd, Uri imageUri, String uid, String email, String fullname, String telephone, String ville, String pays) {
-        if (imageUri != null)
-            ajouterUserProfileImage(pd, imageUri, uid, fullname, telephone, email, ville, pays);
-        else
-            ajouterUnUtilisateur(pd, uid, fullname, "", telephone, email, ville, pays);
-    }
-
-    /**
-     *
-     * @param pd
-     * @param imageUri
-     * @param uid
-     * @param fullname
-     * @param telephone
-     * @param email
-     */
-    private void ajouterUserProfileImage(ProgressDialog pd, Uri imageUri, String uid, String fullname, String telephone, String email, String ville, String pays) {
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference(buildPathWithSlash(USERS, AVATAR, uid));
-        storageReference.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
-            Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-            while (!uriTask.isSuccessful());
-
-            String downloadUri = uriTask.getResult().toString();
-            if (uriTask.isSuccessful()){
-                pd.dismiss();
-                ajouterUnUtilisateur(pd, uid, fullname, downloadUri, telephone, email, ville, pays);
-            }else
-                pd.dismiss();
-        }).addOnFailureListener(e -> {
-            pd.dismiss();
-            Toast.makeText(appContext, appContext.getString(R.string.save_image_error), Toast.LENGTH_SHORT).show();
-        });
-    }
-
-    /**
-     *
-     * @param pd
-     * @param uid
-     * @param fullname
-     * @param avatar
-     * @param telephone
-     * @param email
-     */
-    private void ajouterUnUtilisateur(ProgressDialog pd, String uid, String fullname, String avatar, String telephone, String email, String ville, String pays) {
-        ref.child(buildPathWithSlash(USERS, uid)).setValue(genHashMapUser(uid, fullname, avatar, telephone, email, getXtimestamp(), ville, pays))
-                .addOnSuccessListener(unused -> {
-                    pd.dismiss();
-                    Toast.makeText(appContext, appContext.getString(R.string.save_user_info_ok), Toast.LENGTH_SHORT).show();
-                    gotohome(appContext);
-                }).addOnFailureListener(e -> {
-                    pd.dismiss();
-                    Toast.makeText(appContext, appContext.getString(R.string.save_user_info_error), Toast.LENGTH_SHORT).show();
-                });
-    }
-
-    /**
-     *
-     * @param pd
-     * @param email
-     * @param motdepasse
-     */
-    public void signin(ProgressDialog pd, String email, String motdepasse) {
-        auth.signInWithEmailAndPassword(email, motdepasse).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                pd.dismiss();
-                this.id = Objects.requireNonNull(auth.getCurrentUser()).getUid();
-                this.email = Objects.requireNonNull(auth.getCurrentUser()).getEmail();
-                gotohome(appContext);
-            }else{
-                pd.dismiss();
-                Toast.makeText(appContext, appContext.getString(R.string.authentication_failed), Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(e ->
-                Toast.makeText(appContext, appContext.getString(R.string.connexion_error), Toast.LENGTH_SHORT).show());
-    }
-
-    /**
-     *
-     * @param valueEventListener
-     */
-    public void toutesMesTaches(final ValueEventListener valueEventListener) {
+    public void liretoutesmestaches(final ValueEventListener valueEventListener) {
         Query query = ref.child(TACHES).orderByChild(UID).equalTo(this.id);
         query.addValueEventListener(valueEventListener);
     }
 
-    public void toutesLesTaches(final ValueEventListener valueEventListener) {
-        ref.child(TACHES).addValueEventListener(valueEventListener);
+    public static void liretoutesmestaches(final ValueEventListener valueEventListener, String uid) {
+        Query query = ref.child(TACHES).orderByChild(UID).equalTo(uid);
+        query.addValueEventListener(valueEventListener);
     }
 
     /**
      *
-     * @param valueEventListener
+     * @param valueEventListener L'écouteur permettant de récupérer les élémnents dans la base de données
      */
-    public void specificUser(final ValueEventListener valueEventListener) {
-        Query query = ref.child(USERS).orderByKey().equalTo(this.id);
-        query.addValueEventListener(valueEventListener);
+    public void liretouteslestaches(final ValueEventListener valueEventListener) {
+        ref.child(TACHES).addValueEventListener(valueEventListener);
     }
 
     /**
@@ -326,29 +126,69 @@ public class Fbtools {
      * @param vComment
      * @param tid
      */
-    public void specificTask(
+    public static void lireunetachespecifique(
             final ValueEventListener vCurrentUser, String currentUid,
             final ValueEventListener vTask,
-            final ValueEventListener vComment, String tid) {
+            final ValueEventListener vComment, String tid,
+            final ValueEventListener vSignale) {
+        /*
+
+         */
         Query qCurrentUser = ref.child(USERS).orderByKey().equalTo(currentUid);
-        qCurrentUser.addValueEventListener(vCurrentUser);
+        qCurrentUser.addListenerForSingleValueEvent(vCurrentUser);
+        /*
+
+         */
         Query qTask = ref.child(TACHES).orderByKey().equalTo(tid);
         qTask.addValueEventListener(vTask);
+        /*
+
+         */
         Query qComments = ref.child(COMMENTS).orderByChild(TID).equalTo(tid);
         qComments.addValueEventListener(vComment);
+        /*
+
+         */
+        Query qSignales = ref.child(SIGNALES).child(TACHES).child(tid).orderByKey().equalTo(currentUid);
+        qSignales.addValueEventListener(vSignale);
     }
 
     /**
      *
-     * @param pd
-     * @param taches
-     * @param ntask
+     * @param valueEventListener L'écouteur permettant de récupérer les élémnents dans la base de données
      */
-    public void addTaskInSpecificUserAccount(ProgressDialog pd, Taches taches, String ntask) {
+    public void lireUnUtilisateurSpecifique(final ValueEventListener valueEventListener) {
+        Query query = ref.child(USERS).orderByKey().equalTo(this.id);
+        query.addValueEventListener(valueEventListener);
+    }
+
+    public static void lireUnUtilisateurSpecifique(final ValueEventListener valueEventListener, String uid) {
+        Query query = ref.child(USERS).orderByKey().equalTo(uid);
+        query.addValueEventListener(valueEventListener);
+    }
+
+    //Toutes les requetes permettant à l'utilisateur ou meme le système de d'ecrire, de modifier ou
+    // de supprimer les éléments contenu dans la base de données
+
+    /*
+        Les taches
+     */
+    public void ecrireunenouvelletache(Tache tache) {
+        ref.child(buildPathWithSlash(TACHES, tache.getTid())).setValue(tache)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful())
+                        Toast.makeText(appContext, appContext.getString(R.string.success_operation), Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(appContext, appContext.getString(R.string.not_auth_to_do), Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> Toast.makeText(appContext, appContext.getString(R.string.error_operation), Toast.LENGTH_SHORT).show());
+    }
+
+    public void ecrireUneNouvelleTacheEtMajLutilisateur(ProgressDialog pd, Tache tache, String ntask) {
         pd.setMessage(appContext.getString(R.string.save_task_data));
-        ref.child(buildPathWithSlash(TACHES, taches.getTdate())).setValue(taches)
+        ref.child(buildPathWithSlash(TACHES, tache.getTdate())).setValue(tache)
                 .addOnSuccessListener(unused -> {
-                    ref.child(buildPathWithSlash(USERS, taches.getUid(), UNTASK)).setValue(incrementValue(ntask))
+                    ref.child(buildPathWithSlash(USERS, tache.getUid(), UNTASK)).setValue(incrementValue(ntask))
                             .addOnCompleteListener(task -> {
                                 pd.dismiss();
                                 Toast.makeText(appContext, appContext.getString(R.string.add_task_ok), Toast.LENGTH_SHORT).show();
@@ -361,18 +201,11 @@ public class Fbtools {
                 });
     }
 
-    /**
-     *
-     * @param pd
-     * @param imageUri
-     * @param taches
-     * @param ntask
-     */
-    public void addPictureInSpecificTask(ProgressDialog pd, Uri imageUri, Taches taches, String ntask) {
+    public void ecrireUneNouvelleTacheApresMajPhotoUtilisateur(ProgressDialog pd, Uri imageUri, Tache tache, String ntask) {
         StorageReference storageReference = FirebaseStorage.getInstance().getReference(buildPathWithSlash(
                 TACHES,
-                taches.getUid(),
-                taches.getTdate()
+                tache.getUid(),
+                tache.getTdate()
         ));
         storageReference.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
             Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
@@ -381,8 +214,8 @@ public class Fbtools {
             String downloadUri = uriTask.getResult().toString();
             if (uriTask.isSuccessful()){
                 pd.dismiss();
-                taches.setTcover(downloadUri);
-                addTaskInSpecificUserAccount(pd, taches, ntask);
+                tache.setTcover(downloadUri);
+                ecrireUneNouvelleTacheEtMajLutilisateur(pd, tache, ntask);
             }else
                 pd.dismiss();
         }).addOnFailureListener(e -> {
@@ -391,19 +224,36 @@ public class Fbtools {
         });
     }
 
-    /**
-     *
-     * @param pd
-     * @param comment
-     * @param tid
+    /*
+        Les utilisateurs
      */
-    public void addCommentInSpecificTask(ProgressDialog pd, String comment, String tid, String uid, String unoms, String uavatar, String ntComment, String nuComment) {
+
+    public void ecrireunnouvelutilisateur(User user) {
+        ref.child(buildPathWithSlash(USERS, user.getUid())).setValue(user)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful())
+                        Toast.makeText(appContext, appContext.getString(R.string.success_operation), Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(appContext, appContext.getString(R.string.not_auth_to_do), Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> Toast.makeText(appContext, appContext.getString(R.string.error_operation), Toast.LENGTH_SHORT).show());
+    }
+
+    /*
+        Les commentaires
+     */
+
+    public static void ecrireUnNouveauCommentaire(ProgressDialog pd, Commentaire commentaire, String ntComment, String nuComment) {
         String timestamp = getXtimestamp();
-        ref.child(buildPathWithSlash(COMMENTS, timestamp)).setValue(genHashMapComment(comment, timestamp, tid, uid, unoms, uavatar))
+        commentaire.setCid(timestamp);
+        commentaire.setCdate(timestamp);
+        ref.child(buildPathWithSlash(COMMENTS, timestamp)).setValue(commentaire)
                 .addOnSuccessListener(unused -> {
-                    ref.child(buildPathWithSlash(TACHES, tid, TNCOMMENTS)).setValue(incrementValue(ntComment))
+                    ref.child(buildPathWithSlash(TACHES, commentaire.getTid(), TNCOMMENTS))
+                            .setValue(incrementValue(ntComment))
                             .addOnCompleteListener(task -> {
-                                ref.child(buildPathWithSlash(USERS, uid, UNCOMMENTS)).setValue(incrementValue(nuComment))
+                                ref.child(buildPathWithSlash(USERS, commentaire.getUid(), UNCOMMENTS))
+                                        .setValue(incrementValue(nuComment))
                                         .addOnCompleteListener(task1 -> pd.dismiss())
                                         .addOnFailureListener(e -> pd.dismiss());
                             })
@@ -412,6 +262,71 @@ public class Fbtools {
                     pd.dismiss();
                 });
     }
+
+    /*
+        Les autres méthodes
+     */
+
+    public void ecrireDansUnChamp(String path, String value) {
+        ref.child(path).setValue(value)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful())
+                        Toast.makeText(appContext, appContext.getString(R.string.updated_ok), Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(appContext, appContext.getString(R.string.not_auth_to_do), Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> Toast.makeText(appContext, appContext.getString(R.string.updated_not_ok), Toast.LENGTH_SHORT).show());
+    }
+
+    public static void ecrireUnSignalementDeTache(Signale signale) {
+        signale.setSdate(getXtimestamp());
+        ref.child(buildPathWithSlash(SIGNALES, TACHES, signale.getTid(), signale.getSid())).setValue(signale)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful())
+                        Toast.makeText(appContext, appContext.getString(R.string.success_operation), Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(appContext, appContext.getString(R.string.not_auth_to_do), Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> Toast.makeText(appContext, appContext.getString(R.string.updated_not_ok), Toast.LENGTH_SHORT).show());
+    }
+
+    public static void ecrireUnSignalementDuser(Signale signale) {
+        signale.setSdate(getXtimestamp());
+        ref.child(buildPathWithSlash(SIGNALES, USERS, signale.getUid(), signale.getSid())).setValue(signale)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful())
+                        Toast.makeText(appContext, appContext.getString(R.string.success_operation), Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(appContext, appContext.getString(R.string.not_auth_to_do), Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> Toast.makeText(appContext, appContext.getString(R.string.updated_not_ok), Toast.LENGTH_SHORT).show());
+    }
+
+    /*
+        Sign out
+     */
+
+    public void signOut() {
+        auth.signOut();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      *
@@ -490,13 +405,14 @@ public class Fbtools {
     }
 
     public void deleteOldImage(ProgressDialog pd, Uri imageUri, String pathStorage, String pathRealtime) {
+        String timestamp = getXtimestamp();
         if (isStringEmpty(pathStorage)){
-            saveImage(pd, imageUri, pathStorage, pathRealtime);
+            saveImage(pd, imageUri, buildPathWithSlash(TACHES, this.id, timestamp), pathRealtime);
         }else {
             pd.setMessage(appContext.getString(R.string.task_image_delete));
             StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(pathStorage);
             storageReference.delete().addOnSuccessListener(unused ->
-                    saveImage(pd, imageUri, pathStorage, pathRealtime))
+                    saveImage(pd, imageUri, buildPathWithSlash(TACHES, this.id, timestamp), pathRealtime))
                     .addOnFailureListener(e -> {
                 pd.dismiss();
                 Toast.makeText(appContext, appContext.getString(R.string.delete_image_error), Toast.LENGTH_SHORT).show();
@@ -556,18 +472,6 @@ public class Fbtools {
      */
     public void updateUserAvatarOrCover(ProgressDialog pd, String uid, String downloadUri, String field) {
         ref.child(buildPathWithSlash(USERS, uid, field)).setValue(downloadUri)
-                .addOnCompleteListener(task -> pd.dismiss())
-                .addOnFailureListener(e -> pd.dismiss());
-    }
-
-    /**
-     *
-     * @param pd
-     * @param field
-     * @param value
-     */
-    public void updateStringWithFieldAndValue(ProgressDialog pd, String field, String value) {
-        ref.child(buildPathWithSlash(USERS, this.id, field)).setValue(value)
                 .addOnCompleteListener(task -> pd.dismiss())
                 .addOnFailureListener(e -> pd.dismiss());
     }

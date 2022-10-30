@@ -8,49 +8,24 @@
     tools:context=".SettingsActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/toolbarSettings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize" >
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/ivAvatar"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/russia" />
-
-            <TextView
-                android:id="@+id/tvDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:layout_toEndOf="@+id/ivAvatar"
-                android:text="@string/_12_nov_2022"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-
-        </RelativeLayout>
-
-    </androidx.appcompat.widget.Toolbar>
+        android:minHeight="?attr/actionBarSize" />
 
     <androidx.core.widget.NestedScrollView
-        android:layout_below="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbarSettings">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/ivCover"
+                android:id="@+id/ivSettingsCover"
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
                 android:contentDescription="@string/item_avatar_image"
@@ -58,16 +33,41 @@
                 android:src="@drawable/lions" />
 
             <RelativeLayout
-                android:id="@+id/rlAcount"
+                android:padding="10dp"
+                android:layout_alignBottom="@+id/ivSettingsCover"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/ivSettingsAvatar"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/russia" />
+
+                <TextView
+                    android:id="@+id/tvSettingsDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/ivSettingsAvatar"
+                    android:text="@string/_12_nov_2022"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlSettingsAcount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/ivCover"
+                android:layout_below="@+id/ivSettingsCover"
                 android:layout_marginTop="3dp"
                 android:background="@color/white"
                 android:padding="20dp">
 
                 <TextView
-                    android:id="@+id/tvCompteTitle"
+                    android:id="@+id/tvSettingsCompteTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
@@ -79,10 +79,10 @@
                     app:drawableStartCompat="@drawable/ic_action_account" />
 
                 <TextView
-                    android:id="@+id/tvCompteName"
+                    android:id="@+id/tvSettingsCompteName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tvCompteTitle"
+                    android:layout_below="@+id/tvSettingsCompteTitle"
                     android:layout_marginStart="35dp"
                     android:layout_marginTop="5dp"
                     android:text="@string/user_name"
@@ -90,10 +90,10 @@
                     android:textSize="17sp" />
 
                 <TextView
-                    android:id="@+id/tvComptePhone"
+                    android:id="@+id/tvSettingsComptePhone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tvCompteName"
+                    android:layout_below="@+id/tvSettingsCompteName"
                     android:layout_marginStart="35dp"
                     android:layout_marginTop="5dp"
                     android:text="@string/telephone"
@@ -103,16 +103,16 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/rlKeywords"
+                android:id="@+id/rlSettingsKeywords"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/rlAcount"
+                android:layout_below="@+id/rlSettingsAcount"
                 android:layout_marginTop="3dp"
                 android:background="@color/white"
                 android:padding="20dp">
 
                 <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/swKey"
+                    android:id="@+id/swSettingsKey"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="10dp"
@@ -123,10 +123,10 @@
                     app:drawableStartCompat="@drawable/ic_action_key" />
 
                 <TextView
-                    android:id="@+id/tvKeyList"
+                    android:id="@+id/tvSettingsKeyList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/swKey"
+                    android:layout_below="@+id/swSettingsKey"
                     android:layout_marginTop="5dp"
                     android:drawablePadding="10dp"
                     android:text="@string/liste_des_mots_cle"
@@ -137,10 +137,10 @@
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/tvAutorisation"
+                android:id="@+id/tvSettingsAutorisation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/rlKeywords"
+                android:layout_below="@+id/rlSettingsKeywords"
                 android:layout_marginTop="3dp"
                 android:background="@color/white"
                 android:drawablePadding="10dp"
@@ -152,10 +152,10 @@
                 app:drawableStartCompat="@drawable/ic_action_auth" />
 
             <TextView
-                android:id="@+id/tvNotification"
+                android:id="@+id/tvSettingsNotification"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvAutorisation"
+                android:layout_below="@+id/tvSettingsAutorisation"
                 android:layout_marginTop="3dp"
                 android:background="@color/white"
                 android:drawablePadding="10dp"
@@ -167,10 +167,10 @@
                 app:drawableStartCompat="@drawable/ic_action_notification" />
 
             <TextView
-                android:id="@+id/tvDisplayMode"
+                android:id="@+id/tvSettingsDisplayMode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvNotification"
+                android:layout_below="@+id/tvSettingsNotification"
                 android:layout_marginTop="3dp"
                 android:background="@color/white"
                 android:drawablePadding="10dp"
@@ -182,25 +182,25 @@
                 app:drawableStartCompat="@drawable/ic_action_jour" />
 
             <TextView
-                android:id="@+id/tvLanguage"
+                android:id="@+id/tvSettingsLanguage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvDisplayMode"
+                android:layout_below="@+id/tvSettingsDisplayMode"
                 android:layout_marginTop="3dp"
                 android:background="@color/white"
+                android:drawablePadding="10dp"
                 android:padding="20dp"
                 android:text="@string/language"
                 android:textColor="@color/black"
                 android:textSize="17sp"
                 android:textStyle="bold"
-                android:drawablePadding="10dp"
                 app:drawableStartCompat="@drawable/ic_action_language" />
 
             <TextView
-                android:id="@+id/tvConfidentialite"
+                android:id="@+id/tvSettingsConfidentialite"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvLanguage"
+                android:layout_below="@+id/tvSettingsLanguage"
                 android:layout_marginTop="3dp"
                 android:background="@color/white"
                 android:drawablePadding="10dp"
@@ -212,10 +212,10 @@
                 app:drawableStartCompat="@drawable/ic_action_key_security" />
 
             <TextView
-                android:id="@+id/tvDataStockage"
+                android:id="@+id/tvSettingsDataStockage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvConfidentialite"
+                android:layout_below="@+id/tvSettingsConfidentialite"
                 android:layout_marginTop="3dp"
                 android:background="@color/white"
                 android:drawablePadding="10dp"
@@ -227,10 +227,10 @@
                 app:drawableStartCompat="@drawable/ic_action_stockage" />
 
             <TextView
-                android:id="@+id/tvGroupe"
+                android:id="@+id/tvSettingsGroupe"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvDataStockage"
+                android:layout_below="@+id/tvSettingsDataStockage"
                 android:layout_marginTop="3dp"
                 android:background="@color/white"
                 android:drawablePadding="10dp"
@@ -242,10 +242,10 @@
                 app:drawableStartCompat="@drawable/ic_action_groupe" />
 
             <TextView
-                android:id="@+id/tvFaq"
+                android:id="@+id/tvSettingsFaq"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvDataStockage"
+                android:layout_below="@+id/tvSettingsDataStockage"
                 android:layout_marginTop="3dp"
                 android:background="@color/white"
                 android:drawablePadding="10dp"
@@ -257,10 +257,10 @@
                 app:drawableStartCompat="@drawable/ic_action_faq" />
 
             <TextView
-                android:id="@+id/tvAbout"
+                android:id="@+id/tvSettingsAbout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvFaq"
+                android:layout_below="@+id/tvSettingsFaq"
                 android:layout_marginTop="3dp"
                 android:background="@color/white"
                 android:drawablePadding="10dp"
@@ -272,10 +272,10 @@
                 app:drawableStartCompat="@drawable/ic_action_about" />
 
             <TextView
-                android:id="@+id/tvSignOut"
+                android:id="@+id/tvSettingsSignOut"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvAbout"
+                android:layout_below="@+id/tvSettingsAbout"
                 android:layout_marginTop="3dp"
                 android:background="@color/white"
                 android:drawablePadding="10dp"

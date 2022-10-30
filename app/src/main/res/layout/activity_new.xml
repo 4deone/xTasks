@@ -8,7 +8,7 @@
     tools:context=".NewActivity">
 
     <TextView
-        android:id="@+id/tvBonjour"
+        android:id="@+id/tvOneNew"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -19,10 +19,10 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/tvBonjourTwo"
+        android:id="@+id/tvTwoNew"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvBonjour"
+        android:layout_below="@+id/tvOneNew"
         android:layout_centerHorizontal="true"
         android:text="@string/entrez_vos_informations"
         android:textColor="@color/black" />
@@ -30,9 +30,9 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvBonjourTwo"
+        android:layout_below="@+id/tvTwoNew"
         android:layout_marginTop="10dp"
-        android:background="@drawable/main_rounder_top">
+        android:background="@color/white">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -40,7 +40,7 @@
             android:padding="10dp">
 
             <TextView
-                android:id="@+id/tvEmail"
+                android:id="@+id/tvEmailNew"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -48,37 +48,37 @@
                 android:textColor="@color/black" />
 
             <EditText
-                android:id="@+id/etvLogin"
+                android:id="@+id/etvLoginNew"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvEmail"
+                android:layout_below="@+id/tvEmailNew"
                 android:drawableEnd="@drawable/ic_action_login"
                 android:hint="@string/enter_email"
                 android:inputType="textEmailAddress"
                 android:padding="20dp" />
 
             <TextView
-                android:id="@+id/tvMotdepasse"
+                android:id="@+id/tvMotdepasseNew"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/etvLogin"
+                android:layout_below="@+id/etvLoginNew"
                 android:layout_marginTop="10dp"
                 android:text="@string/motdepasse"
                 android:textColor="@color/black" />
 
             <EditText
-                android:id="@+id/etvMotdepasse"
+                android:id="@+id/etvMotdepasseNew"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvMotdepasse"
+                android:layout_below="@+id/tvMotdepasseNew"
                 android:inputType="textPassword"
                 android:drawableEnd="@drawable/ic_action_motdepasse"
                 android:hint="@string/enter_password"
                 android:padding="20dp" />
 
             <TextView
-                android:id="@+id/tvFullName"
-                android:layout_below="@+id/etvMotdepasse"
+                android:id="@+id/tvFullNameNew"
+                android:layout_below="@+id/etvMotdepasseNew"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -86,98 +86,98 @@
                 android:textColor="@color/black" />
 
             <EditText
-                android:id="@+id/etvFullName"
+                android:id="@+id/etvFullNameNew"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvFullName"
+                android:layout_below="@+id/tvFullNameNew"
                 android:hint="@string/enter_full_name"
                 android:inputType="textPersonName"
                 android:padding="20dp" />
 
             <TextView
-                android:id="@+id/tvTelephone"
+                android:id="@+id/tvTelephoneNew"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/etvFullName"
+                android:layout_below="@+id/etvFullNameNew"
                 android:layout_marginTop="10dp"
                 android:text="@string/telephone"
                 android:textColor="@color/black" />
 
             <EditText
-                android:id="@+id/etvTelephone"
+                android:id="@+id/etvTelephoneNew"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvTelephone"
+                android:layout_below="@+id/tvTelephoneNew"
                 android:hint="@string/enter_telephone"
                 android:inputType="phone"
                 android:padding="20dp" />
 
             <TextView
-                android:id="@+id/tvVille"
+                android:id="@+id/tvVilleNew"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/etvTelephone"
+                android:layout_below="@+id/etvTelephoneNew"
                 android:layout_marginTop="10dp"
                 android:text="@string/city"
                 android:textColor="@color/black" />
 
             <EditText
-                android:id="@+id/etvVille"
+                android:id="@+id/etvVilleNew"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvVille"
+                android:layout_below="@+id/tvVilleNew"
                 android:hint="@string/enter_your_city"
                 android:inputType="phone"
                 android:padding="20dp" />
 
             <TextView
-                android:id="@+id/tvPays"
+                android:id="@+id/tvPaysNew"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/etvVille"
+                android:layout_below="@+id/etvVilleNew"
                 android:layout_marginTop="10dp"
                 android:text="@string/country"
                 android:textColor="@color/black" />
 
             <EditText
-                android:id="@+id/etvPays"
+                android:id="@+id/etvPaysNew"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvPays"
+                android:layout_below="@+id/tvPaysNew"
                 android:hint="@string/enter_your_country"
                 android:inputType="phone"
                 android:padding="20dp" />
 
             <TextView
-                android:id="@+id/tvConditions"
+                android:id="@+id/tvConditionsNew"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/etvPays"
+                android:layout_below="@+id/etvPaysNew"
                 android:layout_marginTop="10dp"
                 android:text="@string/conditions_utilisation"
                 android:textColor="@color/black" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvConditions"
+                android:id="@+id/rvConditionsNew"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvConditions"
+                android:layout_below="@+id/tvConditionsNew"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 tools:listitem="@layout/item_condition" />
 
             <CheckBox
-                android:id="@+id/cbAcceptRules"
+                android:id="@+id/cbAcceptRulesNew"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/rvConditions"
+                android:layout_below="@+id/rvConditionsNew"
                 android:text="@string/accept_conditions_utilisation"
                 android:textColor="@color/black" />
 
             <Button
-                android:id="@+id/btCreateAccount"
+                android:id="@+id/btCreateAccountNew"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/cbAcceptRules"
+                android:layout_below="@+id/cbAcceptRulesNew"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/main_rounder"
@@ -187,12 +187,12 @@
                 android:gravity="center"
                 android:id="@+id/rlRegister"
                 android:layout_marginTop="10dp"
-                android:layout_below="@+id/btCreateAccount"
+                android:layout_below="@+id/btCreateAccountNew"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
 
                 <TextView
-                    android:id="@+id/tvRegisterOne"
+                    android:id="@+id/tvRegisterOneNew"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -201,12 +201,12 @@
                     android:textColor="@color/black" />
 
                 <TextView
-                    android:id="@+id/tvSignIn"
+                    android:id="@+id/tvSignInNew"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="10dp"
-                    android:layout_toEndOf="@+id/tvRegisterOne"
+                    android:layout_toEndOf="@+id/tvRegisterOneNew"
                     android:gravity="center"
                     android:text="@string/sign_in"
                     android:textColor="@color/purple_700"

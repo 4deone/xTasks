@@ -3,47 +3,46 @@ package com.deone.extrmtasks;
 import static android.view.View.GONE;
 import static android.view.View.OVER_SCROLL_ALWAYS;
 import static android.view.View.VISIBLE;
-import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_LANGUE;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_MODE;
+import static com.deone.extrmtasks.tools.Constants.CAMERA_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.EN;
-import static com.deone.extrmtasks.tools.Constants.LOCATION_REQUEST_CODE_ACCESS_COARSE_LOCATION;
-import static com.deone.extrmtasks.tools.Constants.LOCATION_REQUEST_CODE_ACCESS_FINE_LOCATION;
+import static com.deone.extrmtasks.tools.Constants.FRAGMENT_ACCOUNT;
+import static com.deone.extrmtasks.tools.Constants.IDFRAGMENT;
+import static com.deone.extrmtasks.tools.Constants.STORAGE_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.TACHES;
-import static com.deone.extrmtasks.tools.Constants.TADRESSE;
-import static com.deone.extrmtasks.tools.Constants.TCODEPOSTAL;
+import static com.deone.extrmtasks.tools.Constants.TCOVER;
 import static com.deone.extrmtasks.tools.Constants.TDESCRIPTION;
 import static com.deone.extrmtasks.tools.Constants.TID;
-import static com.deone.extrmtasks.tools.Constants.TLATITUDE;
-import static com.deone.extrmtasks.tools.Constants.TLONGITUDE;
-import static com.deone.extrmtasks.tools.Constants.TPAYS;
-import static com.deone.extrmtasks.tools.Constants.TSTATE;
 import static com.deone.extrmtasks.tools.Constants.TTITRE;
-import static com.deone.extrmtasks.tools.Constants.TVILLE;
 import static com.deone.extrmtasks.tools.Constants.UID;
+import static com.deone.extrmtasks.tools.Fbtools.ecrireUnNouveauCommentaire;
+import static com.deone.extrmtasks.tools.Fbtools.ecrireUnSignalementDeTache;
+import static com.deone.extrmtasks.tools.Fbtools.lireunetachespecifique;
 import static com.deone.extrmtasks.tools.Ivtools.loadingImageWithPath;
 import static com.deone.extrmtasks.tools.Other.buildAlertDialog;
-import static com.deone.extrmtasks.tools.Other.buildAlertDialogForSelectOption;
 import static com.deone.extrmtasks.tools.Other.buildPathWithSlash;
 import static com.deone.extrmtasks.tools.Other.buildProgressDialog;
 import static com.deone.extrmtasks.tools.Other.checkBeforeFormatData;
+import static com.deone.extrmtasks.tools.Other.formatAdresse;
 import static com.deone.extrmtasks.tools.Other.formatLaDate;
-import static com.deone.extrmtasks.tools.Other.gotoaccount;
 import static com.deone.extrmtasks.tools.Other.gotohome;
 import static com.deone.extrmtasks.tools.Other.initLLanguage;
 import static com.deone.extrmtasks.tools.Other.initThemeMode;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
 import static com.deone.extrmtasks.tools.Other.rvLayoutManager;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,24 +51,24 @@ import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.deone.extrmtasks.adapters.Cadapter;
-import com.deone.extrmtasks.modeles.Comment;
-import com.deone.extrmtasks.modeles.Taches;
+import com.deone.extrmtasks.modeles.Commentaire;
+import com.deone.extrmtasks.modeles.Signale;
+import com.deone.extrmtasks.modeles.Tache;
 import com.deone.extrmtasks.modeles.User;
 import com.deone.extrmtasks.tools.Fbtools;
 import com.deone.extrmtasks.tools.Ivtools;
@@ -87,27 +86,27 @@ import java.util.List;
 public class TaskActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Fbtools fbtools;
-    private Sptools sptools;
     private Lctools lctools;
     private Ivtools ivtools;
     private Uri imageUri;
-    private ImageView ivAvatarUser;
-    private ImageView ivTachesLogo;
-    private TextView tvUsername;
-    private TextView tvPublicationDate;
-    private TextView tvTitle;
-    private TextView tvDescription;
-    private TextView tvAdresse;
-    private TextView tvNcomment;
-    private TextView tvNjaime;
-    private RecyclerView rvComments;
-    private EditText etvComment;
-    private List<Comment> commentList;
+    private ImageView ivtaskAvatarUser;
+    private ImageView ivTaskCover;
+    private ImageButton ibTaskSignale;
+    private TextView tvTaskUsername;
+    private TextView tvTaskPublicationDate;
+    private TextView tvTaskTitle;
+    private TextView tvTaskDescription;
+    private TextView tvTaskAdresse;
+    private TextView tvTaskNcomment;
+    private TextView tvTaskNjaime;
+    private RecyclerView rvTaskComments;
+    private EditText etvTaskComment;
+    private List<Commentaire> commentaireList;
     private String tid;
     private String uid;
-    private String currentUid;
-    private User currentUser;
-    private Taches taches;
+    private String myuid;
+    private User CurrentUser;
+    private Tache tache;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,13 +119,15 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.task_menu, menu);
         MenuItem editItem = menu.findItem(R.id.itEditer);
-        editItem.setVisible(currentUid.equals(uid));
+        editItem.setVisible(myuid.equals(uid));
+        MenuItem deleteItem = menu.findItem(R.id.itDelete);
+        deleteItem.setVisible(myuid.equals(uid));
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.itDelete && currentUid.equals(taches.getUid())){
+        if (item.getItemId() == R.id.itDelete && myuid.equals(tache.getUid())){
             buildAlertDialog(
                     this, getString(R.string.app_name),
                     getString(R.string.delete_task_message),
@@ -139,20 +140,67 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        if (id == R.id.ibTaskJaime)
+            likeProcess();
+        else if (id == R.id.ibTaskFavorite)
+            favorisProcess();
+        else if (id == R.id.ibTaskShare)
+            shareProcess();
+        else if (id == R.id.ibTaskSendComment)
+            verifDataBeforeSendComment();
+        else if (!myuid.equals(tache.getUid()) && (id == R.id.ivtaskAvatarUser || id == R.id.tvTaskUsername))
+            showUserDetails();
+        else if (id == R.id.tvTaskAdresse)
+            showAdresseDialog();
+        else if (id == R.id.ibTaskSignale)
+            showSignalerDialog();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (resultCode == RESULT_OK){
+            if (requestCode == STORAGE_REQUEST_CODE){
+                assert data != null;
+                imageUri = data.getData();
+            } else if (requestCode == CAMERA_REQUEST_CODE){
+                imageUri = ivtools.getImageUri();
+            }
+            ProgressDialog pd = buildProgressDialog(this, getString(R.string.app_name), getString(R.string.task_image_path));
+            pd.show();
+            fbtools.deleteOldImage(pd, imageUri, ""+ tache.getTcover(), ""+buildPathWithSlash(TACHES, tid, TCOVER));
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /*
+            Les methodes usuellles pour l'initialisation de l'activité
+     */
+
     private void initApp() {
-        sptools = Sptools.getInstance(this);
+        Sptools sptools = Sptools.getInstance(this);
+
         fbtools = Fbtools.getInstance(this);
+        myuid = fbtools.getId();
+
+        ivtools = Ivtools.getInstance(this);
+
         lctools = Lctools.getInstance(this);
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        lctools.setLocationManager(locationManager);
         lctools.initLocation();
+
         tid = getIntent().getStringExtra(TID);
         uid = getIntent().getStringExtra(UID);
-        currentUid = fbtools.getId();
+
         initThemeMode(sptools.readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
         initLLanguage(this, sptools.readStringData(APP_PREFS_LANGUE, EN));
     }
 
     private void checkUser() {
-        if(isStringEmpty(currentUid)||isStringEmpty(tid)){
+        if(isStringEmpty(myuid)||isStringEmpty(tid)){
             gotohome(this);
         }else {
             initViews();
@@ -161,114 +209,45 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initViews() {
         setContentView(R.layout.activity_task);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ivAvatarUser = findViewById(R.id.ivAvatarUser);
-        tvUsername = findViewById(R.id.tvUsername);
-        tvPublicationDate = findViewById(R.id.tvPublicationDate);
-        tvTitle = findViewById(R.id.tvTitle);
-        tvDescription = findViewById(R.id.tvDescription);
-        tvAdresse = findViewById(R.id.tvAdresse);
-        ivTachesLogo = findViewById(R.id.ivTachesLogo);
-        tvNcomment = findViewById(R.id.tvNcomment);
-        tvNjaime = findViewById(R.id.tvNjaime);
-        rvComments = findViewById(R.id.rvComments);
-        rvComments.setLayoutManager(rvLayoutManager(this, 0));
-        commentList = new ArrayList<>();
-        etvComment = findViewById(R.id.etvComment);
-        ivtools.setSomeActivityResultLauncher(someActivityResultLauncher);
-        fbtools.specificTask(vCurrentUser, currentUid, vTask, vComment, tid);
-        findViewById(R.id.ibJaime).setOnClickListener(this);
-        findViewById(R.id.ibFavorite).setOnClickListener(this);
-        findViewById(R.id.ibShare).setOnClickListener(this);
-        findViewById(R.id.ibSendComment).setOnClickListener(this);
-        ivAvatarUser.setOnClickListener(this);
-        tvAdresse.setOnClickListener(this);
+
+        Toolbar toolbarTask = findViewById(R.id.toolbarTask);
+        setSupportActionBar(toolbarTask);
+
+        ivtaskAvatarUser = findViewById(R.id.ivtaskAvatarUser);
+        tvTaskUsername = findViewById(R.id.tvTaskUsername);
+        tvTaskPublicationDate = findViewById(R.id.tvTaskPublicationDate);
+        tvTaskTitle = findViewById(R.id.tvTaskTitle);
+        tvTaskDescription = findViewById(R.id.tvTaskDescription);
+        tvTaskAdresse = findViewById(R.id.tvTaskAdresse);
+        ivTaskCover = findViewById(R.id.ivTaskCover);
+        tvTaskNcomment = findViewById(R.id.tvTaskNcomment);
+        tvTaskNjaime = findViewById(R.id.tvTaskNjaime);
+        rvTaskComments = findViewById(R.id.rvTaskComments);
+        rvTaskComments.setLayoutManager(rvLayoutManager(this, 0, LinearLayoutManager.VERTICAL));
+        commentaireList = new ArrayList<>();
+        etvTaskComment = findViewById(R.id.etvTaskComment);
+        ibTaskSignale = findViewById(R.id.ibTaskSignale);
+        ibTaskSignale.setVisibility(myuid.equals(uid)?GONE:VISIBLE);
+
+        lireunetachespecifique(vCurrentUser, myuid, vTask, vComments, tid, vSignale);
+
+        findViewById(R.id.ibTaskJaime).setOnClickListener(this);
+        findViewById(R.id.ibTaskFavorite).setOnClickListener(this);
+        findViewById(R.id.ibTaskShare).setOnClickListener(this);
+        findViewById(R.id.ibTaskSendComment).setOnClickListener(this);
+        ibTaskSignale.setOnClickListener(this);
+        ivtaskAvatarUser.setOnClickListener(this);
+        tvTaskUsername.setOnClickListener(this);
+        tvTaskAdresse.setOnClickListener(this);
     }
 
-    private void showEditDialog() {
-        buildAlertDialogForSelectOption(
-                this,
-                getString(R.string.app_name_lite),
-                optionListener,
-                getResources().getStringArray(R.array.edit_task)
-        ).create().show();
-    }
-
-    private void likeProcess() {
-    }
-
-    private void favorisProcess() {
-    }
-
-    private void shareProcess() {
-    }
-
-    private void showAdresseDialog() {
-        AlertDialog.Builder alertDialog=new AlertDialog.Builder(this);
-        alertDialog.setTitle(getString(R.string.position_tache));
-        alertDialog.setMessage(
-                "city = "+taches.getTville() + ",\n state = "+taches.getTstate()+
-                ",\n country = "+taches.getTpays()+ ",\n codepostal = "+taches.getTcodepostal()+
-                        ",\n adresse = "+taches.getTadresse()
-        );
-        alertDialog.setPositiveButton("OK", (dialog, which) -> dialog.cancel());
-        alertDialog.setCancelable(false);
-        AlertDialog alert=alertDialog.create();
-        alert.show();
-    }
-
-    private void verifDataBeforeSendComment() {
-        String comment = etvComment.getText().toString().trim();
-        if (isStringEmpty(comment)){
-            Toast.makeText(this, getString(R.string.comment_error), Toast.LENGTH_SHORT).show();
-            return;
-        }
-        ProgressDialog pd = buildProgressDialog(this, getString(R.string.app_name), getString(R.string.traitement_encours));
-        pd.show();
-        fbtools.addCommentInSpecificTask(
-                pd,
-                comment,
-                tid,
-                currentUser.getUid(),
-                currentUser.getUnoms(),
-                currentUser.getUavatar(),
-                taches.getTncomment(),
-                currentUser.getUncomments());
-        etvComment.setText(null);
-    }
+    /*
+           Afficher les informations de l'utilisateur
+     */
 
     private void showCurrentUserInformation(DataSnapshot snapshot) {
         for (DataSnapshot ds : snapshot.getChildren()){
-            currentUser = ds.getValue(User.class);
-        }
-    }
-
-    private void showTaskInformation(DataSnapshot snapshot) {
-        for (DataSnapshot ds : snapshot.getChildren()){
-            taches = ds.getValue(Taches.class);
-            assert taches != null;
-            tvUsername.setText(taches.getUnoms());
-            tvPublicationDate.setText(formatLaDate(taches.getTdate()));
-            tvTitle.setText(taches.getTtitre());
-            tvDescription.setText(taches.getTdescription());
-            tvAdresse.setVisibility(isStringEmpty(taches.getTadresse())?GONE:VISIBLE);
-            tvAdresse.setText(isStringEmpty(taches.getTadresse())?"":""+taches.getTville()+", "+taches.getTpays());
-            tvNcomment.setText(checkBeforeFormatData(getString(R.string.comments), taches.getTncomment()));
-            tvNjaime.setText(checkBeforeFormatData(getString(R.string.like), taches.getTnlike()));
-            loadingImageWithPath(ivTachesLogo, R.drawable.wild, taches.getTcover());
-            loadingImageWithPath(ivAvatarUser, R.drawable.russia, taches.getUavatar());
-        }
-    }
-
-    private void showTaskComments(DataSnapshot snapshot) {
-        commentList.clear();
-        for (DataSnapshot ds : snapshot.getChildren()){
-            Comment comment = ds.getValue(Comment.class);
-            commentList.add(comment);
-            Cadapter cadapter = new Cadapter(TaskActivity.this, commentList);
-            rvComments.setAdapter(cadapter);
-            cadapter.setListener(xListener);
+            CurrentUser = ds.getValue(User.class);
         }
     }
 
@@ -284,6 +263,27 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
+    /*
+        Afficher les informations de la tache
+     */
+
+    private void showTaskInformation(DataSnapshot snapshot) {
+        for (DataSnapshot ds : snapshot.getChildren()){
+            tache = ds.getValue(Tache.class);
+            assert tache != null;
+            tvTaskUsername.setText(myuid.equals(tache.getUid())?getString(R.string.you):tache.getUnoms());
+            tvTaskPublicationDate.setText(formatLaDate(tache.getTdate()));
+            tvTaskTitle.setText(tache.getTtitre());
+            tvTaskDescription.setText(tache.getTdescription());
+            tvTaskAdresse.setVisibility(isStringEmpty(tache.getTadresse())?GONE:VISIBLE);
+            tvTaskAdresse.setText(isStringEmpty(tache.getTadresse())?"":""+ tache.getTville()+", "+ tache.getTpays());
+            tvTaskNcomment.setText(checkBeforeFormatData(getString(R.string.comments), tache.getTncomment()));
+            tvTaskNjaime.setText(checkBeforeFormatData(getString(R.string.like), tache.getTnlike()));
+            loadingImageWithPath(ivTaskCover, R.drawable.wild, tache.getTcover());
+            loadingImageWithPath(ivtaskAvatarUser, R.drawable.russia, tache.getUavatar());
+        }
+    }
+
     private final ValueEventListener vTask = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -297,7 +297,22 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    private final ValueEventListener vComment = new ValueEventListener() {
+    /*
+        Afficher les commentaires de la tache
+     */
+
+    private void showTaskComments(DataSnapshot snapshot) {
+        commentaireList.clear();
+        for (DataSnapshot ds : snapshot.getChildren()){
+            Commentaire commentaire = ds.getValue(Commentaire.class);
+            commentaireList.add(commentaire);
+            Cadapter cadapter = new Cadapter(TaskActivity.this, commentaireList);
+            rvTaskComments.setAdapter(cadapter);
+            cadapter.setListener(xListener);
+        }
+    }
+
+    private final ValueEventListener vComments = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             showTaskComments(snapshot);
@@ -321,14 +336,128 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    private final DialogInterface.OnClickListener adListener = new DialogInterface.OnClickListener() {
+    /*
+
+     */
+
+    private void showUserDetails() {
+        Intent intent = new Intent(this, TempActivity.class);
+        intent.putExtra(UID, uid);
+        intent.putExtra(IDFRAGMENT, FRAGMENT_ACCOUNT);
+        startActivity(intent);
+    }
+
+    /*
+        Liker la tache
+     */
+
+    private void likeProcess() {
+    }
+
+    /*
+        Rendre favorite la tache
+     */
+
+    private void favorisProcess() {
+    }
+
+    /*
+        Partager la tache
+     */
+
+    private void shareProcess() {
+    }
+
+    /*
+        Formater l'adresse de la tache
+     */
+
+    private void showAdresseDialog() {
+        AlertDialog.Builder alertDialog=new AlertDialog.Builder(this);
+        alertDialog.setTitle(getString(R.string.position_tache));
+        alertDialog.setMessage(formatAdresse(
+                getString(R.string.ville) + " : " + tache.getTville(),
+                getString(R.string.state) + " : " + tache.getTstate(),
+                getString(R.string.pays) + " : " + tache.getTpays(),
+                getString(R.string.codepostal) + " : " + tache.getTcodepostal(),
+                getString(R.string.adresse) + " : " + tache.getTadresse()));
+        alertDialog.setPositiveButton(getString(R.string.ok), (dialog, which) -> dialog.cancel());
+        alertDialog.setCancelable(false);
+        AlertDialog alert=alertDialog.create();
+        alert.show();
+    }
+
+    /*
+        Ajouter un commentaire
+     */
+
+    private void verifDataBeforeSendComment() {
+        String comment = etvTaskComment.getText().toString().trim();
+        if (isStringEmpty(comment)){
+            Toast.makeText(this, getString(R.string.comment_error), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        ProgressDialog pd = buildProgressDialog(this, getString(R.string.app_name), getString(R.string.traitement_encours));
+        pd.show();
+        Commentaire commentaire = new Commentaire(comment, tid, CurrentUser.getUid(), CurrentUser.getUnoms(), CurrentUser.getUavatar());
+        ecrireUnNouveauCommentaire(pd, commentaire, tache.getTncomment(), CurrentUser.getUncomments());
+        etvTaskComment.setText(null);
+    }
+
+    /*
+
+     */
+
+    private void showSignalerDialog() {
+
+        Log.e("Users", "CurentUser = "+CurrentUser.getUid()+", myuid = "+myuid);
+
+        final Dialog dialogSignaler = new Dialog(this);
+        dialogSignaler.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogSignaler.setContentView(R.layout.dialod_signal);
+
+        TextView tvSignalTitle = dialogSignaler.findViewById(R.id.tvSignalTitle);
+        tvSignalTitle.setText(getString(R.string.signaler_la_tache, tache.getTtitre()));
+        EditText edtSignalRaison =  dialogSignaler.findViewById(R.id.edtSignalRaison);
+
+        Button btSendSignal = dialogSignaler.findViewById(R.id.btSendSignal);
+        btSendSignal.setOnClickListener(v -> {
+            String value = edtSignalRaison.getText().toString().trim();
+            if (isStringEmpty(value)){
+                Toast.makeText(TaskActivity.this, getString(R.string.reason_error), Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Signale signale = new Signale(""+CurrentUser.getUid(), ""+value, "", ""+tache.getTid(),
+                    ""+tache.getTtitre(), ""+tache.getTcover(), ""+tache.getTdescription(),
+                    ""+CurrentUser.getUid(), ""+CurrentUser.getUnoms(), ""+CurrentUser.getUavatar());
+            ecrireUnSignalementDeTache(signale);
+            dialogSignaler.dismiss();
+        });
+        dialogSignaler.show();
+    }
+
+    private final ValueEventListener vSignale = new ValueEventListener() {
         @Override
-        public void onClick(DialogInterface dialogInterface, int i) {
-            ProgressDialog pd = buildProgressDialog(TaskActivity.this, getString(R.string.app_name), getString(R.string.traitement_encours));
-            pd.show();
-            fbtools.deleteTask(pd,tid, currentUid, currentUser.getUntask(), currentUser.getUncomments());
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            ibTaskSignale.setImageResource(snapshot.hasChildren()?R.drawable.ic_action_signaler:R.drawable.ic_action_signaler_old);
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+            Toast.makeText(TaskActivity.this, getString(R.string.database_error), Toast.LENGTH_SHORT).show();
         }
     };
+
+    /*
+        Modifier la tache
+     */
+
+    private void showEditDialog() {
+        AlertDialog.Builder builderEdit = new AlertDialog.Builder(this);
+        builderEdit.setTitle(getString(R.string.app_name_lite));
+        builderEdit.setItems(getResources().getStringArray(R.array.edit_task), optionEditListener);
+        builderEdit.create().show();
+    }
 
     private final DialogInterface.OnClickListener coverListener = new DialogInterface.OnClickListener() {
         @Override
@@ -338,7 +467,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                     if (!ivtools.checkCameraPermissions()){
                         ivtools.requestCameraPermissions();
                     }else{
-                        ivtools.pickFromCamera(imageUri);
+                        ivtools.pickFromCamera();
                     }
                     break;
                 case 1 :
@@ -353,54 +482,39 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    private final DialogInterface.OnClickListener optionListener = (dialogInterface, i) -> {
+    private final DialogInterface.OnClickListener optionEditListener = (dialogInterface, i) -> {
         switch (i) {
             case 0: // cover
-                buildAlertDialogForSelectOption(
-                        this, getString(R.string.app_name_lite),
-                        coverListener, getResources().getStringArray(R.array.select_place)).create().show();
+                updateCoverDialog();
                 break;
             case 1: // titre
-                updateString(getString(R.string.titre), i);
+                updateTitreOrDescription(getString(R.string.titre), i);
                 break;
             case 2: // description
-                updateString(getString(R.string.description), i);
+                updateTitreOrDescription(getString(R.string.description), i);
                 break;
             case 3: // localisation
-                showLocalisationDialog();
+                updateLocalisationDialog();
                 break;
         }
     };
 
-    private void showLocalisationDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.app_name_lite));
-        builder.setMessage(getString(R.string.loc_message));
-        builder.setPositiveButton(getText(R.string.ok), (dialogInterface, i) -> {
-            lctools.testGeocoder();
-            fbtools.writeStringInDb(buildPathWithSlash(TACHES, tid, TPAYS), lctools.getCountry());
-            fbtools.writeStringInDb(buildPathWithSlash(TACHES, tid, TVILLE), lctools.getCity());
-            fbtools.writeStringInDb(buildPathWithSlash(TACHES, tid, TADRESSE), lctools.getAdresse());
-            fbtools.writeStringInDb(buildPathWithSlash(TACHES, tid, TCODEPOSTAL), lctools.getCodepostal());
-            fbtools.writeStringInDb(buildPathWithSlash(TACHES, tid, TSTATE), lctools.getState());
-            fbtools.writeStringInDb(buildPathWithSlash(TACHES, tid, TLONGITUDE), ""+lctools.getLongitude());
-            fbtools.writeStringInDb(buildPathWithSlash(TACHES, tid, TLATITUDE), ""+lctools.getLatitude());
-            dialogInterface.dismiss();
-        });
-        builder.create().show();
+    private void updateCoverDialog() {
+        AlertDialog.Builder builderCover = new AlertDialog.Builder(this);
+        builderCover.setTitle(getString(R.string.app_name_lite));
+        builderCover.setItems(getResources().getStringArray(R.array.select_place), coverListener);
+        builderCover.create().show();
     }
 
-    private void updateString(String message, int i) {
+    private void updateTitreOrDescription(String message, int i) {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialod_edit);
 
-        TextView tvTitle = (TextView) dialog.findViewById(R.id.tvTitle);
+        TextView tvTitle = dialog.findViewById(R.id.tvTitle);
         tvTitle.setText(MessageFormat.format(getString(R.string.title_update), message));
-        EditText edtValue = (EditText) dialog.findViewById(R.id.edtValue);
+        EditText edtValue =  dialog.findViewById(R.id.edtValue);
         switch (i) {
-            case 0: // cover
-                break;
             case 1: // titre
                 edtValue.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
                 edtValue.setHint(getString(R.string.enter_titre_de_la_tache));
@@ -419,11 +533,10 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 edtValue.setSingleLine(false);
                 edtValue.setImeOptions(EditorInfo.IME_FLAG_NO_ENTER_ACTION);
                 break;
-            case 3: // localisation
-                break;
+            default:
         }
 
-        Button dialogButton = (Button) dialog.findViewById(R.id.btUpdate);
+        Button dialogButton = dialog.findViewById(R.id.btUpdate);
         dialogButton.setOnClickListener(v -> {
             String value = edtValue.getText().toString().trim();
             if (isStringEmpty(value)){
@@ -431,15 +544,11 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 return;
             }
             switch (i) {
-                case 0: // cover
-                    break;
                 case 1: // titre
-                    fbtools.writeStringInDb(buildPathWithSlash(TACHES, tid, TTITRE), value);
+                    fbtools.ecrireDansUnChamp(buildPathWithSlash(TACHES, tid, TTITRE), value);
                     break;
                 case 2: // description
-                    fbtools.writeStringInDb(buildPathWithSlash(TACHES, tid, TDESCRIPTION), value);
-                    break;
-                case 3: // localisation
+                    fbtools.ecrireDansUnChamp(buildPathWithSlash(TACHES, tid, TDESCRIPTION), value);
                     break;
             }
             dialog.dismiss();
@@ -448,50 +557,36 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         dialog.show();
     }
 
-    @Override
-    public void onClick(View view) {
-        int id = view.getId();
-        if (id == R.id.ibJaime)
-            likeProcess();
-        else if (id == R.id.ibFavorite)
-            favorisProcess();
-        else if (id == R.id.ibShare)
-            shareProcess();
-        else if (id == R.id.ibSendComment)
-            verifDataBeforeSendComment();
-        else if (id == R.id.ivAvatarUser || id == R.id.tvUsername)
-            gotoaccount(this, currentUid);
-        else if (id == R.id.tvAdresse)
-            showAdresseDialog();
+    private void updateLocalisationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.app_name_lite));
+        builder.setMessage(getString(R.string.loc_message));
+        builder.setPositiveButton(getText(R.string.ok), (dialogInterface, i) -> {
+            lctools.testGeocoder();
+            tache.setTpays(lctools.getCountry());
+            tache.setTpays(lctools.getCity());
+            tache.setTpays(lctools.getAdresse());
+            tache.setTpays(lctools.getCodepostal());
+            tache.setTpays(lctools.getState());
+            tache.setTpays(""+lctools.getLongitude());
+            tache.setTpays(""+lctools.getLatitude());
+            fbtools.ecrireunenouvelletache(tache);
+            dialogInterface.dismiss();
+        });
+        builder.create().show();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == LOCATION_REQUEST_CODE_ACCESS_COARSE_LOCATION || requestCode == LOCATION_REQUEST_CODE_ACCESS_FINE_LOCATION)
-            lctools.requestLoccationPermissionsResults(requestCode, grantResults);
-        else
-            ivtools.requestCameraAndGalleryPermissions(requestCode, grantResults, imageUri);
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
+    /*
+        Suppression de la tache
+     */
 
-    private final ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data != null){
-                            imageUri = data.getData();
-                        }
-                        updateTaskCoverImage();
-                    }
-                }
-            });
+    private final DialogInterface.OnClickListener adListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+            ProgressDialog pd = buildProgressDialog(TaskActivity.this, getString(R.string.app_name), getString(R.string.traitement_encours));
+            pd.show();
+            fbtools.deleteTask(pd,tid, myuid, CurrentUser.getUntask(), CurrentUser.getUncomments());
+        }
+    };
 
-    private void updateTaskCoverImage() {
-        ProgressDialog pd = buildProgressDialog(this, getString(R.string.app_name), getString(R.string.task_image_path));
-        pd.show();
-        fbtools.deleteOldImage(pd, imageUri, ""+taches.getTcover(), "");
-    }
 }

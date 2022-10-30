@@ -26,4 +26,10 @@
         <item>@string/description</item>
         <item>@string/localisation</item>
     </array>
+    <array name="permissions_list">
+        <item>Manifest.permission.WRITE_EXTERNAL_STORAGE</item>
+        <item>Manifest.permission.CAMERA</item>
+        <item>Manifest.permission.ACCESS_FINE_LOCATION</item>
+        <item>Manifest.permission.ACCESS_COARSE_LOCATION</item>
+    </array>
 </resources>

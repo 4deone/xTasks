@@ -16,11 +16,11 @@
     <string name="ou">OU</string>
     <string name="don_t_have_an_account">Don\'t have an account?</string>
     <string name="have_an_account">have an account?</string>
-    <string name="sign_up">Sign up</string>
+    <string name="sign_up">Create your account</string>
     <string name="sign_in">Sign in</string>
     <string name="connectez_vous_avec_google">Connectez-vous avec Google</string>
     <string name="connectez_vous_avec_facebook">Connectez-vous avec Facebook</string>
-    <string name="copyrigth_2022">Copyrigth - 2022</string>
+    <string name="copyrigth_2022">Copyrigth 2022 - v0.1</string>
     <string name="bienvenue">Bienvenue!</string>
     <string name="entrez_vos_informations">Entrez vos informations</string>
     <string name="full_name">Full name</string>
@@ -65,8 +65,8 @@
     <string name="add_task">Add task</string>
     <string name="remplissez_les_champs_ci_dessous">Remplissez les champs ci-dessous</string>
     <string name="nouvelle_tache">Nouvelle tâche</string>
-    <string name="enter_your_comment">Enter your comment</string>
-    <string name="send_comment">Send comment</string>
+    <string name="enter_your_comment">Enter your commentaire</string>
+    <string name="send_comment">Send commentaire</string>
     <string name="username">Nom de l\'utilisateur</string>
     <string name="_16_oct_2022">16 Oct. 2022</string>
     <string name="language">Language</string>
@@ -136,6 +136,7 @@
     <string name="new_value">New value</string>
     <string name="dialog_title">New value for {0}</string>
     <string name="value_error">Erreur lors de la saisie de la valeur!</string>
+    <string name="reason_error">Erreur lors de la saisie de la raison!</string>
     <string name="settings_item">Settings items</string>
     <string name="notifications_personnalisees">Notifications personnalisées</string>
     <string name="liste_des_taches">Liste des taches</string>
@@ -164,7 +165,7 @@
     <string name="description_de_la_condition">description de la condition</string>
     <string name="autorisations">Autorisations</string>
     <string name="verif_entries">Vérification des donées saisies, Patientez!</string>
-    <string name="user_auth">Authentification de l\'utilisateur, Patientez!</string>
+    <string name="user_auth">Authentification de l\'utilisateur</string>
     <string name="mep_creating_account">Mise en place des élément de création du compte de l\'utilisateur, Patientez!</string>
     <string name="verif_if_account_exist">Vérification de l\'existance de l\'utilisateur dans le système, Patientez!</string>
     <string name="init_task_id">Intialisation de l\'identifiant de la tâche</string>
@@ -183,4 +184,27 @@
     <string name="task_image_path">Vérification du chemin de la tâche</string>
     <string name="task_image_save_storage">Enregistrement de l\'image dans la banque à image</string>
     <string name="task_image_realtime_path">Mise à jour des informations de la tâche</string>
+    <string name="liste_des_autorisations_n_cessaires">Liste des autorisations nécessaires</string>
+    <string name="permission_error">Toutes les permissions n\'ont pas été accordées!!</string>
+    <string name="check_requires_permission">Vérification des permisssions réquises!</string>
+    <string name="create_user_account">Création du compte utilisateur!</string>
+    <string name="create_user_profile">Création du profile de l\'utilisateur!</string>
+    <string name="create_user_avatar">Création de l\'avatar de l\'utilisateur!</string>
+    <string name="save_user_infos">Sauvegarde des informations de l\'utilisateur!</string>
+    <string name="ville">Ville</string>
+    <string name="state">State</string>
+    <string name="pays">Pays</string>
+    <string name="codepostal">Code postal</string>
+    <string name="adresse">Adresse</string>
+    <string name="success_operation">Opération réussie!</string>
+    <string name="error_operation">Erreur lors de la sauvegarde des information!</string>
+    <string name="about_app">About app</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="no_description">Pas de description</string>
+    <string name="signaler">Signaler</string>
+    <string name="you">You</string>
+    <string name="enter_your_reason">Enter your reason</string>
+    <string name="signaler_l_utilisateur">Signaler l\'utilisateur, %s</string>
+    <string name="signaler_la_tache">Signaler la tache, %s</string>
 </resources>

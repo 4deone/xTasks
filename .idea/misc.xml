@@ -23,7 +23,16 @@
         <entry key="app/src/main/res/layout/activity_new_user.xml" value="0.18" />
         <entry key="app/src/main/res/layout/activity_settings.xml" value="0.24048913043478262" />
         <entry key="app/src/main/res/layout/activity_task.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/dialod_auths.xml" value="0.2515625" />
         <entry key="app/src/main/res/layout/dialod_edit.xml" value="0.24048913043478262" />
+        <entry key="app/src/main/res/layout/dialod_signal.xml" value="0.2515625" />
+        <entry key="app/src/main/res/layout/fragment_account.xml" value="0.2515625" />
+        <entry key="app/src/main/res/layout/fragment_autorisation.xml" value="0.2515625" />
+        <entry key="app/src/main/res/layout/fragment_confidentiality.xml" value="0.23645833333333333" />
+        <entry key="app/src/main/res/layout/fragment_group.xml" value="0.2515625" />
+        <entry key="app/src/main/res/layout/fragment_key.xml" value="0.2515625" />
+        <entry key="app/src/main/res/layout/fragment_notification.xml" value="0.23645833333333333" />
+        <entry key="app/src/main/res/layout/fragment_stockage.xml" value="0.2515625" />
         <entry key="app/src/main/res/layout/item_comment.xml" value="0.24048913043478262" />
         <entry key="app/src/main/res/layout/item_condition.xml" value="0.2515625" />
         <entry key="app/src/main/res/layout/item_taches.xml" value="0.24048913043478262" />

@@ -1,6 +1,6 @@
 package com.deone.extrmtasks.modeles;
 
-public class Comment implements Comparable<Comment>{
+public class Commentaire implements Comparable<Commentaire>{
     private String cid;
     private String cmessage;
     private String cdate;
@@ -9,10 +9,18 @@ public class Comment implements Comparable<Comment>{
     private String unoms;
     private String uavatar;
 
-    public Comment() {
+    public Commentaire() {
     }
 
-    public Comment(String cid, String cmessage, String cdate, String tid, String uid, String unoms, String uavatar) {
+    public Commentaire(String cmessage, String tid, String uid, String unoms, String uavatar) {
+        this.cmessage = cmessage;
+        this.tid = tid;
+        this.uid = uid;
+        this.unoms = unoms;
+        this.uavatar = uavatar;
+    }
+
+    public Commentaire(String cid, String cmessage, String cdate, String tid, String uid, String unoms, String uavatar) {
         this.cid = cid;
         this.cmessage = cmessage;
         this.cdate = cdate;
@@ -79,7 +87,8 @@ public class Comment implements Comparable<Comment>{
     }
 
     @Override
-    public int compareTo(Comment comment) {
+    public int compareTo(Commentaire commentaire) {
         return 0;
     }
+
 }

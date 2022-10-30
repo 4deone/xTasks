@@ -28,7 +28,10 @@ public class Condition implements Comparable<Condition>{
     }
 
     @Override
-    public int compareTo(Condition comment) {
+    public int compareTo(Condition condition) {
         return 0;
     }
+
+    // Le comportement de notre classe Condition
+
 }

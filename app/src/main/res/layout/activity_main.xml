@@ -7,20 +7,23 @@
     android:background="?attr/bg_color"
     tools:context=".MainActivity">
 
+    <!--https://developer.android.com/reference/androidx/constraintlayout
+    /widget/ConstraintLayout-->
+
     <ImageView
-        android:layout_marginTop="25dp"
-        android:id="@+id/ivLogo"
+        android:id="@+id/ivLogoMain"
         android:layout_width="200dp"
         android:layout_height="80dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
         android:contentDescription="@string/deone_corporation"
         android:src="@drawable/logo" />
 
     <TextView
-        android:id="@+id/tvBonjour"
+        android:id="@+id/tvOneMain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ivLogo"
+        android:layout_below="@+id/ivLogoMain"
         android:layout_centerHorizontal="true"
         android:text="@string/bonjour"
         android:textColor="@color/black"
@@ -28,10 +31,10 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/tvBonjourTwo"
+        android:id="@+id/tvTwoMain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvBonjour"
+        android:layout_below="@+id/tvOneMain"
         android:layout_centerHorizontal="true"
         android:text="@string/connect_you"
         android:textColor="@color/black" />
@@ -39,11 +42,11 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvBonjourTwo"
+        android:layout_below="@+id/tvTwoMain"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="10dp"
-        android:background="@drawable/main_rounder_top"
-        android:padding="10dp">
+        android:background="@color/white"
+        android:padding="20dp">
 
         <TextView
             android:id="@+id/tvEmail"
@@ -54,7 +57,7 @@
             android:textColor="@color/black" />
 
         <EditText
-            android:id="@+id/etvLogin"
+            android:id="@+id/etvLoginMain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tvEmail"
@@ -64,44 +67,45 @@
             android:padding="20dp" />
 
         <TextView
-            android:id="@+id/tvMotdepasse"
+            android:id="@+id/tvMotdepasseMain"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/etvLogin"
+            android:layout_below="@+id/etvLoginMain"
             android:layout_marginTop="10dp"
             android:text="@string/motdepasse"
             android:textColor="@color/black" />
 
         <EditText
-            android:id="@+id/etvMotdepasse"
+            android:id="@+id/etvMotdepasseMain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvMotdepasse"
+            android:layout_below="@+id/tvMotdepasseMain"
             android:drawableEnd="@drawable/ic_action_motdepasse"
             android:hint="@string/enter_password"
             android:inputType="textPassword"
             android:padding="20dp" />
 
         <Button
-            android:id="@+id/btProcess"
+            android:id="@+id/btProcessMain"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/etvMotdepasse"
+            android:layout_below="@+id/etvMotdepasseMain"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/main_rounder"
             android:text="@string/process" />
 
         <RelativeLayout
-            android:id="@+id/rlRegister"
+            android:id="@+id/rlRegisterMain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/btProcess"
+            android:layout_above="@+id/tvCopyrightMain"
+            android:layout_below="@+id/btProcessMain"
             android:layout_marginTop="10dp"
             android:gravity="center">
 
             <TextView
-                android:id="@+id/tvRegisterOne"
+                android:id="@+id/tvRegisterOneMain"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -110,12 +114,12 @@
                 android:textColor="@color/black" />
 
             <TextView
-                android:id="@+id/tvSignUp"
+                android:id="@+id/tvSignUpMain"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="10dp"
-                android:layout_toEndOf="@+id/tvRegisterOne"
+                android:layout_toEndOf="@+id/tvRegisterOneMain"
                 android:gravity="center"
                 android:text="@string/sign_up"
                 android:textColor="@color/purple_700"
@@ -125,46 +129,9 @@
         </RelativeLayout>
 
         <TextView
-            android:id="@+id/tvOr"
+            android:id="@+id/tvCopyrightMain"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/rlRegister"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/main_circle"
-            android:gravity="center"
-            android:padding="10dp"
-            android:text="@string/ou"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvGoogle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tvOr"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:text="@string/connectez_vous_avec_google"
-            android:textColor="@color/black"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvFacebook"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tvGoogle"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:text="@string/connectez_vous_avec_facebook"
-            android:textColor="@color/black"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tvFacebook"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"

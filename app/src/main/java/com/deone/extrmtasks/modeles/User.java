@@ -2,14 +2,15 @@ package com.deone.extrmtasks.modeles;
 
 public class User implements Comparable<User>{
     private  String uid;
-    private  String unoms;
     private  String ucover;
-    private  String uavatar;
-    private  String utelephone;
-    private  String udescription;
     private  String uemail;
-    private  String ucity;
-    private  String ucountry;
+    private  String umotdepasse;
+    private  String unoms;
+    private  String utelephone;
+    private  String uville;
+    private  String upays;
+    private  String uavatar;
+    private  String udescription;
     private  String udate;
     private  String untask;
     private  String unfavoris;
@@ -20,16 +21,46 @@ public class User implements Comparable<User>{
     public User() {
     }
 
-    public User(String uid, String unoms, String ucover, String uavatar, String utelephone, String udescription, String uemail, String ucity, String ucountry, String udate, String untask, String unfavoris, String unlikes, String uncomments, String ungroups) {
-        this.uid = uid;
-        this.unoms = unoms;
-        this.ucover = ucover;
-        this.uavatar = uavatar;
-        this.utelephone = utelephone;
-        this.udescription = udescription;
+    public User(String uemail, String umotdepasse) {
         this.uemail = uemail;
-        this.ucity = ucity;
-        this.ucountry = ucountry;
+        this.umotdepasse = umotdepasse;
+    }
+
+    public User(String uemail, String umotdepasse, String unoms, String utelephone, String uville, String upays) {
+        this.uemail = uemail;
+        this.umotdepasse = umotdepasse;
+        this.unoms = unoms;
+        this.utelephone = utelephone;
+        this.uville = uville;
+        this.upays = upays;
+    }
+
+    public User(String uid,
+                String ucover,
+                String uemail,
+                String umotdepasse,
+                String unoms,
+                String utelephone,
+                String uville,
+                String upays,
+                String uavatar,
+                String udescription,
+                String udate,
+                String untask,
+                String unfavoris,
+                String unlikes,
+                String uncomments,
+                String ungroups) {
+        this.uid = uid;
+        this.ucover = ucover;
+        this.uemail = uemail;
+        this.umotdepasse = umotdepasse;
+        this.unoms = unoms;
+        this.utelephone = utelephone;
+        this.uville = uville;
+        this.upays = upays;
+        this.uavatar = uavatar;
+        this.udescription = udescription;
         this.udate = udate;
         this.untask = untask;
         this.unfavoris = unfavoris;
@@ -46,44 +77,12 @@ public class User implements Comparable<User>{
         this.uid = uid;
     }
 
-    public String getUnoms() {
-        return unoms;
-    }
-
-    public void setUnoms(String unoms) {
-        this.unoms = unoms;
-    }
-
     public String getUcover() {
         return ucover;
     }
 
     public void setUcover(String ucover) {
         this.ucover = ucover;
-    }
-
-    public String getUavatar() {
-        return uavatar;
-    }
-
-    public void setUavatar(String uavatar) {
-        this.uavatar = uavatar;
-    }
-
-    public String getUtelephone() {
-        return utelephone;
-    }
-
-    public void setUtelephone(String utelephone) {
-        this.utelephone = utelephone;
-    }
-
-    public String getUdescription() {
-        return udescription;
-    }
-
-    public void setUdescription(String udescription) {
-        this.udescription = udescription;
     }
 
     public String getUemail() {
@@ -94,20 +93,60 @@ public class User implements Comparable<User>{
         this.uemail = uemail;
     }
 
-    public String getUcity() {
-        return ucity;
+    public String getUmotdepasse() {
+        return umotdepasse;
     }
 
-    public void setUcity(String ucity) {
-        this.ucity = ucity;
+    public void setUmotdepasse(String umotdepasse) {
+        this.umotdepasse = umotdepasse;
     }
 
-    public String getUcountry() {
-        return ucountry;
+    public String getUnoms() {
+        return unoms;
     }
 
-    public void setUcountry(String ucountry) {
-        this.ucountry = ucountry;
+    public void setUnoms(String unoms) {
+        this.unoms = unoms;
+    }
+
+    public String getUtelephone() {
+        return utelephone;
+    }
+
+    public void setUtelephone(String utelephone) {
+        this.utelephone = utelephone;
+    }
+
+    public String getUville() {
+        return uville;
+    }
+
+    public void setUville(String uville) {
+        this.uville = uville;
+    }
+
+    public String getUpays() {
+        return upays;
+    }
+
+    public void setUpays(String upays) {
+        this.upays = upays;
+    }
+
+    public String getUavatar() {
+        return uavatar;
+    }
+
+    public void setUavatar(String uavatar) {
+        this.uavatar = uavatar;
+    }
+
+    public String getUdescription() {
+        return udescription;
+    }
+
+    public void setUdescription(String udescription) {
+        this.udescription = udescription;
     }
 
     public String getUdate() {
@@ -162,4 +201,5 @@ public class User implements Comparable<User>{
     public int compareTo(User user) {
         return 0;
     }
+
 }

@@ -1,6 +1,6 @@
 package com.deone.extrmtasks.modeles;
 
-public class Taches implements Comparable<Taches>{
+public class Tache implements Comparable<Tache>{
     private String tid;
     private String tcover;
     private String ttitre;
@@ -19,10 +19,10 @@ public class Taches implements Comparable<Taches>{
     private String unoms;
     private String uavatar;
 
-    public Taches() {
+    public Tache() {
     }
 
-    public Taches(String tid, String tcover, String ttitre, String tdescription, String tpays, String tville, String tadresse, String tcodepostal, String tlongitude, String tlatitude, String tstate, String tdate, String tncomment, String tnlike, String uid, String unoms, String uavatar) {
+    public Tache(String tid, String tcover, String ttitre, String tdescription, String tpays, String tville, String tadresse, String tcodepostal, String tlongitude, String tlatitude, String tstate, String tdate, String tncomment, String tnlike, String uid, String unoms, String uavatar) {
         this.tid = tid;
         this.tcover = tcover;
         this.ttitre = ttitre;
@@ -179,7 +179,8 @@ public class Taches implements Comparable<Taches>{
     }
 
     @Override
-    public int compareTo(Taches taches) {
+    public int compareTo(Tache tache) {
         return 0;
     }
+
 }

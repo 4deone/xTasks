@@ -3,9 +3,16 @@ package com.deone.extrmtasks;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_LANGUE;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_MODE;
 import static com.deone.extrmtasks.tools.Constants.EN;
+import static com.deone.extrmtasks.tools.Constants.FRAGMENT_ACCOUNT;
+import static com.deone.extrmtasks.tools.Constants.FRAGMENT_AUTH;
+import static com.deone.extrmtasks.tools.Constants.FRAGMENT_CONF;
+import static com.deone.extrmtasks.tools.Constants.FRAGMENT_GROUP;
+import static com.deone.extrmtasks.tools.Constants.FRAGMENT_KEY;
+import static com.deone.extrmtasks.tools.Constants.FRAGMENT_NOT;
+import static com.deone.extrmtasks.tools.Constants.FRAGMENT_STOCKAGE;
+import static com.deone.extrmtasks.tools.Constants.IDFRAGMENT;
 import static com.deone.extrmtasks.tools.Constants.UID;
 import static com.deone.extrmtasks.tools.Ivtools.loadingImageWithPath;
-import static com.deone.extrmtasks.tools.Other.buildAlertDialog;
 import static com.deone.extrmtasks.tools.Other.buildAlertDialogForSingleSelectOption;
 import static com.deone.extrmtasks.tools.Other.chooseDrawable;
 import static com.deone.extrmtasks.tools.Other.formatLaDate;
@@ -17,18 +24,22 @@ import static com.deone.extrmtasks.tools.Other.isStringEmpty;
 import static com.deone.extrmtasks.tools.Other.safeShowValue;
 import static com.deone.extrmtasks.tools.Other.selectedLangue;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SwitchCompat;
@@ -46,25 +57,13 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     private Fbtools fbtools;
     private Sptools sptools;
-    private Ivtools ivtools;
-    private ImageView ivAvatar;
-    private ImageView ivCover;
-    private TextView tvDate;
-    private TextView tvCompteName;
-    private TextView tvComptePhone;
-    private SwitchCompat swKey;
-    private TextView tvKeyList;
-    private TextView tvAutorisation;
-    private TextView tvNotification;
-    private TextView tvDisplayMode;
-    private TextView tvLanguage;
-    private TextView tvConfidentialite;
-    private TextView tvDataStockage;
-    private TextView tvGroupe;
-    private TextView tvFaq;
-    private TextView tvAbout;
-    private TextView tvSignOut;
-    private User user;
+    private ImageView ivSettingsCover;
+    private ImageView ivSettingsAvatar;
+    private TextView tvSettingsDate;
+    private TextView tvSettingsCompteName;
+    private TextView tvSettingsComptePhone;
+    private TextView tvSettingsDisplayMode;
+    private TextView tvSettingsLanguage;
     private String myuid;
 
     @Override
@@ -83,12 +82,64 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.itAccount){
-            Intent intent = new Intent(this, AccountActivity.class);
+            Intent intent = new Intent(this, TempActivity.class);
             intent.putExtra(UID, myuid);
+            intent.putExtra(IDFRAGMENT, FRAGMENT_ACCOUNT);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        gotohome(this);
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+        int id = compoundButton.getId();
+        if (id == R.id.swSettingsKey){
+
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.app_name_lite));
+
+        if (id == R.id.ivSettingsCover || id == R.id.ivSettingsAvatar)
+            gotoUserDetails();
+        else if (id == R.id.tvSettingsKeyList)
+            showKeyList();
+        else if (id == R.id.tvSettingsAutorisation)
+            showAutorisationList();
+        else if (id == R.id.tvSettingsNotification)
+            showNotification();
+        else if (id == R.id.tvSettingsDisplayMode)
+            showDisplayMode(builder);
+        else if (id == R.id.tvSettingsLanguage)
+            showLanguageDialog(builder);
+        else if (id == R.id.tvSettingsConfidentialite)
+            sendConfidentialite();
+        else if (id == R.id.tvSettingsDataStockage)
+            showDataStockage();
+        else if (id == R.id.tvSettingsGroupe)
+            showDialogGroupe();
+        else if (id == R.id.tvSettingsFaq)
+            showFaq();
+        else if (id == R.id.tvSettingsAbout)
+            showDialogAbout();
+        else if (id == R.id.tvSettingsSignOut)
+            showSignoutDialog(builder);
+    }
+
+    /*
+            Initialisation des l'activité
+     */
 
     /**
      *
@@ -96,7 +147,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private void initApp() {
         sptools = Sptools.getInstance(this);
         fbtools = Fbtools.getInstance(this);
-        ivtools = Ivtools.getInstance(this);
         initThemeMode(sptools.readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
         initLLanguage(this, sptools.readStringData(APP_PREFS_LANGUE, EN));
     }
@@ -118,82 +168,74 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
      */
     private void initViews() {
         setContentView(R.layout.activity_settings);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        Toolbar toolbarSettings = findViewById(R.id.toolbarSettings);
+        setSupportActionBar(toolbarSettings);
 
-        ivAvatar = findViewById(R.id.ivAvatar);
-        tvDate = findViewById(R.id.tvDate);
-        ivCover = findViewById(R.id.ivCover);
-        tvCompteName = findViewById(R.id.tvCompteName);
-        tvComptePhone = findViewById(R.id.tvComptePhone);
-        swKey = findViewById(R.id.swKey);
-        tvKeyList = findViewById(R.id.tvKeyList);
-        tvAutorisation = findViewById(R.id.tvAutorisation);
-        tvNotification = findViewById(R.id.tvNotification);
-        tvDisplayMode = findViewById(R.id.tvDisplayMode);
-        tvLanguage = findViewById(R.id.tvLanguage);
-        tvConfidentialite = findViewById(R.id.tvConfidentialite);
-        tvDataStockage = findViewById(R.id.tvDataStockage);
-        tvGroupe = findViewById(R.id.tvGroupe);
-        tvFaq = findViewById(R.id.tvFaq);
-        tvAbout = findViewById(R.id.tvAbout);
-        tvSignOut = findViewById(R.id.tvSignOut);
+        ivSettingsCover = findViewById(R.id.ivSettingsCover);
+        ivSettingsAvatar = findViewById(R.id.ivSettingsAvatar);
+        tvSettingsDate = findViewById(R.id.tvSettingsDate);
+        tvSettingsCompteName = findViewById(R.id.tvSettingsCompteName);
+        tvSettingsComptePhone = findViewById(R.id.tvSettingsComptePhone);
+        SwitchCompat swSettingsKey = findViewById(R.id.swSettingsKey);
+        tvSettingsDisplayMode = findViewById(R.id.tvSettingsDisplayMode);
+        tvSettingsLanguage = findViewById(R.id.tvSettingsLanguage);
 
-        fbtools.specificUser(vUser);
+        fbtools.lireUnUtilisateurSpecifique(vUser);
 
-        ivAvatar.setOnClickListener(this);
-        ivCover.setOnClickListener(this);
-        tvKeyList.setOnClickListener(this);
-        tvAutorisation.setOnClickListener(this);
-        tvNotification.setOnClickListener(this);
-        tvDisplayMode.setOnClickListener(this);
-        tvLanguage.setOnClickListener(this);
-        tvConfidentialite.setOnClickListener(this);
-        tvDataStockage.setOnClickListener(this);
-        tvGroupe.setOnClickListener(this);
-        tvFaq.setOnClickListener(this);
-        tvAbout.setOnClickListener(this);
-        tvSignOut.setOnClickListener(this);
+        ivSettingsAvatar.setOnClickListener(this);
+        ivSettingsAvatar.setOnClickListener(this);
+        tvSettingsDisplayMode.setOnClickListener(this);
+        tvSettingsLanguage.setOnClickListener(this);
+        findViewById(R.id.tvSettingsKeyList).setOnClickListener(this);
+        findViewById(R.id.tvSettingsAutorisation).setOnClickListener(this);
+        findViewById(R.id.tvSettingsNotification).setOnClickListener(this);
+        findViewById(R.id.tvSettingsConfidentialite).setOnClickListener(this);
+        findViewById(R.id.tvSettingsDataStockage).setOnClickListener(this);
+        findViewById(R.id.tvSettingsGroupe).setOnClickListener(this);
+        findViewById(R.id.tvSettingsFaq).setOnClickListener(this);
+        findViewById(R.id.tvSettingsAbout).setOnClickListener(this);
+        findViewById(R.id.tvSettingsSignOut).setOnClickListener(this);
+        swSettingsKey.setOnCheckedChangeListener(this);
     }
+
+    /*
+        Goto user details
+     */
 
     /**
      *
      */
-    private void showDialogGroupe() {
+    private void gotoUserDetails() {
+        Intent intent = new Intent(this, TempActivity.class);
+        intent.putExtra(UID, myuid);
+        intent.putExtra(IDFRAGMENT, FRAGMENT_ACCOUNT);
+        startActivity(intent);
     }
 
-    /**
-     *
+    /*
+            Display user information
      */
-    private void showDialogUserInfo() {
-    }
-
-    /**
-     *
-     */
-    private void showDialogAbout() {
-    }
 
     /**
      *
      * @param snapshot
      */
-    private void showUser(DataSnapshot snapshot) {
+    private void DisplayUserInformation(DataSnapshot snapshot) {
         for (DataSnapshot ds : snapshot.getChildren()){
-            user = ds.getValue(User.class);
+            User user = ds.getValue(User.class);
             assert user != null;
-            tvCompteName.setText(user.getUnoms());
-            tvDate.setText(formatLaDate(user.getUdate()));
-            tvComptePhone.setText(safeShowValue(user.getUtelephone()));
-            loadingImageWithPath(ivAvatar, R.drawable.russia, user.getUavatar());
-            loadingImageWithPath(ivCover, R.drawable.wild, user.getUcover());
+            tvSettingsCompteName.setText(user.getUnoms());
+            tvSettingsDate.setText(formatLaDate(user.getUdate()));
+            tvSettingsComptePhone.setText(safeShowValue(user.getUtelephone()));
+            loadingImageWithPath(ivSettingsCover, R.drawable.russia, user.getUavatar());
+            loadingImageWithPath(ivSettingsAvatar, R.drawable.wild, user.getUcover());
         }
     }
 
     private final ValueEventListener vUser = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
-            showUser(snapshot);
+            DisplayUserInformation(snapshot);
         }
 
         @Override
@@ -202,16 +244,73 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         }
     };
 
+    /*
+            Display key word
+     */
+
+    private void showKeyList() {
+        Intent intent = new Intent(this, TempActivity.class);
+        intent.putExtra(UID, myuid);
+        intent.putExtra(IDFRAGMENT, FRAGMENT_KEY);
+        startActivity(intent);
+    }
+
+    /*
+            Display app autorisations
+     */
+
+    private void showAutorisationList() {
+        Intent intent = new Intent(this, TempActivity.class);
+        intent.putExtra(UID, myuid);
+        intent.putExtra(IDFRAGMENT, FRAGMENT_AUTH);
+        startActivity(intent);
+    }
+
+    /*
+            Display app notification
+     */
+
+    private void showNotification() {
+        Intent intent = new Intent(this, TempActivity.class);
+        intent.putExtra(UID, myuid);
+        intent.putExtra(IDFRAGMENT, FRAGMENT_NOT);
+        startActivity(intent);
+    }
+
+    /*
+            Choose app theme mode
+     */
+
+    private void showDisplayMode(AlertDialog.Builder builder) {
+        builder.setMessage(getString(R.string.choisir_mode));
+        builder.setSingleChoiceItems(getResources().getStringArray(R.array.modes),
+                sptools.readIntData(APP_PREFS_MODE, 0), modeListener);
+        builder.create().show();
+    }
+
     private final DialogInterface.OnClickListener modeListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
             //initThemeMode(i);
             sptools.writeIntData(APP_PREFS_MODE, i);
-            tvDisplayMode.setCompoundDrawablesRelativeWithIntrinsicBounds(chooseDrawable(i), 0, 0, 0);
+            tvSettingsDisplayMode.setCompoundDrawablesRelativeWithIntrinsicBounds(chooseDrawable(i), 0, 0, 0);
         }
     };
 
+    /*
+            Display choose language
+     */
+
+    private void showLanguageDialog(AlertDialog.Builder builder) {
+        builder.setMessage(getString(R.string.choisir_langue));
+        builder.setSingleChoiceItems(getResources().getStringArray(R.array.langues),
+                selectedLangue(sptools.readStringData(APP_PREFS_LANGUE, "")),
+                langueListener);
+        builder.create().show();
+    }
+
     private final DialogInterface.OnClickListener langueListener = (dialogInterface, i) -> {
+        tvSettingsLanguage.setText(getString(R.string.language));
         /*if (i == 0){
             setLocale("ar");
             recreate();
@@ -224,71 +323,78 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         }*/
     };
 
-    private final DialogInterface.OnClickListener okModeListener = (dialogInterface, i) -> gotomain(SettingsActivity.this);
-
-    @Override
-    public void onClick(View view) {
-        int id = view.getId();
-        if (id == R.id.ivAvatar || id == R.id.ivCover)
-            showDialogUserInfo();
-        else if (id == R.id.tvKeyList)
-            showKeyList();
-        else if (id == R.id.tvAutorisation)
-            showAutorisationList();
-        else if (id == R.id.tvNotification)
-            showNotification();
-        else if (id == R.id.tvDisplayMode)
-            buildAlertDialogForSingleSelectOption(this, getString(R.string.choisir_mode),
-                    modeListener, getResources().getStringArray(R.array.modes),
-                    sptools.readIntData(APP_PREFS_MODE, 0)).create().show();
-        else if (id == R.id.tvLanguage)
-            buildAlertDialogForSingleSelectOption(this, getString(R.string.choisir_langue),
-                    langueListener, getResources().getStringArray(R.array.langues),
-                    selectedLangue(sptools.readStringData(APP_PREFS_LANGUE, ""))).create().show();
-        else if (id == R.id.tvConfidentialite)
-            sendConfidentialite();
-        else if (id == R.id.tvDataStockage)
-            showDataStockage();
-        else if (id == R.id.tvGroupe)
-            showDialogGroupe();
-        else if (id == R.id.tvFaq)
-            showFaq();
-        else if (id == R.id.tvAbout)
-            showDialogAbout();
-        else if (id == R.id.tvSignOut)
-            buildAlertDialog(this, getString(R.string.app_name), getString(R.string.signout_message),
-                    null, getString(R.string.non), okModeListener, getString(R.string.oui)).create().show();
-    }
-
-    private void showKeyList() {
-    }
-
-    private void showAutorisationList() {
-    }
-
-    private void showNotification() {
-    }
+    /*
+            Display app confidentiality
+     */
 
     private void sendConfidentialite() {
+        Intent intent = new Intent(this, TempActivity.class);
+        intent.putExtra(UID, myuid);
+        intent.putExtra(IDFRAGMENT, FRAGMENT_CONF);
+        startActivity(intent);
     }
+
+    /*
+            Display app data & stockage
+     */
 
     private void showDataStockage() {
+        Intent intent = new Intent(this, TempActivity.class);
+        intent.putExtra(UID, myuid);
+        intent.putExtra(IDFRAGMENT, FRAGMENT_STOCKAGE);
+        startActivity(intent);
     }
+
+    /*
+            Display user groups
+     */
+
+    /**
+     *
+     */
+    private void showDialogGroupe() {
+        Intent intent = new Intent(this, TempActivity.class);
+        intent.putExtra(UID, myuid);
+        intent.putExtra(IDFRAGMENT, FRAGMENT_GROUP);
+        startActivity(intent);
+    }
+
+    /*
+            Display FAQ
+     */
 
     private void showFaq() {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.deone.com/corp/xtasks/faq"));
+        startActivity(browserIntent);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        gotohome(this);
+    /*
+        Display About
+     */
+
+    /**
+     *
+     */
+    private void showDialogAbout() {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.deone.com/corp/xtasks/about"));
+        startActivity(browserIntent);
     }
 
-    @Override
-    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-        int id = compoundButton.getId();
-        if (id == R.id.swKey){
+    /*
+            Sign out
+     */
 
-        }
+    private void showSignoutDialog(AlertDialog.Builder builder) {
+        builder.setMessage(getString(R.string.signout_message));
+        builder.setNegativeButton(getString(R.string.non), null);
+        builder.setPositiveButton(getString(R.string.oui), signoutListener);
+        builder.create().show();
     }
+
+    private final DialogInterface.OnClickListener signoutListener = (dialogInterface, i) -> {
+        fbtools.signOut();
+        dialogInterface.dismiss();
+        gotomain(this);
+    };
+
 }

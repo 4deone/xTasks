@@ -12,26 +12,29 @@ import static com.deone.extrmtasks.tools.Other.initLLanguage;
 import static com.deone.extrmtasks.tools.Other.initThemeMode;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.deone.extrmtasks.tools.Fbtools;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+
+import com.deone.extrmtasks.modeles.User;
+import com.deone.extrmtasks.tools.Signtools;
 import com.deone.extrmtasks.tools.Sptools;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Fbtools fbtools;
+    private Signtools signtools;
     private Sptools sptools;
-    private EditText etvLogin;
-    private EditText etvMotdepasse;
+    private EditText etvLoginMain;
+    private EditText etvMotdepasseMain;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,35 +48,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void initApp() {
         sptools = Sptools.getInstance(this);
-        fbtools = Fbtools.getInstance(this);
-        sptools.writeIntData(APP_PREFS_MODE, checkUiCurrentMode()==AppCompatDelegate.MODE_NIGHT_YES?AppCompatDelegate.MODE_NIGHT_YES:AppCompatDelegate.MODE_NIGHT_NO);
+        sptools.writeIntData(APP_PREFS_MODE, appActualThemeMode());
         initThemeMode(sptools.readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
         sptools.writeStringData(APP_PREFS_LANGUE, Locale.getDefault().getLanguage());
         sptools.writeStringData(APP_PREFS_COUNTRY, Locale.getDefault().getCountry());
         initLLanguage(this, sptools.readStringData(APP_PREFS_LANGUE, EN));
+
+        signtools = Signtools.getInstance(this);
+    }
+
+    private int appActualThemeMode() {
+        return checkUiCurrentMode()==AppCompatDelegate.MODE_NIGHT_YES
+                ?
+                AppCompatDelegate.MODE_NIGHT_YES
+                :
+                AppCompatDelegate.MODE_NIGHT_NO;
     }
 
     /**
      *
      */
     private void checkUser() {
-        if(isStringEmpty(fbtools.getId())){
-            initViews();
-        }else {
+        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+        if(fuser != null){
             gotohome(this);
+        }else {
+            initViews();
         }
-    }
-
-    /**
-     *
-     */
-    private void connectWithGoogle() {
-    }
-
-    /**
-     *
-     */
-    private void connectWithFacebook() {
     }
 
     /**
@@ -81,12 +82,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void initViews() {
         setContentView(R.layout.activity_main);
-        etvLogin = findViewById(R.id.etvLogin);
-        etvMotdepasse = findViewById(R.id.etvMotdepasse);
-        findViewById(R.id.btProcess).setOnClickListener(this);
-        findViewById(R.id.tvSignUp).setOnClickListener(this);
-        findViewById(R.id.tvGoogle).setOnClickListener(this);
-        findViewById(R.id.tvFacebook).setOnClickListener(this);
+        etvLoginMain = findViewById(R.id.etvLoginMain);
+        etvMotdepasseMain = findViewById(R.id.etvMotdepasseMain);
+        findViewById(R.id.btProcessMain).setOnClickListener(this);
+        findViewById(R.id.tvSignUpMain).setOnClickListener(this);
     }
 
     /**
@@ -95,32 +94,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void signInProcess() {
         ProgressDialog pd = buildProgressDialog(this, getString(R.string.app_name), getString(R.string.verif_entries));
         pd.show();
-        String email = etvLogin.getText().toString().trim();
+        String email = etvLoginMain.getText().toString().trim();
         if (isStringEmpty(email)){
             pd.dismiss();
             Toast.makeText(this, getString(R.string.email_error), Toast.LENGTH_SHORT).show();
             return;
         }
-        String motdepasse = etvMotdepasse.getText().toString().trim();
+        String motdepasse = etvMotdepasseMain.getText().toString().trim();
         if (isStringEmpty(motdepasse)){
             pd.dismiss();
             Toast.makeText(this, getString(R.string.motdepasse_error), Toast.LENGTH_SHORT).show();
             return;
         }
-        fbtools.checkEmailStatus(pd, email, motdepasse);
+        User user = new User(""+email, ""+motdepasse);
+        signtools.checkEmailStatus(pd, user);
     }
 
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        if (id == R.id.btProcess)
+        if (id == R.id.btProcessMain)
             signInProcess();
-        else if (id == R.id.tvSignUp)
+        else if (id == R.id.tvSignUpMain)
             gotonew(this);
-        else if (id == R.id.tvGoogle)
-            connectWithGoogle();
-        else if (id == R.id.tvFacebook)
-            connectWithFacebook();
     }
 
     @Override

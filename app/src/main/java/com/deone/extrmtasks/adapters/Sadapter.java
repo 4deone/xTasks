@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.deone.extrmtasks.R;
-import com.deone.extrmtasks.modeles.Taches;
+import com.deone.extrmtasks.modeles.Tache;
 import com.deone.extrmtasks.tools.Xlistener;
 
 import java.util.List;
@@ -24,16 +24,16 @@ public class Sadapter extends RecyclerView.Adapter<Sadapter.Holder>{
 
     private final Context appContext;
     private Xlistener listener;
-    private final List<Taches> tachesList;
+    private final List<Tache> tacheList;
 
     /**
      *
      * @param appContext
-     * @param tachesList
+     * @param tacheList
      */
-    public Sadapter(Context appContext, List<Taches> tachesList) {
+    public Sadapter(Context appContext, List<Tache> tacheList) {
         this.appContext = appContext;
-        this.tachesList = tachesList;
+        this.tacheList = tacheList;
     }
 
     @NonNull
@@ -45,13 +45,13 @@ public class Sadapter extends RecyclerView.Adapter<Sadapter.Holder>{
 
     @Override
     public void onBindViewHolder(@NonNull Sadapter.Holder holder, int position) {
-        String tCover = tachesList.get(position).getTcover();
+        String tCover = tacheList.get(position).getTcover();
         loadingImageWithPath(holder.ivTachesLogoSettings, R.drawable.wild, tCover);
     }
 
     @Override
     public int getItemCount() {
-        return tachesList.size();
+        return tacheList.size();
     }
 
     /**

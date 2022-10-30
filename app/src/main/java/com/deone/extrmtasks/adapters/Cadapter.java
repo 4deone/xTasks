@@ -1,8 +1,13 @@
 package com.deone.extrmtasks.adapters;
 
+import static com.deone.extrmtasks.tools.Constants.FRAGMENT_ACCOUNT;
+import static com.deone.extrmtasks.tools.Constants.IDFRAGMENT;
+import static com.deone.extrmtasks.tools.Constants.UID;
+import static com.deone.extrmtasks.tools.Ivtools.loadingImageWithPath;
 import static com.deone.extrmtasks.tools.Other.formatLaDate;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +18,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.deone.extrmtasks.R;
-import com.deone.extrmtasks.modeles.Comment;
+import com.deone.extrmtasks.TempActivity;
+import com.deone.extrmtasks.modeles.Commentaire;
+import com.deone.extrmtasks.tools.Fbtools;
 import com.deone.extrmtasks.tools.Xlistener;
 
 import java.util.List;
@@ -21,20 +28,22 @@ import java.util.List;
 /**
  *
  */
-public class Cadapter extends RecyclerView.Adapter<Cadapter.Holder>{
+public class Cadapter extends RecyclerView.Adapter<Cadapter.Holder> {
 
     private final Context appContext;
     private Xlistener listener;
-    private final List<Comment> commentList;
+    private final List<Commentaire> commentaireList;
+    private String myuid;
 
     /**
      *
      * @param appContext
-     * @param commentList
+     * @param commentaireList
      */
-    public Cadapter(Context appContext, List<Comment> commentList) {
+    public Cadapter(Context appContext, List<Commentaire> commentaireList) {
         this.appContext = appContext;
-        this.commentList = commentList;
+        this.commentaireList = commentaireList;
+        this.myuid = Fbtools.getInstance(appContext).getId();
     }
 
     @NonNull
@@ -46,20 +55,39 @@ public class Cadapter extends RecyclerView.Adapter<Cadapter.Holder>{
 
     @Override
     public void onBindViewHolder(@NonNull Cadapter.Holder holder, int position) {
-        String uAvatar = commentList.get(position).getUavatar();
-        String uNoms = commentList.get(position).getUnoms();
-        String message = commentList.get(position).getCmessage();
-        String timestamp = commentList.get(position).getCdate();
+        String uid = commentaireList.get(position).getUid();
+        String uAvatar = commentaireList.get(position).getUavatar();
+        String uNoms = commentaireList.get(position).getUnoms();
+        String message = commentaireList.get(position).getCmessage();
+        String timestamp = commentaireList.get(position).getCdate();
 
-        //holder.ivUser.
-        holder.tvUsername.setText(uNoms);
+        loadingImageWithPath(holder.ivAvatarUser, R.drawable.russia, uAvatar);
+        holder.ivAvatarUser.setOnClickListener(view -> {
+            if (!myuid.equals(uid)) {
+                Intent intent = new Intent(appContext, TempActivity.class);
+                intent.putExtra(UID, uid);
+                intent.putExtra(IDFRAGMENT, FRAGMENT_ACCOUNT);
+                appContext.startActivity(intent);
+            }
+        });
+
+        holder.tvUsername.setText(myuid.equals(uid)?appContext.getString(R.string.you):uNoms);
+        holder.tvUsername.setOnClickListener(view -> {
+            if (!myuid.equals(uid)) {
+                Intent intent = new Intent(appContext, TempActivity.class);
+                intent.putExtra(UID, uid);
+                intent.putExtra(IDFRAGMENT, FRAGMENT_ACCOUNT);
+                appContext.startActivity(intent);
+            }
+        });
+
         holder.tvComment.setText(message);
         holder.tvDatecomment.setText(formatLaDate(timestamp));
     }
 
     @Override
     public int getItemCount() {
-        return commentList.size();
+        return commentaireList.size();
     }
 
     /**
@@ -73,14 +101,14 @@ public class Cadapter extends RecyclerView.Adapter<Cadapter.Holder>{
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener,
             View.OnLongClickListener {
 
-        ImageView ivUser;
+        ImageView ivAvatarUser;
         TextView tvUsername;
         TextView tvComment;
         TextView tvDatecomment;
 
         public Holder(@NonNull View itemView) {
             super(itemView);
-            ivUser = itemView.findViewById(R.id.ivAvatarUser);
+            ivAvatarUser = itemView.findViewById(R.id.ivAvatarUser);
             tvUsername = itemView.findViewById(R.id.tvUsername);
             tvComment = itemView.findViewById(R.id.tvComment);
             tvDatecomment = itemView.findViewById(R.id.tvDatecomment);

@@ -8,9 +8,9 @@
     tools:context=".AddActivity">
 
     <ImageView
-        android:id="@+id/ivTachesLogo"
+        android:id="@+id/ivAddTachesLogo"
         android:layout_width="match_parent"
-        android:layout_height="450dp"
+        android:layout_height="400dp"
         android:contentDescription="@string/item_avatar_image"
         android:scaleType="centerCrop"
         android:src="@drawable/wild" />
@@ -26,14 +26,14 @@
         android:src="@drawable/ic_action_ajouter" />
 
     <RelativeLayout
-        android:layout_above="@+id/rlTask"
-        android:padding="10dp"
-        android:background="@color/gris_transparent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/rlAddTask"
+        android:background="@color/gris_transparent"
+        android:padding="10dp">
 
         <TextView
-            android:id="@+id/tvWindowTitle"
+            android:id="@+id/tvAddWindowTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -43,8 +43,8 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tvWindowSubtitle"
-            android:layout_below="@+id/tvWindowTitle"
+            android:id="@+id/tvAddWindowSubtitle"
+            android:layout_below="@+id/tvAddWindowTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -54,7 +54,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/rlTask"
+        android:id="@+id/rlAddTask"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -62,7 +62,7 @@
         android:padding="10dp">
 
         <TextView
-            android:id="@+id/tvTitle"
+            android:id="@+id/tvAddTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -70,28 +70,28 @@
             android:textColor="@color/black" />
 
         <EditText
-            android:id="@+id/etvTitre"
+            android:id="@+id/edtvAddTitre"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvTitle"
+            android:layout_below="@+id/tvAddTitle"
             android:hint="@string/enter_titre_de_la_tache"
             android:inputType="textCapWords"
             android:padding="20dp" />
 
         <TextView
-            android:id="@+id/tvDescription"
+            android:id="@+id/tvAddDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/etvTitre"
+            android:layout_below="@+id/edtvAddTitre"
             android:layout_marginTop="10dp"
             android:text="@string/description_de_la_tache"
             android:textColor="@color/black" />
 
         <EditText
-            android:id="@+id/etvDescription"
+            android:id="@+id/edtvAddDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvDescription"
+            android:layout_below="@+id/tvAddDescription"
             android:gravity="top"
             android:hint="@string/enter_description_de_la_tache"
             android:inputType="textCapSentences|textMultiLine"
@@ -103,10 +103,10 @@
             android:scrollbars="vertical" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/swLocate"
+            android:id="@+id/swAddLocate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/etvDescription"
+            android:layout_below="@+id/edtvAddDescription"
             android:layout_marginTop="10dp"
             android:drawablePadding="10dp"
             android:text="@string/localise_la_tache"
@@ -118,7 +118,7 @@
             android:id="@+id/btAddTask"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/swLocate"
+            android:layout_below="@+id/swAddLocate"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"

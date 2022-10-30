@@ -1,29 +1,35 @@
 package com.deone.extrmtasks.tools;
 
 import static com.deone.extrmtasks.tools.Constants.APP;
+import static com.deone.extrmtasks.tools.Constants.CAMERA_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.CONDITIONS;
 import static com.deone.extrmtasks.tools.Constants.FORMAT_DATE;
-import static com.deone.extrmtasks.tools.Constants.TID;
+import static com.deone.extrmtasks.tools.Constants.LOCATION_REQUEST_CODE;
+import static com.deone.extrmtasks.tools.Constants.STORAGE_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.UDESCRIPTION;
 import static com.deone.extrmtasks.tools.Constants.UID;
 import static com.deone.extrmtasks.tools.Constants.UNOMS;
 import static com.deone.extrmtasks.tools.Constants.UTELEPHONE;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.deone.extrmtasks.AccountActivity;
+import com.deone.extrmtasks.TempActivity;
 import com.deone.extrmtasks.AddActivity;
 import com.deone.extrmtasks.HomeActivity;
 import com.deone.extrmtasks.MainActivity;
@@ -141,7 +147,7 @@ public class Other {
     }
 
     public static void gotoaccount(Context appContext, String myuid) {
-        Intent intent = new Intent(appContext, AccountActivity.class);
+        Intent intent = new Intent(appContext, TempActivity.class);
         intent.putExtra(UID, myuid);
         appContext.startActivity(intent);
     }
@@ -306,9 +312,9 @@ public class Other {
      *
      * @return
      */
-    public static RecyclerView.LayoutManager rvLayoutManager(Context appContext, int lastPosition) {
+    public static RecyclerView.LayoutManager rvLayoutManager(Context appContext, int lastPosition, int orientation) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(appContext);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        layoutManager.setOrientation(orientation);
         layoutManager.scrollToPosition(lastPosition);
         return layoutManager;
     }
@@ -462,6 +468,57 @@ public class Other {
     public static void toutesLesConditions(ValueEventListener vConditions) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(APP);
         ref.child(CONDITIONS).addValueEventListener(vConditions);
+    }
+
+    public static boolean checkCameraPermissions(Context appContext) {
+        boolean result = ContextCompat.checkSelfPermission(appContext, Manifest.permission.CAMERA)
+                == (PackageManager.PERMISSION_GRANTED);
+        boolean result1 = ContextCompat.checkSelfPermission(appContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == (PackageManager.PERMISSION_GRANTED);
+        return result && result1;
+    }
+
+    public static void requestCameraPermissions(Context appContext, String[] cameraPermissions) {
+        ActivityCompat.requestPermissions((Activity) appContext, cameraPermissions, CAMERA_REQUEST_CODE);
+    }
+
+    public static boolean checkStoragePermissions(Context appContext) {
+        return ContextCompat.checkSelfPermission(appContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == (PackageManager.PERMISSION_GRANTED);
+    }
+
+    public static void requestStoragePermissions(Context appContext, String[] storagePermissions) {
+        ActivityCompat.requestPermissions((Activity) appContext, storagePermissions, STORAGE_REQUEST_CODE);
+    }
+
+    public static boolean checkLocationPermissions(Context appContext) {
+        boolean result = ContextCompat.checkSelfPermission(appContext, Manifest.permission.ACCESS_FINE_LOCATION)
+                == (PackageManager.PERMISSION_GRANTED);
+        boolean result1 = ContextCompat.checkSelfPermission(appContext, Manifest.permission.ACCESS_COARSE_LOCATION)
+                == (PackageManager.PERMISSION_GRANTED);
+        return result && result1;
+    }
+
+    public static void requestLocationPermissions(Context appContext, String[] locationPermissions) {
+        ActivityCompat.requestPermissions((Activity) appContext, locationPermissions, LOCATION_REQUEST_CODE);
+    }
+
+    public static boolean isContains(String marecherche, String value) {
+        return value.toLowerCase().contains(marecherche.toLowerCase());
+    }
+
+    public static String formatAdresse(String... items) {
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        for (String item : items){
+            sb.append(item);
+            if(i!=items.length)
+                sb.append(";\n");
+            else
+                sb.append(".");
+            i++;
+        }
+        return sb.toString();
     }
 
 }

@@ -9,7 +9,7 @@
     tools:context=".TaskActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/toolbarTask"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -19,46 +19,46 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar"
-        android:layout_above="@+id/rlSendComment">
+        android:layout_above="@+id/rlTaskSendComment"
+        android:layout_below="@+id/toolbarTask">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
 
             <RelativeLayout
-                android:id="@+id/rlAutor"
+                android:id="@+id/rlTaskAutor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:background="@color/gris_transparent"
-                android:padding="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:padding="5dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/ivAvatarUser"
+                    android:id="@+id/ivtaskAvatarUser"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:src="@drawable/russia" />
 
                 <RelativeLayout
-                    android:layout_toEndOf="@+id/ivAvatarUser"
-                    android:layout_marginStart="10dp"
-                    android:layout_centerVertical="true"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/ivtaskAvatarUser">
 
                     <TextView
-                        android:id="@+id/tvUsername"
+                        android:id="@+id/tvTaskUsername"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:textSize="17sp"
                         android:text="@string/user_name"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/tvPublicationDate"
-                        android:layout_below="@+id/tvUsername"
+                        android:id="@+id/tvTaskPublicationDate"
+                        android:layout_below="@+id/tvTaskUsername"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/publication_s_date"
@@ -69,9 +69,9 @@
             </RelativeLayout>
 
             <ImageView
-                android:id="@+id/ivTachesLogo"
+                android:id="@+id/ivTaskCover"
                 android:layout_width="match_parent"
-                android:layout_below="@+id/rlAutor"
+                android:layout_below="@+id/rlTaskAutor"
                 android:layout_height="400dp"
                 android:contentDescription="@string/item_avatar_image"
                 android:scaleType="centerCrop"
@@ -81,13 +81,13 @@
                 android:id="@+id/rlTaskInfos"
                 android:background="@color/gris_transparent"
                 android:padding="10dp"
-                android:layout_alignBottom="@+id/ivTachesLogo"
+                android:layout_alignBottom="@+id/ivTaskCover"
                 android:layout_centerVertical="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/tvAdresse"
+                    android:id="@+id/tvTaskAdresse"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -97,13 +97,13 @@
                     android:textSize="12sp" />
 
                 <LinearLayout
-                    android:layout_below="@+id/tvAdresse"
+                    android:layout_below="@+id/tvTaskAdresse"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <TextView
-                        android:id="@+id/tvNjaime"
+                        android:id="@+id/tvTaskNjaime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -113,7 +113,7 @@
                         android:textColor="@color/black" />
 
                     <TextView
-                        android:id="@+id/tvNcomment"
+                        android:id="@+id/tvTaskNcomment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -128,13 +128,13 @@
 
             <RelativeLayout
                 android:id="@+id/rlTaskInfo"
-                android:layout_below="@+id/ivTachesLogo"
+                android:layout_below="@+id/ivTaskCover"
                 android:padding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
 
                 <TextView
-                    android:id="@+id/tvTitle"
+                    android:id="@+id/tvTaskTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -145,17 +145,17 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/tvDescription"
+                    android:id="@+id/tvTaskDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tvTitle"
+                    android:layout_below="@+id/tvTaskTitle"
                     android:text="@string/description_de_la_tache"
                     android:textColor="@color/black" />
 
             </RelativeLayout>
 
             <LinearLayout
-                android:id="@+id/llItemAction"
+                android:id="@+id/llTaskItemAction"
                 android:layout_below="@+id/rlTaskInfo"
                 android:padding="3dp"
                 android:orientation="horizontal"
@@ -163,7 +163,7 @@
                 android:layout_height="wrap_content">
 
                 <ImageButton
-                    android:id="@+id/ibJaime"
+                    android:id="@+id/ibTaskJaime"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_action_jaime"
@@ -172,7 +172,7 @@
                     android:contentDescription="@string/like_task" />
 
                 <ImageButton
-                    android:id="@+id/ibFavorite"
+                    android:id="@+id/ibTaskFavorite"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -181,7 +181,7 @@
                     android:contentDescription="@string/this_task_is_my_favorite" />
 
                 <ImageButton
-                    android:id="@+id/ibShare"
+                    android:id="@+id/ibTaskShare"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -190,7 +190,7 @@
                     android:contentDescription="@string/share_this_task" />
 
                 <ImageButton
-                    android:id="@+id/ibLocation"
+                    android:id="@+id/ibTaskLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -198,13 +198,22 @@
                     android:background="@null"
                     android:contentDescription="@string/this_task_location" />
 
+                <ImageButton
+                    android:id="@+id/ibTaskSignale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_action_signaler_old"
+                    android:background="@null"
+                    android:contentDescription="@string/this_task_location" />
+
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvComments"
+                android:id="@+id/rvTaskComments"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/llItemAction"
+                android:layout_below="@+id/llTaskItemAction"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 tools:listitem="@layout/item_comment" />
 
@@ -213,7 +222,7 @@
     </androidx.core.widget.NestedScrollView>
 
     <RelativeLayout
-        android:id="@+id/rlSendComment"
+        android:id="@+id/rlTaskSendComment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -221,17 +230,17 @@
         android:padding="5dp">
 
         <EditText
-            android:id="@+id/etvComment"
+            android:id="@+id/etvTaskComment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:layout_toStartOf="@+id/ibSendComment"
+            android:layout_toStartOf="@+id/ibTaskSendComment"
             android:hint="@string/enter_your_comment"
             android:inputType="text"
             android:padding="20dp" />
 
         <ImageButton
-            android:id="@+id/ibSendComment"
+            android:id="@+id/ibTaskSendComment"
             android:src="@drawable/ic_action_comment"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"

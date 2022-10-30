@@ -8,7 +8,7 @@
     tools:context=".HomeActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/toolbarHome"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -16,14 +16,14 @@
         android:minHeight="?attr/actionBarSize" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_below="@+id/toolbar"
-        tools:listitem="@layout/item_taches"
-        android:id="@+id/rvTaches"
+        android:id="@+id/rvTachesHome"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbarHome"
+        tools:listitem="@layout/item_taches" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAddTaches"
+        android:id="@+id/fabAddTachesHome"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:src="@drawable/ic_action_ajouter"

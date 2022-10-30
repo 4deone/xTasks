@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/tvAuths"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:text="@string/liste_des_autorisations_n_cessaires"
+        android:textColor="@color/black" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/swCamera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvAuths"
+        android:drawablePadding="10dp"
+        android:padding="20dp"
+        android:text="@string/camera"
+        android:textColor="@color/black"
+        android:textSize="17sp"
+        app:drawableStartCompat="@drawable/ic_action_camera" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/swGallery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/swCamera"
+        android:drawablePadding="10dp"
+        android:padding="20dp"
+        android:text="@string/gallery"
+        android:textColor="@color/black"
+        android:textSize="17sp"
+        app:drawableStartCompat="@drawable/ic_action_galery" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/swLocalisation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/swGallery"
+        android:drawablePadding="10dp"
+        android:padding="20dp"
+        android:text="@string/localisation"
+        android:textColor="@color/black"
+        android:textSize="17sp"
+        app:drawableStartCompat="@drawable/ic_action_localise" />
+
+    <Button
+        android:id="@+id/btProcess"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/swLocalisation"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/process" />
+
+</RelativeLayout>

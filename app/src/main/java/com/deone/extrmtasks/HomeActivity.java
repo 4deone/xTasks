@@ -11,6 +11,7 @@ import static com.deone.extrmtasks.tools.Other.gotomain;
 import static com.deone.extrmtasks.tools.Other.gotosettings;
 import static com.deone.extrmtasks.tools.Other.initLLanguage;
 import static com.deone.extrmtasks.tools.Other.initThemeMode;
+import static com.deone.extrmtasks.tools.Other.isContains;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
 import static com.deone.extrmtasks.tools.Other.rvLayoutManager;
 
@@ -26,15 +27,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.deone.extrmtasks.adapters.Tadapter;
-import com.deone.extrmtasks.modeles.Taches;
+import com.deone.extrmtasks.modeles.Tache;
 import com.deone.extrmtasks.tools.Fbtools;
 import com.deone.extrmtasks.tools.Sptools;
 import com.deone.extrmtasks.tools.Xlistener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -45,10 +45,10 @@ import java.util.List;
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Fbtools fbtools;
-    private Sptools sptools;
-    private RecyclerView rvTaches;
-    private List<Taches> tachesList;
+    private RecyclerView rvTachesHome;
+    private List<Tache> tacheList;
     private String ma_recherche;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         initApp();
@@ -78,7 +78,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void initApp() {
         fbtools = Fbtools.getInstance(this);
-        sptools = Sptools.getInstance(this);
+        Sptools sptools = Sptools.getInstance(this);
         initThemeMode(sptools.readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
         initLLanguage(this, sptools.readStringData(APP_PREFS_LANGUE, EN));
     }
@@ -99,13 +99,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void initViews() {
         setContentView(R.layout.activity_home);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        rvTaches = findViewById(R.id.rvTaches);
-        rvTaches.setLayoutManager(rvLayoutManager(this, 0));
-        tachesList = new ArrayList<>();
-        fbtools.toutesLesTaches(vTaches);
-        findViewById(R.id.fabAddTaches).setOnClickListener(this);
+        Toolbar toolbarHome = findViewById(R.id.toolbarHome);
+        setSupportActionBar(toolbarHome);
+        rvTachesHome = findViewById(R.id.rvTachesHome);
+        rvTachesHome.setLayoutManager(rvLayoutManager(this, 0, LinearLayoutManager.VERTICAL));
+        tacheList = new ArrayList<>();
+        fbtools.liretouteslestaches(vTaches);
+        findViewById(R.id.fabAddTachesHome).setOnClickListener(this);
     }
 
     /**
@@ -113,12 +113,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      * @param snapshot
      */
     private void showToutesMesTaches(DataSnapshot snapshot) {
-        tachesList.clear();
+        tacheList.clear();
         for (DataSnapshot ds : snapshot.getChildren()){
-            Taches taches = ds.getValue(Taches.class);
-            tachesList.add(taches);
-            Tadapter tadapter = new Tadapter(HomeActivity.this, tachesList);
-            rvTaches.setAdapter(tadapter);
+            Tache tache = ds.getValue(Tache.class);
+            tacheList.add(tache);
+            Tadapter tadapter = new Tadapter(HomeActivity.this, tacheList);
+            rvTachesHome.setAdapter(tadapter);
             tadapter.setListener(xListener);
         }
     }
@@ -128,32 +128,36 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      * @param snapshot
      */
     private void showToutesMesRechercheDeTaches(DataSnapshot snapshot) {
-        tachesList.clear();
+        tacheList.clear();
         for (DataSnapshot ds : snapshot.getChildren()){
-            Taches taches = ds.getValue(Taches.class);
-            assert taches != null;
-            if (ma_recherche.equals(taches.getTtitre())||ma_recherche.equals(taches.getTdescription())){
-                tachesList.add(taches);
-                Tadapter tadapter = new Tadapter(HomeActivity.this, tachesList);
-                rvTaches.setAdapter(tadapter);
+            Tache tache = ds.getValue(Tache.class);
+            assert tache != null;
+            if (isContains(ma_recherche, tache.getTtitre())||isContains(ma_recherche, tache.getTdescription())){
+                tacheList.add(tache);
+                Tadapter tadapter = new Tadapter(HomeActivity.this, tacheList);
+                rvTachesHome.setAdapter(tadapter);
                 tadapter.setListener(xListener);
             }
         }
     }
 
+    /**
+     *
+     * @param query
+     */
     private void makeAndFindYourSearch(String query) {
         if (!TextUtils.isEmpty(query)){
             ma_recherche = query;
-            fbtools.toutesLesTaches(vSearchTaches);
+            fbtools.liretouteslestaches(vSearchTaches);
         }else {
-            fbtools.toutesLesTaches(vTaches);
+            fbtools.liretouteslestaches(vTaches);
         }
     }
 
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        if (id == R.id.fabAddTaches)
+        if (id == R.id.fabAddTachesHome)
             gotoaddtask(this);
     }
 
@@ -182,18 +186,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    private final Xlistener xListener = new Xlistener() {
-        @Override
-        public void onItemClick(View view, int position) {
-            gotoTask(HomeActivity.this, TID, tachesList.get(position).getTid(), UID, tachesList.get(position).getUid());
-        }
-
-        @Override
-        public void onLongItemClick(View view, int position) {
-
-        }
-    };
-
     private final SearchView.OnQueryTextListener searchManage = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
@@ -205,6 +197,18 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         public boolean onQueryTextChange(String newText) {
             makeAndFindYourSearch(newText);
             return false;
+        }
+    };
+
+    private final Xlistener xListener = new Xlistener() {
+        @Override
+        public void onItemClick(View view, int position) {
+            gotoTask(HomeActivity.this, TID, tacheList.get(position).getTid(), UID, tacheList.get(position).getUid());
+        }
+
+        @Override
+        public void onLongItemClick(View view, int position) {
+
         }
     };
 

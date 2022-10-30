@@ -12,13 +12,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -32,7 +30,7 @@ public class Ivtools {
     private static Ivtools instance;
     private static String[] cameraPermissions;
     private static String[] storagePermissions;
-    private static ActivityResultLauncher<Intent> someActivityResultLauncher ;
+    private Uri imageUri;
 
     /**
      *
@@ -96,13 +94,13 @@ public class Ivtools {
     public void pickFromGallery() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK);
         galleryIntent.setType("image/*");
-        someActivityResultLauncher.launch(galleryIntent);
+        ((Activity) appContext).startActivityForResult(galleryIntent, STORAGE_REQUEST_CODE);
     }
 
     /**
      *
      */
-    public void pickFromCamera(Uri imageUri) {
+    public void pickFromCamera() {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, "User Avatar Title");
         values.put(MediaStore.Images.Media.DESCRIPTION, "User Avatar Description");
@@ -110,17 +108,24 @@ public class Ivtools {
 
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-        someActivityResultLauncher.launch(cameraIntent);
+        ((Activity) appContext).startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
     }
 
     /**
      *
-     * @param someActivityResultLauncher
+     * @param imageUri
      */
-    public void setSomeActivityResultLauncher(ActivityResultLauncher<Intent> someActivityResultLauncher) {
-        Ivtools.someActivityResultLauncher = someActivityResultLauncher;
+    public void setImageUri(Uri imageUri) {
+        this.imageUri = imageUri;
     }
 
+    /**
+     *
+     * @return
+     */
+    public Uri getImageUri() {
+        return imageUri;
+    }
 
     /**
      *
@@ -172,35 +177,6 @@ public class Ivtools {
     public static void loadingImageWithPath(ImageView iv, int draw, String image) {
         if (!isStringEmpty(image))
             Picasso.get().load(image).placeholder(draw).into(iv);
-    }
-
-    /**
-     *
-     * @param requestCode
-     * @param grantResults
-     * @param imageUri
-     */
-    public void requestCameraAndGalleryPermissions(int requestCode, int[] grantResults, Uri imageUri) {
-        switch (requestCode){
-            case CAMERA_REQUEST_CODE:{
-                if (grantResults.length>0){
-                    if (isCameraAccepted(grantResults[0]) && isWriteStorageAccepted(grantResults[1]))
-                        this.pickFromCamera(imageUri);
-                    else
-                        Toast.makeText(appContext, appContext.getString(R.string.enable_camera_storage_permissions), Toast.LENGTH_SHORT).show();
-                }
-            }
-            break;
-            case STORAGE_REQUEST_CODE:{
-                if (grantResults.length>0){
-                    if (isWriteStorageAccepted(grantResults[0]))
-                        this.pickFromGallery();
-                    else
-                        Toast.makeText(appContext, appContext.getString(R.string.enable_storage_permissions), Toast.LENGTH_SHORT).show();
-                }
-            }
-            break;
-        }
     }
 
 }
