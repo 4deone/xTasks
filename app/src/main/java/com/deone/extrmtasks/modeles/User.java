@@ -17,6 +17,7 @@ public class User implements Comparable<User>{
     private  String unlikes;
     private  String uncomments;
     private  String ungroups;
+    private  String unkeys;
 
     public User() {
     }
@@ -35,22 +36,9 @@ public class User implements Comparable<User>{
         this.upays = upays;
     }
 
-    public User(String uid,
-                String ucover,
-                String uemail,
-                String umotdepasse,
-                String unoms,
-                String utelephone,
-                String uville,
-                String upays,
-                String uavatar,
-                String udescription,
-                String udate,
-                String untask,
-                String unfavoris,
-                String unlikes,
-                String uncomments,
-                String ungroups) {
+    public User(String uid, String ucover, String uemail, String umotdepasse, String unoms, String utelephone,
+                String uville, String upays, String uavatar, String udescription, String udate, String untask,
+                String unfavoris, String unlikes, String uncomments, String ungroups, String unkeys) {
         this.uid = uid;
         this.ucover = ucover;
         this.uemail = uemail;
@@ -67,6 +55,7 @@ public class User implements Comparable<User>{
         this.unlikes = unlikes;
         this.uncomments = uncomments;
         this.ungroups = ungroups;
+        this.unkeys = unkeys;
     }
 
     public String getUid() {
@@ -195,6 +184,14 @@ public class User implements Comparable<User>{
 
     public void setUngroups(String ungroups) {
         this.ungroups = ungroups;
+    }
+
+    public String getUnkeys() {
+        return unkeys;
+    }
+
+    public void setUnkeys(String unkeys) {
+        this.unkeys = unkeys;
     }
 
     @Override

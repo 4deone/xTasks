@@ -208,4 +208,9 @@
     <string name="signaler_l_utilisateur">Signaler l\'utilisateur, %s</string>
     <string name="signaler_la_tache">Signaler la tache, %s</string>
     <string name="param_your_app">Paramétrage de l\'application</string>
+    <string name="key_item">Key item</string>
+    <string name="delete_key_item">Delete key item</string>
+    <string name="no_key_words">No key words</string>
+    <string name="enter_a_new_key">Enter a new key</string>
+    <string name="add_a_new_key">Add a new key</string>
 </resources>

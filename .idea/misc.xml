@@ -35,6 +35,7 @@
         <entry key="app/src/main/res/layout/fragment_stockage.xml" value="0.2515625" />
         <entry key="app/src/main/res/layout/item_comment.xml" value="0.24048913043478262" />
         <entry key="app/src/main/res/layout/item_condition.xml" value="0.2515625" />
+        <entry key="app/src/main/res/layout/item_key.xml" value="0.18" />
         <entry key="app/src/main/res/layout/item_taches.xml" value="0.24048913043478262" />
         <entry key="app/src/main/res/layout/item_taches_list.xml" value="0.2515625" />
         <entry key="app/src/main/res/layout/item_taches_signalement.xml" value="0.2515625" />

@@ -51,6 +51,8 @@ public class Constants {
     public static final String FRAGMENT_KEY = "key";
     public static final String FRAGMENT_NOT = "notification";
     public static final String FRAGMENT_STOCKAGE = "stockage";
+    public static final String KEYS = "Keys";
+    public static final String UNKEYS = "unkeys";
     public static final int LOCATION_REQUEST_CODE_ACCESS_COARSE_LOCATION = 101;
     public static final int LOCATION_REQUEST_CODE_ACCESS_FINE_LOCATION = 102;
     public static final int LOCATION_REQUEST_CODE = 100;

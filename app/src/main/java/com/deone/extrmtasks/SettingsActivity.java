@@ -64,6 +64,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private TextView tvSettingsComptePhone;
     private TextView tvSettingsDisplayMode;
     private TextView tvSettingsLanguage;
+    private TextView tvSettingsKeyList;
     private String myuid;
 
     @Override
@@ -100,7 +101,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         int id = compoundButton.getId();
         if (id == R.id.swSettingsKey){
-
+                tvSettingsKeyList.setEnabled(b);
         }
     }
 
@@ -181,6 +182,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         SwitchCompat swSettingsKey = findViewById(R.id.swSettingsKey);
         tvSettingsDisplayMode = findViewById(R.id.tvSettingsDisplayMode);
         tvSettingsLanguage = findViewById(R.id.tvSettingsLanguage);
+        tvSettingsKeyList = findViewById(R.id.tvSettingsKeyList);
+        tvSettingsKeyList.setEnabled(swSettingsKey.isEnabled());
 
         fbtools.lireUnUtilisateurSpecifique(vUser);
 
@@ -188,7 +191,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         ivSettingsAvatar.setOnClickListener(this);
         tvSettingsDisplayMode.setOnClickListener(this);
         tvSettingsLanguage.setOnClickListener(this);
-        findViewById(R.id.tvSettingsKeyList).setOnClickListener(this);
+        tvSettingsKeyList.setOnClickListener(this);
         findViewById(R.id.tvSettingsAutorisation).setOnClickListener(this);
         findViewById(R.id.tvSettingsNotification).setOnClickListener(this);
         findViewById(R.id.tvSettingsConfidentialite).setOnClickListener(this);
@@ -231,6 +234,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             tvSettingsComptePhone.setText(safeShowValue(user.getUtelephone()));
             loadingImageWithPath(ivSettingsCover, R.drawable.russia, user.getUavatar());
             loadingImageWithPath(ivSettingsAvatar, R.drawable.wild, user.getUcover());
+            ds.child("Keys").getRef().addValueEventListener(vKeys);
         }
     }
 
@@ -238,6 +242,18 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             DisplayUserInformation(snapshot);
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+            Toast.makeText(SettingsActivity.this, getString(R.string.download_error), Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    private final ValueEventListener vKeys = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            tvSettingsKeyList.setEnabled(snapshot.hasChildren());
         }
 
         @Override

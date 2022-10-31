@@ -4,6 +4,7 @@ import static com.deone.extrmtasks.tools.Constants.AVATAR;
 import static com.deone.extrmtasks.tools.Constants.COMMENTS;
 import static com.deone.extrmtasks.tools.Constants.COVER;
 import static com.deone.extrmtasks.tools.Constants.DATABASE;
+import static com.deone.extrmtasks.tools.Constants.KEYS;
 import static com.deone.extrmtasks.tools.Constants.SIGNALES;
 import static com.deone.extrmtasks.tools.Constants.TACHES;
 import static com.deone.extrmtasks.tools.Constants.TID;
@@ -13,6 +14,7 @@ import static com.deone.extrmtasks.tools.Constants.UAVATAR;
 import static com.deone.extrmtasks.tools.Constants.UCOVER;
 import static com.deone.extrmtasks.tools.Constants.UID;
 import static com.deone.extrmtasks.tools.Constants.UNCOMMENTS;
+import static com.deone.extrmtasks.tools.Constants.UNKEYS;
 import static com.deone.extrmtasks.tools.Constants.UNTASK;
 import static com.deone.extrmtasks.tools.Constants.USERS;
 import static com.deone.extrmtasks.tools.Other.buildPathWithSlash;
@@ -168,6 +170,10 @@ public class Fbtools {
         query.addValueEventListener(valueEventListener);
     }
 
+    public static void lireUnUtilisateurkeys(final ValueEventListener valueEventListener, String uid) {
+        ref.child(USERS).child(uid).child(KEYS).addValueEventListener(valueEventListener);
+    }
+
     //Toutes les requetes permettant à l'utilisateur ou meme le système de d'ecrire, de modifier ou
     // de supprimer les éléments contenu dans la base de données
 
@@ -258,6 +264,22 @@ public class Fbtools {
                                         .addOnCompleteListener(task1 -> pd.dismiss())
                                         .addOnFailureListener(e -> pd.dismiss());
                             })
+                            .addOnFailureListener(e -> pd.dismiss());
+                }).addOnFailureListener(e -> {
+                    pd.dismiss();
+                });
+    }
+
+    /*
+        Les Keys
+     */
+
+    public static void ecrireUneNouvelleKey(ProgressDialog pd, String key, String myuid, String nkeys) {
+        ref.child(buildPathWithSlash(USERS, myuid, KEYS, getXtimestamp())).setValue(key)
+                .addOnSuccessListener(unused -> {
+                    ref.child(buildPathWithSlash(USERS, myuid, UNKEYS))
+                            .setValue(incrementValue(nkeys))
+                            .addOnCompleteListener(task1 -> pd.dismiss())
                             .addOnFailureListener(e -> pd.dismiss());
                 }).addOnFailureListener(e -> {
                     pd.dismiss();
