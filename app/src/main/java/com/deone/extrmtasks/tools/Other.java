@@ -21,6 +21,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
+import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -37,6 +38,7 @@ import com.deone.extrmtasks.NewActivity;
 import com.deone.extrmtasks.R;
 import com.deone.extrmtasks.SettingsActivity;
 import com.deone.extrmtasks.TaskActivity;
+import com.deone.extrmtasks.modeles.Tache;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.database.DatabaseReference;
@@ -44,7 +46,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -503,8 +507,8 @@ public class Other {
         ActivityCompat.requestPermissions((Activity) appContext, locationPermissions, LOCATION_REQUEST_CODE);
     }
 
-    public static boolean isContains(String marecherche, String value) {
-        return value.toLowerCase().contains(marecherche.toLowerCase());
+    public static boolean isContains(String contenu, String contenant) {
+        return contenant.toLowerCase().contains(contenu.toLowerCase());
     }
 
     public static String formatAdresse(String... items) {
@@ -521,4 +525,21 @@ public class Other {
         return sb.toString();
     }
 
+    public static List<Tache> orderListByKeyWords(List<Tache> tacheList, List<String> stringList) {
+        if (stringList.size() == 0)
+            return tacheList;
+        else {
+            List<Tache> temp = new ArrayList<>();
+            for (String st : stringList) {
+                for (Tache tache : tacheList){
+                    if (isContains(""+st, ""+tache.getTtitre())
+                            ||
+                            isContains(""+st, ""+tache.getTdescription())){
+                        temp.add(tache);
+                    }
+                }
+            }
+            return temp;
+        }
+    }
 }

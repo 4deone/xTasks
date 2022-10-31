@@ -1,10 +1,13 @@
 package com.deone.extrmtasks;
 
+import static com.deone.extrmtasks.tools.Constants.APP_PREFS_KEY;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_LANGUE;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_MODE;
 import static com.deone.extrmtasks.tools.Constants.EN;
 import static com.deone.extrmtasks.tools.Constants.TID;
 import static com.deone.extrmtasks.tools.Constants.UID;
+import static com.deone.extrmtasks.tools.Fbtools.lireUnUtilisateurkeys;
+import static com.deone.extrmtasks.tools.Fbtools.liretouteslestaches;
 import static com.deone.extrmtasks.tools.Other.gotoTask;
 import static com.deone.extrmtasks.tools.Other.gotoaddtask;
 import static com.deone.extrmtasks.tools.Other.gotomain;
@@ -13,7 +16,11 @@ import static com.deone.extrmtasks.tools.Other.initLLanguage;
 import static com.deone.extrmtasks.tools.Other.initThemeMode;
 import static com.deone.extrmtasks.tools.Other.isContains;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
+import static com.deone.extrmtasks.tools.Other.orderListByKeyWords;
 import static com.deone.extrmtasks.tools.Other.rvLayoutManager;
+import static com.deone.extrmtasks.tools.Sptools.readBooleanData;
+import static com.deone.extrmtasks.tools.Sptools.readIntData;
+import static com.deone.extrmtasks.tools.Sptools.readStringData;
 
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -45,8 +52,10 @@ import java.util.List;
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Fbtools fbtools;
+    private Sptools sptools ;
     private RecyclerView rvTachesHome;
     private List<Tache> tacheList;
+    private List<String> stringList;
     private String ma_recherche;
 
     @Override
@@ -62,6 +71,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         MenuItem searchItem = menu.findItem(R.id.itSearch);
         final SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setOnQueryTextListener(searchManage);
+        searchView.setOnQueryTextFocusChangeListener(searchQueryTextFocusChange);
+        searchView.setOnCloseListener(searchClose);
+        searchView.setOnSuggestionListener(searchSuggestion);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -78,9 +90,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void initApp() {
         fbtools = Fbtools.getInstance(this);
-        Sptools sptools = Sptools.getInstance(this);
-        initThemeMode(sptools.readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
-        initLLanguage(this, sptools.readStringData(APP_PREFS_LANGUE, EN));
+        sptools = Sptools.getInstance(this);
+        initThemeMode(readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
+        initLLanguage(this, readStringData(APP_PREFS_LANGUE, EN));
     }
 
     /**
@@ -104,7 +116,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         rvTachesHome = findViewById(R.id.rvTachesHome);
         rvTachesHome.setLayoutManager(rvLayoutManager(this, 0, LinearLayoutManager.VERTICAL));
         tacheList = new ArrayList<>();
-        fbtools.liretouteslestaches(vTaches);
+        stringList = new ArrayList<>();
+        if (readBooleanData(APP_PREFS_KEY, false))
+            lireUnUtilisateurkeys(vKeys, fbtools.getId());
+        liretouteslestaches(vTaches);
         findViewById(R.id.fabAddTachesHome).setOnClickListener(this);
     }
 
@@ -117,7 +132,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         for (DataSnapshot ds : snapshot.getChildren()){
             Tache tache = ds.getValue(Tache.class);
             tacheList.add(tache);
-            Tadapter tadapter = new Tadapter(HomeActivity.this, tacheList);
+            Tadapter tadapter = new Tadapter(HomeActivity.this, orderListByKeyWords(tacheList, stringList));
             rvTachesHome.setAdapter(tadapter);
             tadapter.setListener(xListener);
         }
@@ -134,10 +149,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             assert tache != null;
             if (isContains(ma_recherche, tache.getTtitre())||isContains(ma_recherche, tache.getTdescription())){
                 tacheList.add(tache);
-                Tadapter tadapter = new Tadapter(HomeActivity.this, tacheList);
-                rvTachesHome.setAdapter(tadapter);
-                tadapter.setListener(xListener);
             }
+            Tadapter tadapter = new Tadapter(HomeActivity.this, orderListByKeyWords(tacheList, stringList));
+            rvTachesHome.setAdapter(tadapter);
+            tadapter.setListener(xListener);
         }
     }
 
@@ -148,9 +163,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private void makeAndFindYourSearch(String query) {
         if (!TextUtils.isEmpty(query)){
             ma_recherche = query;
-            fbtools.liretouteslestaches(vSearchTaches);
+            liretouteslestaches(vSearchTaches);
         }else {
-            fbtools.liretouteslestaches(vTaches);
+            liretouteslestaches(vTaches);
         }
     }
 
@@ -197,6 +212,47 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         public boolean onQueryTextChange(String newText) {
             makeAndFindYourSearch(newText);
             return false;
+        }
+    };
+
+    private final SearchView.OnCloseListener searchClose = new SearchView.OnCloseListener() {
+        @Override
+        public boolean onClose() {
+            return false;
+        }
+    };
+
+    private final View.OnFocusChangeListener searchQueryTextFocusChange = new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View view, boolean b) {
+
+        }
+    };
+
+    private final SearchView.OnSuggestionListener searchSuggestion = new SearchView.OnSuggestionListener() {
+        @Override
+        public boolean onSuggestionSelect(int position) {
+            return false;
+        }
+
+        @Override
+        public boolean onSuggestionClick(int position) {
+            return false;
+        }
+    };
+
+    private final ValueEventListener vKeys = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            stringList.clear();
+            for (DataSnapshot ds : snapshot.getChildren()){
+                stringList.add(ds.getValue(String.class));
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
         }
     };
 

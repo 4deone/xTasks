@@ -37,6 +37,7 @@ import androidx.annotation.NonNull;
 
 import com.deone.extrmtasks.R;
 import com.deone.extrmtasks.modeles.Commentaire;
+import com.deone.extrmtasks.modeles.Key;
 import com.deone.extrmtasks.modeles.Signale;
 import com.deone.extrmtasks.modeles.Tache;
 import com.deone.extrmtasks.modeles.User;
@@ -83,8 +84,8 @@ public class Fbtools {
         auth = FirebaseAuth.getInstance();
         fUser = auth.getCurrentUser();
         if (fUser != null){
-            this.id = fUser.getUid();
-            this.email = fUser.getEmail();
+            id = fUser.getUid();
+            email = fUser.getEmail();
         }
         ref = FirebaseDatabase.getInstance().getReference(DATABASE);
     }
@@ -117,7 +118,7 @@ public class Fbtools {
      *
      * @param valueEventListener L'écouteur permettant de récupérer les élémnents dans la base de données
      */
-    public void liretouteslestaches(final ValueEventListener valueEventListener) {
+    public static void liretouteslestaches(final ValueEventListener valueEventListener) {
         ref.child(TACHES).addValueEventListener(valueEventListener);
     }
 
@@ -274,8 +275,8 @@ public class Fbtools {
         Les Keys
      */
 
-    public static void ecrireUneNouvelleKey(ProgressDialog pd, String key, String myuid, String nkeys) {
-        ref.child(buildPathWithSlash(USERS, myuid, KEYS, getXtimestamp())).setValue(key)
+    public static void ecrireUneNouvelleKey(ProgressDialog pd, Key key, String myuid, String nkeys) {
+        ref.child(buildPathWithSlash(USERS, myuid, KEYS, key.getKid())).setValue(key)
                 .addOnSuccessListener(unused -> {
                     ref.child(buildPathWithSlash(USERS, myuid, UNKEYS))
                             .setValue(incrementValue(nkeys))
@@ -283,6 +284,22 @@ public class Fbtools {
                             .addOnFailureListener(e -> pd.dismiss());
                 }).addOnFailureListener(e -> {
                     pd.dismiss();
+                });
+    }
+
+    public static void deleteKey(String path, String myuid, String nkeys) {
+        ref.child(path).removeValue()
+                .addOnSuccessListener(unused -> {
+                    ref.child(buildPathWithSlash(USERS, myuid, UNKEYS))
+                            .setValue(decrementValue(nkeys))
+                            .addOnCompleteListener(task1 -> {
+                                //pd.dismiss();
+                            })
+                            .addOnFailureListener(e -> {
+                                //pd.dismiss();
+                            });
+                }).addOnFailureListener(e -> {
+                    //pd.dismiss();
                 });
     }
 
@@ -333,7 +350,7 @@ public class Fbtools {
         Sign out
      */
 
-    public void signOut() {
+    public static void signOut() {
         auth.signOut();
     }
 
@@ -421,10 +438,10 @@ public class Fbtools {
      */
     public void deleteOldImage(ProgressDialog pd, Uri imageUri, boolean iscover, String oldPath) {
         if (isStringEmpty(oldPath)){
-            saveImage(pd, imageUri, iscover, this.id);
+            saveImage(pd, imageUri, iscover, id);
         }else {
             StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(oldPath);
-            storageReference.delete().addOnSuccessListener(unused -> saveImage(pd, imageUri, iscover, this.id)).addOnFailureListener(e -> {
+            storageReference.delete().addOnSuccessListener(unused -> saveImage(pd, imageUri, iscover, id)).addOnFailureListener(e -> {
                 pd.dismiss();
                 Toast.makeText(appContext, appContext.getString(R.string.delete_image_error), Toast.LENGTH_SHORT).show();
             });
@@ -434,12 +451,12 @@ public class Fbtools {
     public void deleteOldImage(ProgressDialog pd, Uri imageUri, String pathStorage, String pathRealtime) {
         String timestamp = getXtimestamp();
         if (isStringEmpty(pathStorage)){
-            saveImage(pd, imageUri, buildPathWithSlash(TACHES, this.id, timestamp), pathRealtime);
+            saveImage(pd, imageUri, buildPathWithSlash(TACHES, id, timestamp), pathRealtime);
         }else {
             pd.setMessage(appContext.getString(R.string.task_image_delete));
             StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(pathStorage);
             storageReference.delete().addOnSuccessListener(unused ->
-                    saveImage(pd, imageUri, buildPathWithSlash(TACHES, this.id, timestamp), pathRealtime))
+                    saveImage(pd, imageUri, buildPathWithSlash(TACHES, id, timestamp), pathRealtime))
                     .addOnFailureListener(e -> {
                 pd.dismiss();
                 Toast.makeText(appContext, appContext.getString(R.string.delete_image_error), Toast.LENGTH_SHORT).show();
@@ -455,7 +472,7 @@ public class Fbtools {
      * @param uid
      */
     public void saveImage(ProgressDialog pd, Uri imageUri, boolean iscover, String uid) {
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference(buildPathWithSlash(USERS, iscover?COVER:AVATAR, this.id));
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference(buildPathWithSlash(USERS, iscover?COVER:AVATAR, id));
         storageReference.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
             Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
             while (!uriTask.isSuccessful());

@@ -19,6 +19,11 @@ import static com.deone.extrmtasks.tools.Other.initThemeMode;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
 import static com.deone.extrmtasks.tools.Other.rvLayoutManager;
 import static com.deone.extrmtasks.tools.Other.toutesLesConditions;
+import static com.deone.extrmtasks.tools.Signtools.checkEmailStatus;
+import static com.deone.extrmtasks.tools.Sptools.readIntData;
+import static com.deone.extrmtasks.tools.Sptools.readStringData;
+import static com.deone.extrmtasks.tools.Sptools.removeAllData;
+import static com.deone.extrmtasks.tools.Sptools.writeBooleanData;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -76,9 +81,8 @@ public class NewActivity extends AppCompatActivity implements View.OnClickListen
      */
     private void initApp() {
         sptools = Sptools.getInstance(this);
-        initThemeMode(sptools.readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
-        initLLanguage(this, sptools.readStringData(APP_PREFS_LANGUE, EN));
-
+        initThemeMode(readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
+        initLLanguage(this, readStringData(APP_PREFS_LANGUE, EN));
         signtools = Signtools.getInstance(this);
     }
 
@@ -158,7 +162,7 @@ public class NewActivity extends AppCompatActivity implements View.OnClickListen
         }
         User user = new User(""+email, ""+motdepasse, ""+fullname, ""+telephone,
                 ""+ville, ""+pays);
-        signtools.checkEmailStatus(pd, null, user);
+        checkEmailStatus(pd, null, user);
     }
 
     /**
@@ -193,21 +197,21 @@ public class NewActivity extends AppCompatActivity implements View.OnClickListen
             case CAMERA_REQUEST_CODE:{
                 if (grantResults.length>0){
                     if (isCameraAccepted(grantResults[0]) && isWriteStorageAccepted(grantResults[1]))
-                        sptools.writeBooleanData(APP_PREFS_CAMERA, true);
+                        writeBooleanData(APP_PREFS_CAMERA, true);
                 }
             }
             break;
             case STORAGE_REQUEST_CODE:{
                 if (grantResults.length>0){
                     if (isWriteStorageAccepted(grantResults[0]))
-                        sptools.writeBooleanData(APP_PREFS_GALLERY, true);
+                        writeBooleanData(APP_PREFS_GALLERY, true);
                 }
             }
             break;
             case LOCATION_REQUEST_CODE:{
                 if (grantResults.length>0){
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)
-                        sptools.writeBooleanData(APP_PREFS_LOCATION, true);
+                        writeBooleanData(APP_PREFS_LOCATION, true);
                     else {
                         Intent intent=new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivity(intent);
@@ -231,7 +235,7 @@ public class NewActivity extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        sptools.removeAllData();
+        removeAllData();
         gotomain(this);
     }
 

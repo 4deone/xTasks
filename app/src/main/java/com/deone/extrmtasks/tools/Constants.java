@@ -10,6 +10,7 @@ public class Constants {
     public static final String APP_PREFS_LOCATION = "App_prefs_location";
     public static final String APP_PREFS_CAMERA = "App_prefs_camera";
     public static final String APP_PREFS_GALLERY = "App_prefs_gallery";
+    public static final String APP_PREFS_KEY = "App_prefs_key";
     public static final String TITLE = "title";
     public static final String DESCRIPTION = "description";
     public static final String AVATAR = "avatar";

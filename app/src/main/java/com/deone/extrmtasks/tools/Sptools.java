@@ -35,7 +35,7 @@ public class Sptools {
      * @param key
      * @return
      */
-    public String readStringData(String key){
+    public static String readStringData(String key){
         return sp.getString(key, "");
     }
 
@@ -45,7 +45,7 @@ public class Sptools {
      * @param defaut
      * @return
      */
-    public String readStringData(String key, String defaut){
+    public static String readStringData(String key, String defaut){
         return sp.getString(key, ""+defaut);
     }
 
@@ -55,7 +55,7 @@ public class Sptools {
      * @param defaut
      * @return
      */
-    public int readIntData(String key, int defaut){
+    public static int readIntData(String key, int defaut){
         return sp.getInt(key, defaut);
     }
 
@@ -65,7 +65,7 @@ public class Sptools {
      * @param defaut
      * @return
      */
-    public boolean readBooleanData(String key, boolean defaut){
+    public static boolean readBooleanData(String key, boolean defaut){
         return sp.getBoolean(key, defaut);
     }
 
@@ -74,7 +74,7 @@ public class Sptools {
      * @param key
      * @param value
      */
-    public void writeBooleanData(String key, boolean value){
+    public static void writeBooleanData(String key, boolean value){
         SharedPreferences.Editor ed = sp.edit();
         ed.putBoolean(key, value);
         ed.apply();
@@ -85,7 +85,7 @@ public class Sptools {
      * @param key
      * @param value
      */
-    public void writeStringData(String key, String value){
+    public static void writeStringData(String key, String value){
         SharedPreferences.Editor ed = sp.edit();
         ed.putString(key, value);
         ed.apply();
@@ -96,7 +96,7 @@ public class Sptools {
      * @param key
      * @param value
      */
-    public void writeIntData(String key, int value){
+    public static void writeIntData(String key, int value){
         SharedPreferences.Editor ed = sp.edit();
         ed.putInt(key, value);
         ed.apply();
@@ -106,7 +106,7 @@ public class Sptools {
      *
      * @param key
      */
-    public void removeData(String key){
+    public static void removeData(String key){
         SharedPreferences.Editor ed = sp.edit();
         ed.remove(key);
         ed.apply();
@@ -115,7 +115,7 @@ public class Sptools {
     /**
      *
      */
-    public void removeAllData(){
+    public static void removeAllData(){
         sp.edit().clear().apply();
     }
 }

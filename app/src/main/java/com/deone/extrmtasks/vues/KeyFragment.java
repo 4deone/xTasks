@@ -5,6 +5,7 @@ import static com.deone.extrmtasks.tools.Fbtools.ecrireUneNouvelleKey;
 import static com.deone.extrmtasks.tools.Fbtools.lireUnUtilisateurSpecifique;
 import static com.deone.extrmtasks.tools.Fbtools.lireUnUtilisateurkeys;
 import static com.deone.extrmtasks.tools.Other.buildProgressDialog;
+import static com.deone.extrmtasks.tools.Other.getXtimestamp;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
 import static com.deone.extrmtasks.tools.Other.rvLayoutManager;
 
@@ -26,6 +27,7 @@ import com.deone.extrmtasks.HomeActivity;
 import com.deone.extrmtasks.R;
 import com.deone.extrmtasks.adapters.Kadapter;
 import com.deone.extrmtasks.adapters.Tadapter;
+import com.deone.extrmtasks.modeles.Key;
 import com.deone.extrmtasks.modeles.Tache;
 import com.deone.extrmtasks.modeles.User;
 import com.deone.extrmtasks.tools.Fbtools;
@@ -51,7 +53,7 @@ public class KeyFragment extends Fragment implements View.OnClickListener {
     private Fbtools fbtools;
     private String idIntent;
     private RecyclerView rvKeyItem;
-    private List<String> stringList;
+    private List<Key> keyList;
     private EditText etvrlKeyItem;
     private long nKeys = 0;
     private final ValueEventListener vKeys = new ValueEventListener() {
@@ -99,7 +101,7 @@ public class KeyFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_key, container, false);
-        stringList = new ArrayList<>();
+        keyList = new ArrayList<>();
         rvKeyItem = view.findViewById(R.id.rvKeyItem);
         rvKeyItem.setLayoutManager(rvLayoutManager(getActivity(), 0, LinearLayoutManager.VERTICAL));
         etvrlKeyItem = view.findViewById(R.id.etvrlKeyItem);
@@ -118,23 +120,25 @@ public class KeyFragment extends Fragment implements View.OnClickListener {
 
     private void DisplayUserKeys(DataSnapshot snapshot) {
         nKeys = snapshot.getChildrenCount();
-        stringList.clear();
+        keyList.clear();
         for (DataSnapshot ds : snapshot.getChildren()){
-            stringList.add(ds.getValue(String.class));
-            Kadapter kadapter = new Kadapter(getActivity(), stringList);
+            keyList.add(ds.getValue(Key.class));
+            Kadapter kadapter = new Kadapter(keyList, ""+idIntent, ""+nKeys);
             rvKeyItem.setAdapter(kadapter);
         }
     }
 
     private void verifSaisie() {
-        String key = etvrlKeyItem.getText().toString().trim();
+        String keyItem = etvrlKeyItem.getText().toString().trim();
         ProgressDialog pd = buildProgressDialog(getActivity(), getString(R.string.app_name), getString(R.string.verif_entries));
         pd.show();
-        if (isStringEmpty(key)){
+        if (isStringEmpty(keyItem)){
             pd.dismiss();
             Toast.makeText(getActivity(), getString(R.string.titre_error), Toast.LENGTH_SHORT).show();
             return;
         }
-        ecrireUneNouvelleKey(pd, ""+key, ""+idIntent, ""+nKeys);
+        String timestamp = getXtimestamp();
+        Key key = new Key(""+timestamp, ""+keyItem, ""+timestamp);
+        ecrireUneNouvelleKey(pd, key, ""+idIntent, ""+nKeys);
     }
 }

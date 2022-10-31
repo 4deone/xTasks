@@ -66,7 +66,7 @@ public class Signtools {
      * @param pd Progressdialog indiquant à l'utilisateur l'avancement des traitements encours
      * @param user Encapsulation des données de connexion de l'utilisateur
      */
-    public void checkEmailStatus(ProgressDialog pd, User user){
+    public static void checkEmailStatus(ProgressDialog pd, User user){
         auth.fetchSignInMethodsForEmail(user.getUemail()).addOnCompleteListener(task -> {
             if (isNewAccountMain(task)){
                 pd.dismiss();
@@ -90,7 +90,7 @@ public class Signtools {
      * @param email Adresse mail unique qui autorise un utilisteur à avoir un compte pour pouvoir avoir accès à l'application
      * @param motdepasse Il doit être unique et connu du seul utilisateur du compte
      */
-    private void signin(ProgressDialog pd, String email, String motdepasse) {
+    private static void signin(ProgressDialog pd, String email, String motdepasse) {
         auth.signInWithEmailAndPassword(email, motdepasse).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 pd.dismiss();
@@ -112,7 +112,7 @@ public class Signtools {
      * @param imageUri Element comportant une image prise par l'utilisateur
      * @param user Encapsulation des données de connexion de l'utilisateur
      */
-    public void checkEmailStatus(ProgressDialog pd, Uri imageUri, User user){
+    public static void checkEmailStatus(ProgressDialog pd, Uri imageUri, User user){
         pd.setMessage(appContext.getString(R.string.verif_if_account_exist));
         auth.fetchSignInMethodsForEmail(user.getUemail()).addOnCompleteListener(task -> {
             if (isNewAccountMain(task)){
@@ -146,7 +146,7 @@ public class Signtools {
      * @param imageUri Element comportant une image prise par l'utilisateur
      * @param user Encapsulation des données de connexion de l'utilisateur
      */
-    private void createUserAccount(ProgressDialog pd, Uri imageUri, User user) {
+    private static void createUserAccount(ProgressDialog pd, Uri imageUri, User user) {
         pd.setMessage(appContext.getString(R.string.create_user_account));
         auth.createUserWithEmailAndPassword(user.getUemail(), user.getUmotdepasse())
                 .addOnCompleteListener(task -> {
@@ -165,7 +165,7 @@ public class Signtools {
      * @param imageUri Element comportant une image prise par l'utilisateur
      * @param user Encapsulation des données de connexion de l'utilisateur
      */
-    private void checkUser(ProgressDialog pd, Uri imageUri, User user) {
+    private static void checkUser(ProgressDialog pd, Uri imageUri, User user) {
         FirebaseUser fUser = auth.getCurrentUser();
         if (fUser != null) {
             user.setUid(fUser.getUid());
@@ -183,7 +183,7 @@ public class Signtools {
      * @param imageUri Element comportant une image prise par l'utilisateur
      * @param user Encapsulation des données de connexion de l'utilisateur
      */
-    public void createUserProfile(ProgressDialog pd, Uri imageUri, User user) {
+    public static void createUserProfile(ProgressDialog pd, Uri imageUri, User user) {
         if (imageUri != null)
             ajouterUserProfileImage(pd, imageUri, user);
         else
@@ -196,7 +196,7 @@ public class Signtools {
      * @param imageUri Element comportant une image prise par l'utilisateur
      * @param user Encapsulation des données de connexion de l'utilisateur
      */
-    private void ajouterUserProfileImage(ProgressDialog pd, Uri imageUri, User user) {
+    private static void ajouterUserProfileImage(ProgressDialog pd, Uri imageUri, User user) {
         pd.setMessage(appContext.getString(R.string.create_user_avatar));
         StorageReference storageReference = FirebaseStorage.getInstance()
                 .getReference(buildPathWithSlash(USERS, AVATAR, user.getUid()));
@@ -221,7 +221,7 @@ public class Signtools {
      * @param pd Progressdialog indiquant à l'utilisateur l'avancement des traitements encours
      * @param user Encapsulation des données de connexion de l'utilisateur
      */
-    private void ajouterUnUtilisateur(ProgressDialog pd, User user) {
+    private static void ajouterUnUtilisateur(ProgressDialog pd, User user) {
         pd.setMessage(appContext.getString(R.string.save_user_infos));
         user.setUdate(getXtimestamp());
         ref.child(buildPathWithSlash(DATABASE, USERS, user.getUid()))

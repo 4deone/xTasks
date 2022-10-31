@@ -11,6 +11,12 @@ import static com.deone.extrmtasks.tools.Other.gotonew;
 import static com.deone.extrmtasks.tools.Other.initLLanguage;
 import static com.deone.extrmtasks.tools.Other.initThemeMode;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
+import static com.deone.extrmtasks.tools.Signtools.checkEmailStatus;
+import static com.deone.extrmtasks.tools.Sptools.readIntData;
+import static com.deone.extrmtasks.tools.Sptools.readStringData;
+import static com.deone.extrmtasks.tools.Sptools.removeAllData;
+import static com.deone.extrmtasks.tools.Sptools.writeIntData;
+import static com.deone.extrmtasks.tools.Sptools.writeStringData;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -48,12 +54,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void initApp() {
         sptools = Sptools.getInstance(this);
-        sptools.writeIntData(APP_PREFS_MODE, appActualThemeMode());
-        initThemeMode(sptools.readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
-        sptools.writeStringData(APP_PREFS_LANGUE, Locale.getDefault().getLanguage());
-        sptools.writeStringData(APP_PREFS_COUNTRY, Locale.getDefault().getCountry());
-        initLLanguage(this, sptools.readStringData(APP_PREFS_LANGUE, EN));
-
+        writeIntData(APP_PREFS_MODE, appActualThemeMode());
+        initThemeMode(readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
+        writeStringData(APP_PREFS_LANGUE, Locale.getDefault().getLanguage());
+        writeStringData(APP_PREFS_COUNTRY, Locale.getDefault().getCountry());
+        initLLanguage(this, readStringData(APP_PREFS_LANGUE, EN));
         signtools = Signtools.getInstance(this);
     }
 
@@ -107,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
         User user = new User(""+email, ""+motdepasse);
-        signtools.checkEmailStatus(pd, user);
+        checkEmailStatus(pd, user);
     }
 
     @Override
@@ -122,6 +127,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        sptools.removeAllData();
+        removeAllData();
     }
 }

@@ -1,5 +1,6 @@
 package com.deone.extrmtasks;
 
+import static com.deone.extrmtasks.tools.Constants.APP_PREFS_KEY;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_LANGUE;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_MODE;
 import static com.deone.extrmtasks.tools.Constants.EN;
@@ -12,8 +13,8 @@ import static com.deone.extrmtasks.tools.Constants.FRAGMENT_NOT;
 import static com.deone.extrmtasks.tools.Constants.FRAGMENT_STOCKAGE;
 import static com.deone.extrmtasks.tools.Constants.IDFRAGMENT;
 import static com.deone.extrmtasks.tools.Constants.UID;
+import static com.deone.extrmtasks.tools.Fbtools.signOut;
 import static com.deone.extrmtasks.tools.Ivtools.loadingImageWithPath;
-import static com.deone.extrmtasks.tools.Other.buildAlertDialogForSingleSelectOption;
 import static com.deone.extrmtasks.tools.Other.chooseDrawable;
 import static com.deone.extrmtasks.tools.Other.formatLaDate;
 import static com.deone.extrmtasks.tools.Other.gotohome;
@@ -23,8 +24,12 @@ import static com.deone.extrmtasks.tools.Other.initThemeMode;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
 import static com.deone.extrmtasks.tools.Other.safeShowValue;
 import static com.deone.extrmtasks.tools.Other.selectedLangue;
+import static com.deone.extrmtasks.tools.Sptools.readBooleanData;
+import static com.deone.extrmtasks.tools.Sptools.readIntData;
+import static com.deone.extrmtasks.tools.Sptools.readStringData;
+import static com.deone.extrmtasks.tools.Sptools.writeBooleanData;
+import static com.deone.extrmtasks.tools.Sptools.writeIntData;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -32,7 +37,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -47,7 +51,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.deone.extrmtasks.modeles.User;
 import com.deone.extrmtasks.tools.Fbtools;
-import com.deone.extrmtasks.tools.Ivtools;
 import com.deone.extrmtasks.tools.Sptools;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -102,6 +105,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         int id = compoundButton.getId();
         if (id == R.id.swSettingsKey){
                 tvSettingsKeyList.setEnabled(b);
+                writeBooleanData(APP_PREFS_KEY, b);
         }
     }
 
@@ -148,8 +152,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private void initApp() {
         sptools = Sptools.getInstance(this);
         fbtools = Fbtools.getInstance(this);
-        initThemeMode(sptools.readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
-        initLLanguage(this, sptools.readStringData(APP_PREFS_LANGUE, EN));
+        initThemeMode(readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
+        initLLanguage(this, readStringData(APP_PREFS_LANGUE, EN));
     }
 
     /**
@@ -180,10 +184,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         tvSettingsCompteName = findViewById(R.id.tvSettingsCompteName);
         tvSettingsComptePhone = findViewById(R.id.tvSettingsComptePhone);
         SwitchCompat swSettingsKey = findViewById(R.id.swSettingsKey);
+        swSettingsKey.setChecked(readBooleanData(APP_PREFS_KEY, false));
         tvSettingsDisplayMode = findViewById(R.id.tvSettingsDisplayMode);
         tvSettingsLanguage = findViewById(R.id.tvSettingsLanguage);
         tvSettingsKeyList = findViewById(R.id.tvSettingsKeyList);
-        tvSettingsKeyList.setEnabled(swSettingsKey.isEnabled());
+        tvSettingsKeyList.setEnabled(swSettingsKey.isChecked());
 
         fbtools.lireUnUtilisateurSpecifique(vUser);
 
@@ -234,7 +239,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             tvSettingsComptePhone.setText(safeShowValue(user.getUtelephone()));
             loadingImageWithPath(ivSettingsCover, R.drawable.russia, user.getUavatar());
             loadingImageWithPath(ivSettingsAvatar, R.drawable.wild, user.getUcover());
-            ds.child("Keys").getRef().addValueEventListener(vKeys);
         }
     }
 
@@ -242,18 +246,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             DisplayUserInformation(snapshot);
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-            Toast.makeText(SettingsActivity.this, getString(R.string.download_error), Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    private final ValueEventListener vKeys = new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot snapshot) {
-            tvSettingsKeyList.setEnabled(snapshot.hasChildren());
         }
 
         @Override
@@ -302,7 +294,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private void showDisplayMode(AlertDialog.Builder builder) {
         builder.setMessage(getString(R.string.choisir_mode));
         builder.setSingleChoiceItems(getResources().getStringArray(R.array.modes),
-                sptools.readIntData(APP_PREFS_MODE, 0), modeListener);
+                readIntData(APP_PREFS_MODE, 0), modeListener);
         builder.create().show();
     }
 
@@ -310,7 +302,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
             //initThemeMode(i);
-            sptools.writeIntData(APP_PREFS_MODE, i);
+            writeIntData(APP_PREFS_MODE, i);
             tvSettingsDisplayMode.setCompoundDrawablesRelativeWithIntrinsicBounds(chooseDrawable(i), 0, 0, 0);
         }
     };
@@ -322,7 +314,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private void showLanguageDialog(AlertDialog.Builder builder) {
         builder.setMessage(getString(R.string.choisir_langue));
         builder.setSingleChoiceItems(getResources().getStringArray(R.array.langues),
-                selectedLangue(sptools.readStringData(APP_PREFS_LANGUE, "")),
+                selectedLangue(readStringData(APP_PREFS_LANGUE, "")),
                 langueListener);
         builder.create().show();
     }
@@ -410,7 +402,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private final DialogInterface.OnClickListener signoutListener = (dialogInterface, i) -> {
-        fbtools.signOut();
+        signOut();
         dialogInterface.dismiss();
         gotomain(this);
     };
