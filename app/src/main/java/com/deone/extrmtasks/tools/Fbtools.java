@@ -28,6 +28,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -278,14 +279,18 @@ public class Fbtools {
                 .addOnFailureListener(e -> Toast.makeText(appContext, appContext.getString(R.string.updated_not_ok), Toast.LENGTH_SHORT).show());
     }
 
-    public static void ecrireUnSignalementDeTache(Signale signale) {
+    public static void ecrireUnSignalementDeTache(Signale signale, ImageButton ibTaskSignale) {
         signale.setSdate(getXtimestamp());
         ref.child(buildPathWithSlash(SIGNALES, TACHES, signale.getTid(), signale.getSid())).setValue(signale)
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful())
+                    if (task.isSuccessful()){
+                        ibTaskSignale.setImageResource(R.drawable.ic_action_signaler);
                         Toast.makeText(appContext, appContext.getString(R.string.success_operation), Toast.LENGTH_SHORT).show();
-                    else
+                    }
+                    else{
+                        ibTaskSignale.setImageResource(R.drawable.ic_action_signaler_old);
                         Toast.makeText(appContext, appContext.getString(R.string.not_auth_to_do), Toast.LENGTH_SHORT).show();
+                    }
                 })
                 .addOnFailureListener(e -> Toast.makeText(appContext, appContext.getString(R.string.updated_not_ok), Toast.LENGTH_SHORT).show());
     }

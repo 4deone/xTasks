@@ -430,7 +430,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             Signale signale = new Signale(""+CurrentUser.getUid(), ""+value, "", ""+tache.getTid(),
                     ""+tache.getTtitre(), ""+tache.getTcover(), ""+tache.getTdescription(),
                     ""+CurrentUser.getUid(), ""+CurrentUser.getUnoms(), ""+CurrentUser.getUavatar());
-            ecrireUnSignalementDeTache(signale);
+            ecrireUnSignalementDeTache(signale, ibTaskSignale);
             dialogSignaler.dismiss();
         });
         dialogSignaler.show();

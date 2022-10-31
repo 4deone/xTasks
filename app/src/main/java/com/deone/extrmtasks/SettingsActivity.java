@@ -169,6 +169,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private void initViews() {
         setContentView(R.layout.activity_settings);
         Toolbar toolbarSettings = findViewById(R.id.toolbarSettings);
+        toolbarSettings.setTitle(getString(R.string.parametres));
+        toolbarSettings.setSubtitle(getString(R.string.param_your_app));
         setSupportActionBar(toolbarSettings);
 
         ivSettingsCover = findViewById(R.id.ivSettingsCover);
