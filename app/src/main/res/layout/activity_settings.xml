@@ -40,15 +40,15 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/ivSettingsAvatar"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
                     android:src="@drawable/russia" />
 
                 <TextView
                     android:id="@+id/tvSettingsDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                    android:layout_alignBottom="@+id/ivSettingsAvatar"
                     android:layout_marginStart="10dp"
                     android:layout_toEndOf="@+id/ivSettingsAvatar"
                     android:text="@string/_12_nov_2022"
