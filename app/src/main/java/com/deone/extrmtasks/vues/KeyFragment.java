@@ -1,9 +1,13 @@
 package com.deone.extrmtasks.vues;
 
+import static com.deone.extrmtasks.tools.Constants.KEYS;
 import static com.deone.extrmtasks.tools.Constants.UID;
+import static com.deone.extrmtasks.tools.Constants.USERS;
+import static com.deone.extrmtasks.tools.Fbtools.deleteKey;
 import static com.deone.extrmtasks.tools.Fbtools.ecrireUneNouvelleKey;
 import static com.deone.extrmtasks.tools.Fbtools.lireUnUtilisateurSpecifique;
 import static com.deone.extrmtasks.tools.Fbtools.lireUnUtilisateurkeys;
+import static com.deone.extrmtasks.tools.Other.buildPathWithSlash;
 import static com.deone.extrmtasks.tools.Other.buildProgressDialog;
 import static com.deone.extrmtasks.tools.Other.getXtimestamp;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
@@ -13,11 +17,15 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -37,6 +45,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import kotlin.UInt;
 
@@ -91,6 +100,8 @@ public class KeyFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        requireActivity().setTitle(getString(R.string.key_word));
         if (getArguments() != null) {
             idIntent = getArguments().getString(UID);
         }
@@ -111,6 +122,24 @@ public class KeyFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.key_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.itKeysInfos){
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+            builder.setTitle(getString(R.string.app_name_lite));
+            builder.setMessage(getString(R.string.documentation));
+            builder.setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> dialogInterface.dismiss());
+            builder.create().show();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.ibrlKeyItem){
@@ -123,7 +152,7 @@ public class KeyFragment extends Fragment implements View.OnClickListener {
         keyList.clear();
         for (DataSnapshot ds : snapshot.getChildren()){
             keyList.add(ds.getValue(Key.class));
-            Kadapter kadapter = new Kadapter(keyList, ""+idIntent, ""+nKeys);
+            Kadapter kadapter = new Kadapter(getActivity(), keyList, ""+idIntent, ""+nKeys);
             rvKeyItem.setAdapter(kadapter);
         }
     }
@@ -140,5 +169,6 @@ public class KeyFragment extends Fragment implements View.OnClickListener {
         String timestamp = getXtimestamp();
         Key key = new Key(""+timestamp, ""+keyItem, ""+timestamp);
         ecrireUneNouvelleKey(pd, key, ""+idIntent, ""+nKeys);
+        etvrlKeyItem.setText(null);
     }
 }

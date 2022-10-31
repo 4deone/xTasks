@@ -38,6 +38,7 @@ import com.deone.extrmtasks.NewActivity;
 import com.deone.extrmtasks.R;
 import com.deone.extrmtasks.SettingsActivity;
 import com.deone.extrmtasks.TaskActivity;
+import com.deone.extrmtasks.modeles.Key;
 import com.deone.extrmtasks.modeles.Tache;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.SignInMethodQueryResult;
@@ -525,16 +526,16 @@ public class Other {
         return sb.toString();
     }
 
-    public static List<Tache> orderListByKeyWords(List<Tache> tacheList, List<String> stringList) {
-        if (stringList.size() == 0)
+    public static List<Tache> orderListByKeyWords(List<Tache> tacheList, List<Key> keyList) {
+        if (keyList.size() == 0)
             return tacheList;
         else {
             List<Tache> temp = new ArrayList<>();
-            for (String st : stringList) {
+            for (Key key : keyList) {
                 for (Tache tache : tacheList){
-                    if (isContains(""+st, ""+tache.getTtitre())
+                    if (isContains(""+key.getKmessage(), ""+tache.getTtitre())
                             ||
-                            isContains(""+st, ""+tache.getTdescription())){
+                            isContains(""+key.getKmessage(), ""+tache.getTdescription())){
                         temp.add(tache);
                     }
                 }

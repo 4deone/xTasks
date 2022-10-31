@@ -1,10 +1,15 @@
 package com.deone.extrmtasks.adapters;
 
+import static com.deone.extrmtasks.tools.Constants.APP_PREFS_LANGUE;
 import static com.deone.extrmtasks.tools.Constants.KEYS;
 import static com.deone.extrmtasks.tools.Constants.USERS;
 import static com.deone.extrmtasks.tools.Fbtools.deleteKey;
 import static com.deone.extrmtasks.tools.Other.buildPathWithSlash;
+import static com.deone.extrmtasks.tools.Other.selectedLangue;
+import static com.deone.extrmtasks.tools.Sptools.readStringData;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.deone.extrmtasks.R;
@@ -23,7 +29,7 @@ import java.util.List;
  *
  */
 public class Kadapter extends RecyclerView.Adapter<Kadapter.Holder> {
-
+    private final Context appContext;
     private final List<Key> keyList;
     private final String myuid;
     private final String nKeys;
@@ -34,7 +40,8 @@ public class Kadapter extends RecyclerView.Adapter<Kadapter.Holder> {
      * @param myuid
      * @param nKeys
      */
-    public Kadapter(List<Key> keyList, String myuid, String nKeys) {
+    public Kadapter(Context appContext, List<Key> keyList, String myuid, String nKeys) {
+        this.appContext = appContext;
         this.keyList = keyList;
         this.myuid = myuid;
         this.nKeys = nKeys;
@@ -54,7 +61,17 @@ public class Kadapter extends RecyclerView.Adapter<Kadapter.Holder> {
 
         holder.tvKeyItem.setText(key);
         holder.ibKeyItem.setOnClickListener(view -> {
-            deleteKey(buildPathWithSlash(USERS, myuid, KEYS, keyId), myuid, nKeys);
+            AlertDialog.Builder builder = new AlertDialog.Builder(appContext);
+            builder.setTitle(appContext.getString(R.string.app_name_lite));
+            builder.setMessage(appContext.getString(R.string.choisir_langue));
+            builder.setNegativeButton(appContext.getString(R.string.non), null);
+            builder.setPositiveButton(appContext.getString(R.string.oui), (dialogInterface, i) ->{
+                deleteKey(buildPathWithSlash(USERS, myuid, KEYS, keyId), myuid, nKeys);
+                keyList.remove(position);
+                notifyItemRemoved(position);
+                //holder.ibKeyItem.setEnabled(false);
+            });
+            builder.create().show();
         });
     }
 

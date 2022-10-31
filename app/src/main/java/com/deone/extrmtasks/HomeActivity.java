@@ -38,6 +38,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.deone.extrmtasks.adapters.Tadapter;
+import com.deone.extrmtasks.modeles.Key;
 import com.deone.extrmtasks.modeles.Tache;
 import com.deone.extrmtasks.tools.Fbtools;
 import com.deone.extrmtasks.tools.Sptools;
@@ -55,7 +56,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private Sptools sptools ;
     private RecyclerView rvTachesHome;
     private List<Tache> tacheList;
-    private List<String> stringList;
+    private List<Key> keyList;
     private String ma_recherche;
 
     @Override
@@ -116,7 +117,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         rvTachesHome = findViewById(R.id.rvTachesHome);
         rvTachesHome.setLayoutManager(rvLayoutManager(this, 0, LinearLayoutManager.VERTICAL));
         tacheList = new ArrayList<>();
-        stringList = new ArrayList<>();
+        keyList = new ArrayList<>();
         if (readBooleanData(APP_PREFS_KEY, false))
             lireUnUtilisateurkeys(vKeys, fbtools.getId());
         liretouteslestaches(vTaches);
@@ -132,7 +133,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         for (DataSnapshot ds : snapshot.getChildren()){
             Tache tache = ds.getValue(Tache.class);
             tacheList.add(tache);
-            Tadapter tadapter = new Tadapter(HomeActivity.this, orderListByKeyWords(tacheList, stringList));
+            Tadapter tadapter = new Tadapter(HomeActivity.this, orderListByKeyWords(tacheList, keyList));
             rvTachesHome.setAdapter(tadapter);
             tadapter.setListener(xListener);
         }
@@ -150,7 +151,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             if (isContains(ma_recherche, tache.getTtitre())||isContains(ma_recherche, tache.getTdescription())){
                 tacheList.add(tache);
             }
-            Tadapter tadapter = new Tadapter(HomeActivity.this, orderListByKeyWords(tacheList, stringList));
+            Tadapter tadapter = new Tadapter(HomeActivity.this, orderListByKeyWords(tacheList, keyList));
             rvTachesHome.setAdapter(tadapter);
             tadapter.setListener(xListener);
         }
@@ -244,9 +245,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private final ValueEventListener vKeys = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
-            stringList.clear();
+            keyList.clear();
             for (DataSnapshot ds : snapshot.getChildren()){
-                stringList.add(ds.getValue(String.class));
+                keyList.add(ds.getValue(Key.class));
             }
         }
 

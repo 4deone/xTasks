@@ -16,6 +16,8 @@ import static com.deone.extrmtasks.tools.Other.gotomain;
 import static com.deone.extrmtasks.tools.Other.initLLanguage;
 import static com.deone.extrmtasks.tools.Other.initThemeMode;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
+import static com.deone.extrmtasks.tools.Sptools.readIntData;
+import static com.deone.extrmtasks.tools.Sptools.readStringData;
 
 import android.os.Bundle;
 
@@ -52,8 +54,8 @@ public class TempActivity extends AppCompatActivity {
     private void initApp() {
         Sptools sptools = Sptools.getInstance(this);
         fbtools = Fbtools.getInstance(this);
-        initThemeMode(sptools.readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
-        initLLanguage(this, sptools.readStringData(APP_PREFS_LANGUE, EN));
+        initThemeMode(readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
+        initLLanguage(this, readStringData(APP_PREFS_LANGUE, EN));
         idFragmentIntent = getIntent().getStringExtra(IDFRAGMENT);
         idIntent = getIntent().getStringExtra(UID);
     }
@@ -76,6 +78,7 @@ public class TempActivity extends AppCompatActivity {
 
         switch (idFragmentIntent){
             case FRAGMENT_ACCOUNT: loadFragment(AccountFragment.newInstance(idIntent));
+                toolbarTemp.setSubtitle(getString(R.string.details_account));
                 break;
             case FRAGMENT_AUTH: loadFragment(AutorisationFragment.newInstance(idIntent));
                 break;
@@ -84,6 +87,7 @@ public class TempActivity extends AppCompatActivity {
             case FRAGMENT_GROUP: loadFragment(GroupFragment.newInstance(idIntent));
                 break;
             case FRAGMENT_KEY: loadFragment(KeyFragment.newInstance(idIntent));
+                toolbarTemp.setSubtitle(getString(R.string.key_words_list));
                 break;
             case FRAGMENT_NOT: loadFragment(NotificationFragment.newInstance(idIntent));
                 break;

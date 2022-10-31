@@ -213,4 +213,9 @@
     <string name="no_key_words">No key words</string>
     <string name="enter_a_new_key">Enter a new key</string>
     <string name="add_a_new_key">Add a new key</string>
+    <string name="user_account">Compte</string>
+    <string name="details_account">Informations de l\'utilisateur</string>
+    <string name="key_word">Key words</string>
+    <string name="key_words_list">Liste des mots-clé</string>
+    <string name="documentation">Documentation</string>
 </resources>

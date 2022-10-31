@@ -136,6 +136,8 @@ public class AccountFragment extends Fragment  implements View.OnClickListener, 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        requireActivity().setTitle(getString(R.string.user_account));
         fbtools = Fbtools.getInstance(getActivity());
         myuid = fbtools.getId();
         if (getArguments() != null) {
@@ -261,7 +263,8 @@ public class AccountFragment extends Fragment  implements View.OnClickListener, 
         tvafFullname.setText(user.getUnoms());
         tvafDateCreate.setText(formatLaDate(user.getUdate()));
         tvafTelephone.setText(safeShowValue(user.getUtelephone()));
-        tvafDescription.setText(isStringEmpty(user.getUdescription()) ? getString(R.string.no_description) : user.getUdescription());
+        tvafDescription.setText(isStringEmpty(user.getUdescription()) ?
+                requireActivity().getString(R.string.no_description) : user.getUdescription());
         tvafTasks.setText(safeShowValue(user.getUntask()));
         tvafFavoris.setText(safeShowValue(user.getUnfavoris()));
         tvafLikes.setText(safeShowValue(user.getUnlikes()));
