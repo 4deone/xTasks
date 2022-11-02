@@ -1,5 +1,10 @@
 package com.deone.extrmtasks.modeles;
 
+import static com.deone.extrmtasks.tools.Other.tacheToString;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 public class Tache implements Comparable<Tache>{
     private String tid;
     private String tcover;
@@ -183,4 +188,30 @@ public class Tache implements Comparable<Tache>{
         return 0;
     }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        return super.equals(obj);
+    }
+
+    @NonNull
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return tacheToString(this);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+    }
 }

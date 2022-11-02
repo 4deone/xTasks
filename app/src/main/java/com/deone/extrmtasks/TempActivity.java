@@ -4,7 +4,6 @@ import static com.deone.extrmtasks.tools.Constants.APP_PREFS_LANGUE;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_MODE;
 import static com.deone.extrmtasks.tools.Constants.EN;
 import static com.deone.extrmtasks.tools.Constants.FRAGMENT_ACCOUNT;
-import static com.deone.extrmtasks.tools.Constants.FRAGMENT_AUTH;
 import static com.deone.extrmtasks.tools.Constants.FRAGMENT_CONF;
 import static com.deone.extrmtasks.tools.Constants.FRAGMENT_GROUP;
 import static com.deone.extrmtasks.tools.Constants.FRAGMENT_KEY;
@@ -31,7 +30,6 @@ import androidx.fragment.app.FragmentTransaction;
 import com.deone.extrmtasks.tools.Fbtools;
 import com.deone.extrmtasks.tools.Sptools;
 import com.deone.extrmtasks.vues.AccountFragment;
-import com.deone.extrmtasks.vues.AutorisationFragment;
 import com.deone.extrmtasks.vues.ConfidentialityFragment;
 import com.deone.extrmtasks.vues.GroupFragment;
 import com.deone.extrmtasks.vues.KeyFragment;
@@ -79,8 +77,6 @@ public class TempActivity extends AppCompatActivity {
         switch (idFragmentIntent){
             case FRAGMENT_ACCOUNT: loadFragment(AccountFragment.newInstance(idIntent));
                 toolbarTemp.setSubtitle(getString(R.string.details_account));
-                break;
-            case FRAGMENT_AUTH: loadFragment(AutorisationFragment.newInstance(idIntent));
                 break;
             case FRAGMENT_CONF: loadFragment(ConfidentialityFragment.newInstance(idIntent));
                 break;

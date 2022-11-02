@@ -6,6 +6,7 @@ import static com.deone.extrmtasks.tools.Constants.CONDITIONS;
 import static com.deone.extrmtasks.tools.Constants.FORMAT_DATE;
 import static com.deone.extrmtasks.tools.Constants.LOCATION_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.STORAGE_REQUEST_CODE;
+import static com.deone.extrmtasks.tools.Constants.CONTACT_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.UDESCRIPTION;
 import static com.deone.extrmtasks.tools.Constants.UID;
 import static com.deone.extrmtasks.tools.Constants.UNOMS;
@@ -21,7 +22,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
-import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -504,8 +504,20 @@ public class Other {
         return result && result1;
     }
 
+    public static boolean checkContactPermissions(Context appContext) {
+        boolean result = ContextCompat.checkSelfPermission(appContext, Manifest.permission.READ_CONTACTS)
+                == (PackageManager.PERMISSION_GRANTED);
+        boolean result1 = ContextCompat.checkSelfPermission(appContext, Manifest.permission.WRITE_CONTACTS)
+                == (PackageManager.PERMISSION_GRANTED);
+        return result && result1;
+    }
+
     public static void requestLocationPermissions(Context appContext, String[] locationPermissions) {
         ActivityCompat.requestPermissions((Activity) appContext, locationPermissions, LOCATION_REQUEST_CODE);
+    }
+
+    public static void requestContactPermissions(Context appContext, String[] contactPermissions) {
+        ActivityCompat.requestPermissions((Activity) appContext, contactPermissions, CONTACT_REQUEST_CODE);
     }
 
     public static boolean isContains(String contenu, String contenant) {
@@ -542,5 +554,29 @@ public class Other {
             }
             return temp;
         }
+    }
+
+    public static String tacheToString(Tache tache) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(tache.getTid());
+        sb.append(";\n");
+        sb.append(tache.getTtitre());
+        sb.append(";\n");
+        sb.append(tache.getTdescription());
+        sb.append(";\n");
+        sb.append(tache.getTpays());
+        sb.append(";\n");
+        sb.append(tache.getTville());
+        sb.append(";\n");
+        sb.append(tache.getTcodepostal());
+        sb.append(";\n");
+        sb.append(tache.getTlatitude());
+        sb.append(";\n");
+        sb.append(tache.getTlongitude());
+        sb.append(";\n");
+        sb.append(tache.getTstate());
+        sb.append(";\n");
+        sb.append(tache.getTadresse());
+        return sb.toString();
     }
 }

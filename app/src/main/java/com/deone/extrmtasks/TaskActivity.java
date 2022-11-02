@@ -9,6 +9,7 @@ import static com.deone.extrmtasks.tools.Constants.CAMERA_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.EN;
 import static com.deone.extrmtasks.tools.Constants.FRAGMENT_ACCOUNT;
 import static com.deone.extrmtasks.tools.Constants.IDFRAGMENT;
+import static com.deone.extrmtasks.tools.Constants.LOCATION_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.STORAGE_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.TACHES;
 import static com.deone.extrmtasks.tools.Constants.TCOVER;
@@ -20,6 +21,9 @@ import static com.deone.extrmtasks.tools.Fbtools.ecrireUnNouveauCommentaire;
 import static com.deone.extrmtasks.tools.Fbtools.ecrireUnSignalementDeTache;
 import static com.deone.extrmtasks.tools.Fbtools.lireunetachespecifique;
 import static com.deone.extrmtasks.tools.Ivtools.loadingImageWithPath;
+import static com.deone.extrmtasks.tools.Lctools.checkAccessFineLocationPermissions;
+import static com.deone.extrmtasks.tools.Lctools.displayTaskLocation;
+import static com.deone.extrmtasks.tools.Lctools.requestAccessFineLocationPermissions;
 import static com.deone.extrmtasks.tools.Other.buildAlertDialog;
 import static com.deone.extrmtasks.tools.Other.buildPathWithSlash;
 import static com.deone.extrmtasks.tools.Other.buildProgressDialog;
@@ -31,18 +35,20 @@ import static com.deone.extrmtasks.tools.Other.initLLanguage;
 import static com.deone.extrmtasks.tools.Other.initThemeMode;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
 import static com.deone.extrmtasks.tools.Other.rvLayoutManager;
+import static com.deone.extrmtasks.tools.Sptools.readIntData;
+import static com.deone.extrmtasks.tools.Sptools.readStringData;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.LocationManager;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -62,6 +68,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -72,9 +79,9 @@ import com.deone.extrmtasks.modeles.Tache;
 import com.deone.extrmtasks.modeles.User;
 import com.deone.extrmtasks.tools.Fbtools;
 import com.deone.extrmtasks.tools.Ivtools;
-import com.deone.extrmtasks.tools.Lctools;
-import com.deone.extrmtasks.tools.Sptools;
 import com.deone.extrmtasks.tools.Xlistener;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -86,7 +93,6 @@ import java.util.List;
 public class TaskActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Fbtools fbtools;
-    private Lctools lctools;
     private Ivtools ivtools;
     private Uri imageUri;
     private ImageView ivtaskAvatarUser;
@@ -102,6 +108,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView rvTaskComments;
     private EditText etvTaskComment;
     private List<Commentaire> commentaireList;
+    private FusedLocationProviderClient fusedLocationProviderClient;
     private String tid;
     private String uid;
     private String myuid;
@@ -175,28 +182,32 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    /*
-            Les methodes usuellles pour l'initialisation de l'activité
-     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == LOCATION_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, getString(R.string.enabled_location_permissions), Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, getString(R.string.enable_location_permissions), Toast.LENGTH_LONG).show();
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    // TODO: Les methodes usuellles pour l'initialisation de l'activité
 
     private void initApp() {
-        Sptools sptools = Sptools.getInstance(this);
 
         fbtools = Fbtools.getInstance(this);
         myuid = fbtools.getId();
 
         ivtools = Ivtools.getInstance(this);
 
-        lctools = Lctools.getInstance(this);
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        lctools.setLocationManager(locationManager);
-        lctools.initLocation();
-
         tid = getIntent().getStringExtra(TID);
         uid = getIntent().getStringExtra(UID);
 
-        initThemeMode(sptools.readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
-        initLLanguage(this, sptools.readStringData(APP_PREFS_LANGUE, EN));
+        initThemeMode(readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
+        initLLanguage(this, readStringData(APP_PREFS_LANGUE, EN));
     }
 
     private void checkUser() {
@@ -228,9 +239,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         etvTaskComment = findViewById(R.id.etvTaskComment);
         ibTaskSignale = findViewById(R.id.ibTaskSignale);
         ibTaskSignale.setVisibility(myuid.equals(uid)?GONE:VISIBLE);
-
+        fusedLocationProviderClient =  LocationServices.getFusedLocationProviderClient(this);
         lireunetachespecifique(vCurrentUser, myuid, vTask, vComments, tid, vSignale);
-
         findViewById(R.id.ibTaskJaime).setOnClickListener(this);
         findViewById(R.id.ibTaskFavorite).setOnClickListener(this);
         findViewById(R.id.ibTaskShare).setOnClickListener(this);
@@ -241,9 +251,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         tvTaskAdresse.setOnClickListener(this);
     }
 
-    /*
-           Afficher les informations de l'utilisateur
-     */
+    // TODO: Afficher les informations de l'utilisateur
 
     private void showCurrentUserInformation(DataSnapshot snapshot) {
         for (DataSnapshot ds : snapshot.getChildren()){
@@ -263,9 +271,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    /*
-        Afficher les informations de la tache
-     */
+    // TODO: Afficher les informations de la tache
 
     private void showTaskInformation(DataSnapshot snapshot) {
         for (DataSnapshot ds : snapshot.getChildren()){
@@ -297,9 +303,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    /*
-        Afficher les commentaires de la tache
-     */
+    // TODO: Afficher les commentaires de la tache
 
     private void showTaskComments(DataSnapshot snapshot) {
         commentaireList.clear();
@@ -336,9 +340,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    /*
-
-     */
+    // TODO:
 
     private void showUserDetails() {
         Intent intent = new Intent(this, TempActivity.class);
@@ -347,30 +349,22 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
     }
 
-    /*
-        Liker la tache
-     */
+    // TODO: Liker la tache
 
     private void likeProcess() {
     }
 
-    /*
-        Rendre favorite la tache
-     */
+    // TODO: Rendre favorite la tache
 
     private void favorisProcess() {
     }
 
-    /*
-        Partager la tache
-     */
+    // TODO: Partager la tache
 
     private void shareProcess() {
     }
 
-    /*
-        Formater l'adresse de la tache
-     */
+    // TODO: Formater l'adresse de la tache
 
     private void showAdresseDialog() {
         AlertDialog.Builder alertDialog=new AlertDialog.Builder(this);
@@ -387,9 +381,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         alert.show();
     }
 
-    /*
-        Ajouter un commentaire
-     */
+    // TODO: Ajouter un commentaire
 
     private void verifDataBeforeSendComment() {
         String comment = etvTaskComment.getText().toString().trim();
@@ -404,14 +396,9 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         etvTaskComment.setText(null);
     }
 
-    /*
-
-     */
+    // TODO:
 
     private void showSignalerDialog() {
-
-        Log.e("Users", "CurentUser = "+CurrentUser.getUid()+", myuid = "+myuid);
-
         final Dialog dialogSignaler = new Dialog(this);
         dialogSignaler.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogSignaler.setContentView(R.layout.dialod_signal);
@@ -448,9 +435,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    /*
-        Modifier la tache
-     */
+    // TODO: Modifier la tache
 
     private void showEditDialog() {
         AlertDialog.Builder builderEdit = new AlertDialog.Builder(this);
@@ -494,10 +479,31 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 updateTitreOrDescription(getString(R.string.description), i);
                 break;
             case 3: // localisation
-                updateLocalisationDialog();
+                if (checkAccessFineLocationPermissions(TaskActivity.this))
+                    showLocation();
+                else
+                    requestAccessFineLocationPermissions(TaskActivity.this);
+                Toast.makeText(this, ""+tache.toString(), Toast.LENGTH_SHORT).show();
                 break;
         }
     };
+
+    private void showLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling ActivityCompat#requestPermissions
+            requestAccessFineLocationPermissions(this);
+            return;
+        }
+        fusedLocationProviderClient.getLastLocation().addOnCompleteListener(task -> {
+            Location location = task.getResult();
+            if (location != null){
+                displayTaskLocation(TaskActivity.this, location, tache);
+                updateLocalisationDialog();
+            }
+            else
+                Toast.makeText(TaskActivity.this, ""+getString(R.string.loc_error), Toast.LENGTH_SHORT).show();
+        });
+    }
 
     private void updateCoverDialog() {
         AlertDialog.Builder builderCover = new AlertDialog.Builder(this);
@@ -562,23 +568,13 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         builder.setTitle(getString(R.string.app_name_lite));
         builder.setMessage(getString(R.string.loc_message));
         builder.setPositiveButton(getText(R.string.ok), (dialogInterface, i) -> {
-            lctools.testGeocoder();
-            tache.setTpays(lctools.getCountry());
-            tache.setTpays(lctools.getCity());
-            tache.setTpays(lctools.getAdresse());
-            tache.setTpays(lctools.getCodepostal());
-            tache.setTpays(lctools.getState());
-            tache.setTpays(""+lctools.getLongitude());
-            tache.setTpays(""+lctools.getLatitude());
             fbtools.ecrireunenouvelletache(tache);
             dialogInterface.dismiss();
         });
         builder.create().show();
     }
 
-    /*
-        Suppression de la tache
-     */
+    // TODO: Suppression de la tache
 
     private final DialogInterface.OnClickListener adListener = new DialogInterface.OnClickListener() {
         @Override

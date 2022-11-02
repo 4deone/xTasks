@@ -1,5 +1,6 @@
 package com.deone.extrmtasks.tools;
 
+import static com.deone.extrmtasks.tools.Constants.CAMERA_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.LOCATION_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.LOCATION_REQUEST_CODE_ACCESS_COARSE_LOCATION;
 import static com.deone.extrmtasks.tools.Constants.LOCATION_REQUEST_CODE_ACCESS_FINE_LOCATION;
@@ -24,6 +25,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.deone.extrmtasks.R;
+import com.deone.extrmtasks.modeles.Tache;
 
 import java.io.IOException;
 import java.util.List;
@@ -33,7 +35,8 @@ public class Lctools {
 
     private static Context appContext;
     private static Lctools instance;
-    private LocationManager locationManager;
+    private static LocationManager locationManager;
+    private static String[] locationPermissions;
     private String city;
     private String country;
     private String codepostal;
@@ -59,6 +62,9 @@ public class Lctools {
      */
     private Lctools(Context applicationContext) {
         appContext = applicationContext;
+        locationPermissions = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+        locationManager = (LocationManager) appContext.getSystemService(Context.LOCATION_SERVICE);
+        initLocation();
     }
 
     public String getCity() {
@@ -89,15 +95,11 @@ public class Lctools {
         return latitude;
     }
 
-    public void setLocationManager(LocationManager locationManager) {
-        this.locationManager = locationManager;
-    }
-
     /**
      *
      */
 
-    public void initLocation() {
+    private void initLocation() {
         //https://stackoverflow.com/questions/33327984/call-requires-permissions-that-may-be-rejected-by-user
         Criteria criteria = new Criteria();
         String providerName = locationManager.getBestProvider(criteria, true);
@@ -107,20 +109,30 @@ public class Lctools {
                 appContext.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
             }
             Location location = locationManager.getLastKnownLocation(providerName);
-            this.latitude = location.getLatitude();
-            this.longitude = location.getLongitude();
+            if (location != null){
+                this.latitude = location.getLatitude();
+                this.longitude = location.getLongitude();
+            }else {
+                Toast.makeText(appContext, "Localisation null", Toast.LENGTH_SHORT).show();
+            }
         } else {
-            if (ContextCompat.checkSelfPermission(appContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
-                ActivityCompat.requestPermissions((Activity) appContext, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                        LOCATION_REQUEST_CODE_ACCESS_COARSE_LOCATION);
+            if (!checkLocationPermissions()) {
+                requestLocationPermissions();
             }
-            if (ContextCompat.checkSelfPermission(appContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
-                ActivityCompat.requestPermissions((Activity) appContext, new String[] { Manifest.permission.ACCESS_FINE_LOCATION },
-                        LOCATION_REQUEST_CODE_ACCESS_FINE_LOCATION);
-            }
-
         }
         isLocationEnabled();
+    }
+
+    public boolean checkLocationPermissions() {
+        boolean result = ContextCompat.checkSelfPermission(appContext, Manifest.permission.ACCESS_COARSE_LOCATION)
+                == (PackageManager.PERMISSION_GRANTED);
+        boolean result1 = ContextCompat.checkSelfPermission(appContext, Manifest.permission.ACCESS_FINE_LOCATION)
+                == (PackageManager.PERMISSION_GRANTED);
+        return result && result1;
+    }
+
+    public void requestLocationPermissions() {
+        ActivityCompat.requestPermissions((Activity) appContext, locationPermissions, LOCATION_REQUEST_CODE);
     }
 
     public void isLocationEnabled() {
@@ -140,19 +152,7 @@ public class Lctools {
         }
     }
 
-    public void requestLoccationPermissionsResults(int requestCode, int[] grantResults) {
-        if (requestCode == LOCATION_REQUEST_CODE) {
-            if (grantResults.length > 0) {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted
-                } else {
-                    // permission denied
-                }
-            }
-        }
-    }
-
-    public void testGeocoder (){
+    public void displayTaskLocation(){
         try {
             Geocoder geocoder = new Geocoder(appContext, Locale.getDefault());
 
@@ -183,4 +183,31 @@ public class Lctools {
         }
 
     }
+
+    // TODO: Localisation du 02 Novembre 2022
+
+    public static boolean checkAccessFineLocationPermissions(Context appContext) {
+        return ActivityCompat.checkSelfPermission(appContext, Manifest.permission.ACCESS_FINE_LOCATION)
+                == (PackageManager.PERMISSION_GRANTED);
+    }
+
+    public static void requestAccessFineLocationPermissions(Context appContext) {
+        ActivityCompat.requestPermissions((Activity) appContext, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+    }
+
+    public static void displayTaskLocation(Context appContext, Location location, Tache tache){
+        try {
+            Geocoder geocoder = new Geocoder(appContext, Locale.getDefault());
+            List<Address> addresses  = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            tache.setTville(addresses.get(0).getLocality());
+            tache.setTville(addresses.get(0).getAdminArea());
+            tache.setTville(addresses.get(0).getCountryName());
+            tache.setTville(addresses.get(0).getPostalCode());
+            tache.setTville(addresses.get(0).getAddressLine(0));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }

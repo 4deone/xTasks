@@ -122,8 +122,12 @@
     <string name="profile_photo">Avatar</string>
     <string name="cover_photo">Couverture</string>
     <string name="description">Description</string>
+    <string name="enable_location_permissions">Please, enable location permissions.</string>
     <string name="enable_storage_permissions">Please, enable storage permissions.</string>
-    <string name="enable_camera_storage_permissions">Please, enable camera storage permissions.</string>
+    <string name="enable_camera_permissions">Please, enable camera permissions.</string>
+    <string name="enabled_camera_permissions">Camera permissions enabled</string>
+    <string name="enabled_storage_permissions">Storage permissions enabled</string>
+    <string name="enabled_location_permissions">Location permissions enabled</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
     <string name="loading_task_image_error">Erreur lors du chargement de l\'image de la tâche!</string>
@@ -218,4 +222,12 @@
     <string name="key_word">Key words</string>
     <string name="key_words_list">Liste des mots-clé</string>
     <string name="documentation">Documentation</string>
+    <string name="delete_key_word">Do you want to delete key word %s?</string>
+    <string name="storage">Storage</string>
+    <string name="contact">Contact</string>
+    <string name="more_details">More details</string>
+    <string name="refuser">deny</string>
+    <string name="only_this_time">only this time</string>
+    <string name="while_using_the_app">while using the app</string>
+    <string name="loc_error">Location null error</string>
 </resources>

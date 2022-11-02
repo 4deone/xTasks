@@ -63,7 +63,7 @@ public class Kadapter extends RecyclerView.Adapter<Kadapter.Holder> {
         holder.ibKeyItem.setOnClickListener(view -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(appContext);
             builder.setTitle(appContext.getString(R.string.app_name_lite));
-            builder.setMessage(appContext.getString(R.string.choisir_langue));
+            builder.setMessage(appContext.getString(R.string.delete_key_word, key));
             builder.setNegativeButton(appContext.getString(R.string.non), null);
             builder.setPositiveButton(appContext.getString(R.string.oui), (dialogInterface, i) ->{
                 deleteKey(buildPathWithSlash(USERS, myuid, KEYS, keyId), myuid, nKeys);

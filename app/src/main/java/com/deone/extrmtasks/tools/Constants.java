@@ -11,6 +11,9 @@ public class Constants {
     public static final String APP_PREFS_CAMERA = "App_prefs_camera";
     public static final String APP_PREFS_GALLERY = "App_prefs_gallery";
     public static final String APP_PREFS_KEY = "App_prefs_key";
+    public static final String APP_PREFS_LOCALISATION = "App_prefs_localisation";
+    public static final String APP_PREFS_CONTACT = "App_prefs_contact";
+    public static final String APP_PREFS_STORAGE = "App_prefs_camera";
     public static final String TITLE = "title";
     public static final String DESCRIPTION = "description";
     public static final String AVATAR = "avatar";
@@ -59,6 +62,5 @@ public class Constants {
     public static final int LOCATION_REQUEST_CODE = 100;
     public static final int CAMERA_REQUEST_CODE = 200;
     public static final int STORAGE_REQUEST_CODE = 300;
-    public static final int MINIMUM_TIME = 10000;
-    public static final int MINIMUM_DISTANCE = 50;
+    public static final int CONTACT_REQUEST_CODE = 400;
 }

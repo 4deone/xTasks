@@ -138,25 +138,10 @@
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/tvSettingsAutorisation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/rlSettingsKeywords"
-                android:layout_marginTop="3dp"
-                android:background="@color/white"
-                android:drawablePadding="10dp"
-                android:padding="20dp"
-                android:text="@string/autorisations"
-                android:textColor="@color/black"
-                android:textSize="17sp"
-                android:textStyle="bold"
-                app:drawableStartCompat="@drawable/ic_action_auth" />
-
-            <TextView
                 android:id="@+id/tvSettingsNotification"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvSettingsAutorisation"
+                android:layout_below="@+id/rlSettingsKeywords"
                 android:layout_marginTop="3dp"
                 android:background="@color/white"
                 android:drawablePadding="10dp"

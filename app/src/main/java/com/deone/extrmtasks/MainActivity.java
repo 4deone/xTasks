@@ -49,6 +49,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         checkUser();
     }
 
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        if (id == R.id.btProcessMain)
+            signInProcess();
+        else if (id == R.id.tvSignUpMain)
+            gotonew(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        removeAllData();
+    }
+
     /**
      *
      */
@@ -62,6 +77,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         signtools = Signtools.getInstance(this);
     }
 
+    /**
+     *
+     * @return
+     */
     private int appActualThemeMode() {
         return checkUiCurrentMode()==AppCompatDelegate.MODE_NIGHT_YES
                 ?
@@ -115,18 +134,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         checkEmailStatus(pd, user);
     }
 
-    @Override
-    public void onClick(View view) {
-        int id = view.getId();
-        if (id == R.id.btProcessMain)
-            signInProcess();
-        else if (id == R.id.tvSignUpMain)
-            gotonew(this);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        removeAllData();
-    }
 }

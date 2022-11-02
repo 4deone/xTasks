@@ -11,12 +11,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -51,6 +53,16 @@ public class Ivtools {
         appContext = applicationContext;
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        initCameraAndStoragePermissions();
+    }
+
+    private void initCameraAndStoragePermissions() {
+        if (!checkCameraPermissions()) {
+            requestCameraPermissions();
+        }
+        if (!checkStoragePermissions()) {
+            requestStoragePermissions();
+        }
     }
 
     /**
@@ -109,14 +121,6 @@ public class Ivtools {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
         ((Activity) appContext).startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
-    }
-
-    /**
-     *
-     * @param imageUri
-     */
-    public void setImageUri(Uri imageUri) {
-        this.imageUri = imageUri;
     }
 
     /**

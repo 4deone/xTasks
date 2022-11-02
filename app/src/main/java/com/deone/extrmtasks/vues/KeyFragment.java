@@ -14,6 +14,8 @@ import static com.deone.extrmtasks.tools.Other.isStringEmpty;
 import static com.deone.extrmtasks.tools.Other.rvLayoutManager;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -130,11 +132,7 @@ public class KeyFragment extends Fragment implements View.OnClickListener {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.itKeysInfos){
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
-            builder.setTitle(getString(R.string.app_name_lite));
-            builder.setMessage(getString(R.string.documentation));
-            builder.setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> dialogInterface.dismiss());
-            builder.create().show();
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.deone.com/corp/xtasks/keywords/documentation")));
         }
         return super.onOptionsItemSelected(item);
     }

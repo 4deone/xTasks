@@ -59,7 +59,6 @@ import com.google.firebase.database.ValueEventListener;
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private Fbtools fbtools;
-    private Sptools sptools;
     private ImageView ivSettingsCover;
     private ImageView ivSettingsAvatar;
     private TextView tvSettingsDate;
@@ -120,8 +119,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             gotoUserDetails();
         else if (id == R.id.tvSettingsKeyList)
             showKeyList();
-        else if (id == R.id.tvSettingsAutorisation)
-            showAutorisationList();
         else if (id == R.id.tvSettingsNotification)
             showNotification();
         else if (id == R.id.tvSettingsDisplayMode)
@@ -142,18 +139,18 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             showSignoutDialog(builder);
     }
 
-    /*
-            Initialisation des l'activité
-     */
+    // TODO: Initialisation des l'activité
 
     /**
      *
      */
     private void initApp() {
-        sptools = Sptools.getInstance(this);
-        fbtools = Fbtools.getInstance(this);
+        // TODO: Init sharedpreferences tools
+        Sptools sptools = Sptools.getInstance(this);
         initThemeMode(readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
         initLLanguage(this, readStringData(APP_PREFS_LANGUE, EN));
+        // TODO: Init firebase database tools
+        fbtools = Fbtools.getInstance(this);
     }
 
     /**
@@ -197,7 +194,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         tvSettingsDisplayMode.setOnClickListener(this);
         tvSettingsLanguage.setOnClickListener(this);
         tvSettingsKeyList.setOnClickListener(this);
-        findViewById(R.id.tvSettingsAutorisation).setOnClickListener(this);
         findViewById(R.id.tvSettingsNotification).setOnClickListener(this);
         findViewById(R.id.tvSettingsConfidentialite).setOnClickListener(this);
         findViewById(R.id.tvSettingsDataStockage).setOnClickListener(this);
@@ -208,9 +204,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         swSettingsKey.setOnCheckedChangeListener(this);
     }
 
-    /*
-        Goto user details
-     */
+    // TODO: Goto user details
 
     /**
      *
@@ -222,9 +216,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         startActivity(intent);
     }
 
-    /*
-            Display user information
-     */
+    // TODO: Display user information
 
     /**
      *
@@ -254,9 +246,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         }
     };
 
-    /*
-            Display key word
-     */
+    // TODO: Display key word
 
     private void showKeyList() {
         Intent intent = new Intent(this, TempActivity.class);
@@ -265,20 +255,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         startActivity(intent);
     }
 
-    /*
-            Display app autorisations
-     */
-
-    private void showAutorisationList() {
-        Intent intent = new Intent(this, TempActivity.class);
-        intent.putExtra(UID, myuid);
-        intent.putExtra(IDFRAGMENT, FRAGMENT_AUTH);
-        startActivity(intent);
-    }
-
-    /*
-            Display app notification
-     */
+    // TODO: Display app notification
 
     private void showNotification() {
         Intent intent = new Intent(this, TempActivity.class);
@@ -287,9 +264,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         startActivity(intent);
     }
 
-    /*
-            Choose app theme mode
-     */
+    // TODO: Choose app theme mode
 
     private void showDisplayMode(AlertDialog.Builder builder) {
         builder.setMessage(getString(R.string.choisir_mode));
@@ -307,9 +282,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         }
     };
 
-    /*
-            Display choose language
-     */
+    // TODO: Display choose language
 
     private void showLanguageDialog(AlertDialog.Builder builder) {
         builder.setMessage(getString(R.string.choisir_langue));
@@ -333,9 +306,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         }*/
     };
 
-    /*
-            Display app confidentiality
-     */
+    // TODO: Display app confidentiality
 
     private void sendConfidentialite() {
         Intent intent = new Intent(this, TempActivity.class);
@@ -344,9 +315,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         startActivity(intent);
     }
 
-    /*
-            Display app data & stockage
-     */
+    // TODO: Display app data & stockage
 
     private void showDataStockage() {
         Intent intent = new Intent(this, TempActivity.class);
@@ -355,9 +324,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         startActivity(intent);
     }
 
-    /*
-            Display user groups
-     */
+    // TODO: Display user groups
 
     /**
      *
@@ -369,18 +336,14 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         startActivity(intent);
     }
 
-    /*
-            Display FAQ
-     */
+    // TODO: Display FAQ
 
     private void showFaq() {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.deone.com/corp/xtasks/faq"));
         startActivity(browserIntent);
     }
 
-    /*
-        Display About
-     */
+    // TODO: Display About
 
     /**
      *
@@ -390,9 +353,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         startActivity(browserIntent);
     }
 
-    /*
-            Sign out
-     */
+    // TODO: Sign out
 
     private void showSignoutDialog(AlertDialog.Builder builder) {
         builder.setMessage(getString(R.string.signout_message));

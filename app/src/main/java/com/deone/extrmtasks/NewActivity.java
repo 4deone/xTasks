@@ -76,6 +76,55 @@ public class NewActivity extends AppCompatActivity implements View.OnClickListen
         checkUser();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        switch (requestCode){
+            case CAMERA_REQUEST_CODE:{
+                if (grantResults.length>0){
+                    if (isCameraAccepted(grantResults[0]) && isWriteStorageAccepted(grantResults[1]))
+                        writeBooleanData(APP_PREFS_CAMERA, true);
+                }
+            }
+            break;
+            case STORAGE_REQUEST_CODE:{
+                if (grantResults.length>0){
+                    if (isWriteStorageAccepted(grantResults[0]))
+                        writeBooleanData(APP_PREFS_GALLERY, true);
+                }
+            }
+            break;
+            case LOCATION_REQUEST_CODE:{
+                if (grantResults.length>0){
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)
+                        writeBooleanData(APP_PREFS_LOCATION, true);
+                    else {
+                        Intent intent=new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(intent);
+                    }
+                }
+            }
+            break;
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        if (id == R.id.btCreateAccountNew && cbAcceptRulesNew.isChecked())
+            signUpProcess();
+        else if (id == R.id.tvSignInNew)
+            gotomain(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        removeAllData();
+        gotomain(this);
+    }
+
     /**
      *
      */
@@ -179,6 +228,8 @@ public class NewActivity extends AppCompatActivity implements View.OnClickListen
         }
     }
 
+    // TODO: L'ecouteur vConditions
+
     private final ValueEventListener vConditions  = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -190,53 +241,5 @@ public class NewActivity extends AppCompatActivity implements View.OnClickListen
             Toast.makeText(NewActivity.this, ""+error.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
-            case CAMERA_REQUEST_CODE:{
-                if (grantResults.length>0){
-                    if (isCameraAccepted(grantResults[0]) && isWriteStorageAccepted(grantResults[1]))
-                        writeBooleanData(APP_PREFS_CAMERA, true);
-                }
-            }
-            break;
-            case STORAGE_REQUEST_CODE:{
-                if (grantResults.length>0){
-                    if (isWriteStorageAccepted(grantResults[0]))
-                        writeBooleanData(APP_PREFS_GALLERY, true);
-                }
-            }
-            break;
-            case LOCATION_REQUEST_CODE:{
-                if (grantResults.length>0){
-                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)
-                        writeBooleanData(APP_PREFS_LOCATION, true);
-                    else {
-                        Intent intent=new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivity(intent);
-                    }
-                }
-            }
-            break;
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    @Override
-    public void onClick(View view) {
-        int id = view.getId();
-        if (id == R.id.btCreateAccountNew && cbAcceptRulesNew.isChecked())
-            signUpProcess();
-        else if (id == R.id.tvSignInNew)
-            gotomain(this);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        removeAllData();
-        gotomain(this);
-    }
 
 }

@@ -86,6 +86,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        if (id == R.id.fabAddTachesHome)
+            gotoaddtask(this);
+    }
+
     /**
      *
      */
@@ -170,12 +177,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    public void onClick(View view) {
-        int id = view.getId();
-        if (id == R.id.fabAddTachesHome)
-            gotoaddtask(this);
-    }
+    // TODO: Les écouteurs vTaches, vSearchTaches, vKeys & xListener
 
     private final ValueEventListener vTaches  = new ValueEventListener() {
         @Override
@@ -201,6 +203,35 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(HomeActivity.this, ""+error.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
+
+    private final ValueEventListener vKeys = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            keyList.clear();
+            for (DataSnapshot ds : snapshot.getChildren()){
+                keyList.add(ds.getValue(Key.class));
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
+        }
+    };
+
+    private final Xlistener xListener = new Xlistener() {
+        @Override
+        public void onItemClick(View view, int position) {
+            gotoTask(HomeActivity.this, TID, tacheList.get(position).getTid(), UID, tacheList.get(position).getUid());
+        }
+
+        @Override
+        public void onLongItemClick(View view, int position) {
+
+        }
+    };
+
+    // TODO: Les écouteurs SearchView : searchManage, searchClose, searchQueryTextFocusChange & searchSuggestion
 
     private final SearchView.OnQueryTextListener searchManage = new SearchView.OnQueryTextListener() {
         @Override
@@ -239,33 +270,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public boolean onSuggestionClick(int position) {
             return false;
-        }
-    };
-
-    private final ValueEventListener vKeys = new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot snapshot) {
-            keyList.clear();
-            for (DataSnapshot ds : snapshot.getChildren()){
-                keyList.add(ds.getValue(Key.class));
-            }
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-
-        }
-    };
-
-    private final Xlistener xListener = new Xlistener() {
-        @Override
-        public void onItemClick(View view, int position) {
-            gotoTask(HomeActivity.this, TID, tacheList.get(position).getTid(), UID, tacheList.get(position).getUid());
-        }
-
-        @Override
-        public void onLongItemClick(View view, int position) {
-
         }
     };
 

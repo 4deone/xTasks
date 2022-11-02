@@ -99,7 +99,7 @@ public class Fbtools {
         return email;
     }
 
-    //Toutes les requetes permettant à l'utilisateur ou meme le système de lire les éléments contenu dans la base de données
+    // TODO: Toutes les requetes permettant à l'utilisateur ou meme le système de lire les éléments contenu dans la base de données
 
     /**
      *
@@ -176,11 +176,11 @@ public class Fbtools {
         ref.child(USERS).child(uid).child(KEYS).addValueEventListener(valueEventListener);
     }
 
-    //Toutes les requetes permettant à l'utilisateur ou meme le système de d'ecrire, de modifier ou
+    //TODO: Toutes les requetes permettant à l'utilisateur ou meme le système de d'ecrire, de modifier ou
     // de supprimer les éléments contenu dans la base de données
 
     /*
-        Les taches
+        TODO: Les taches
      */
     public void ecrireunenouvelletache(Tache tache) {
         ref.child(buildPathWithSlash(TACHES, tache.getTid())).setValue(tache)
@@ -234,7 +234,7 @@ public class Fbtools {
     }
 
     /*
-        Les utilisateurs
+        TODO: Les utilisateurs
      */
 
     public void ecrireunnouvelutilisateur(User user) {
@@ -249,7 +249,7 @@ public class Fbtools {
     }
 
     /*
-        Les commentaires
+        TODO: Les commentaires
      */
 
     public static void ecrireUnNouveauCommentaire(ProgressDialog pd, Commentaire commentaire, String ntComment, String nuComment) {
@@ -273,7 +273,7 @@ public class Fbtools {
     }
 
     /*
-        Les Keys
+        TODO: Les Keys
      */
 
     public static void ecrireUneNouvelleKey(ProgressDialog pd, Key key, String myuid, String nkeys) {
@@ -305,7 +305,7 @@ public class Fbtools {
     }
 
     /*
-        Les autres méthodes
+        TODO: Les autres méthodes
      */
 
     public void ecrireDansUnChamp(String path, String value) {
@@ -348,7 +348,7 @@ public class Fbtools {
     }
 
     /*
-        Sign out
+        TODO: Sign out
      */
 
     public static void signOut() {
