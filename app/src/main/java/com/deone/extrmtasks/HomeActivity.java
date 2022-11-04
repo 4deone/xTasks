@@ -1,13 +1,21 @@
 package com.deone.extrmtasks;
 
+import static com.deone.extrmtasks.database.Fbtools.lireUnUtilisateurkeys;
+import static com.deone.extrmtasks.database.Fbtools.liretouteslestaches;
+import static com.deone.extrmtasks.preference.Sptools.readBooleanData;
+import static com.deone.extrmtasks.preference.Sptools.readIntData;
+import static com.deone.extrmtasks.preference.Sptools.readStringData;
+import static com.deone.extrmtasks.tools.Constants.ACTION_START_LOCATION_SERVICE_ID;
+import static com.deone.extrmtasks.tools.Constants.ACTION_STOP_LOCATION_SERVICE_ID;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_KEY;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_LANGUE;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_MODE;
 import static com.deone.extrmtasks.tools.Constants.EN;
+import static com.deone.extrmtasks.tools.Constants.LOCATION_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.TID;
 import static com.deone.extrmtasks.tools.Constants.UID;
-import static com.deone.extrmtasks.tools.Fbtools.lireUnUtilisateurkeys;
-import static com.deone.extrmtasks.tools.Fbtools.liretouteslestaches;
+import static com.deone.extrmtasks.tools.Lctools.checkAccessFineLocationPermissions;
+import static com.deone.extrmtasks.tools.Lctools.requestAccessFineLocationPermissions;
 import static com.deone.extrmtasks.tools.Other.gotoTask;
 import static com.deone.extrmtasks.tools.Other.gotoaddtask;
 import static com.deone.extrmtasks.tools.Other.gotomain;
@@ -18,31 +26,44 @@ import static com.deone.extrmtasks.tools.Other.isContains;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
 import static com.deone.extrmtasks.tools.Other.orderListByKeyWords;
 import static com.deone.extrmtasks.tools.Other.rvLayoutManager;
-import static com.deone.extrmtasks.tools.Sptools.readBooleanData;
-import static com.deone.extrmtasks.tools.Sptools.readIntData;
-import static com.deone.extrmtasks.tools.Sptools.readStringData;
 
+import android.Manifest;
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.deone.extrmtasks.adapters.Tadapter;
+import com.deone.extrmtasks.database.Fbtools;
 import com.deone.extrmtasks.modeles.Key;
 import com.deone.extrmtasks.modeles.Tache;
-import com.deone.extrmtasks.tools.Fbtools;
-import com.deone.extrmtasks.tools.Sptools;
+import com.deone.extrmtasks.preference.Sptools;
+import com.deone.extrmtasks.tools.LocService;
 import com.deone.extrmtasks.tools.Xlistener;
+import com.google.android.gms.location.LocationServices;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -87,10 +108,57 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if (requestCode == LOCATION_REQUEST_CODE && grantResults.length > 0)
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                startLocationService();
+            else
+                Toast.makeText(this, "Permission denied!", Toast.LENGTH_SHORT).show();
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.fabAddTachesHome)
             gotoaddtask(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        /*if (checkAccessFineLocationPermissions(HomeActivity.this))
+            startLocationService();
+        else
+            requestAccessFineLocationPermissions(HomeActivity.this);*/
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        /*if (checkAccessFineLocationPermissions(HomeActivity.this))
+            startLocationService();
+        else
+            requestAccessFineLocationPermissions(HomeActivity.this);*/
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //stopLocationService();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //stopLocationService();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //stopLocationService();
     }
 
     /**
@@ -101,6 +169,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         sptools = Sptools.getInstance(this);
         initThemeMode(readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
         initLLanguage(this, readStringData(APP_PREFS_LANGUE, EN));
+        /*if (checkAccessFineLocationPermissions(HomeActivity.this))
+            startLocationService();
+        else
+            requestAccessFineLocationPermissions(HomeActivity.this);*/
     }
 
     /**
@@ -273,4 +345,41 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
+    // TODO: Location service
+    private boolean isLocationServiceRunning(){
+        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        if (activityManager != null){
+            for (ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)){
+                if (LocationServices.class.getName().equals(service.service.getClassName())){
+                    if (service.foreground)
+                        return true;
+                }
+            }
+            return false;
+        }
+        return false;
+    }
+
+    private void startLocationService(){
+        if (!isLocationServiceRunning()){
+            Intent intent = new Intent(getApplicationContext(), LocService.class);
+            intent.setAction(ACTION_START_LOCATION_SERVICE_ID);
+            startService(intent);
+            Toast.makeText(this, "Location service started!", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void stopLocationService(){
+        if (!isLocationServiceRunning()){
+            Intent intent = new Intent(getApplicationContext(), LocService.class);
+            intent.setAction(ACTION_STOP_LOCATION_SERVICE_ID);
+            startService(intent);
+            Toast.makeText(this, "Location service stopped!", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    /*Toast.makeText(context, "Latitude = " + intent.getExtras().getString(LOCATION_SERVICE_SIGNAL_LATITUDE)
+                    + ", Longitude = " + intent.getExtras().getString(LOCATION_SERVICE_SIGNAL_LONGITUDE), Toast.LENGTH_SHORT).show();*/
 }

@@ -1,10 +1,10 @@
 package com.deone.extrmtasks.vues;
 
 import static com.deone.extrmtasks.tools.Constants.UID;
-import static com.deone.extrmtasks.tools.Fbtools.ecrireUnSignalementDuser;
-import static com.deone.extrmtasks.tools.Fbtools.lireUnUtilisateurSpecifique;
-import static com.deone.extrmtasks.tools.Fbtools.liretoutesmestaches;
-import static com.deone.extrmtasks.tools.Ivtools.loadingImageWithPath;
+import static com.deone.extrmtasks.database.Fbtools.ecrireUnSignalementDuser;
+import static com.deone.extrmtasks.database.Fbtools.lireUnUtilisateurSpecifique;
+import static com.deone.extrmtasks.database.Fbtools.liretoutesmestaches;
+import static com.deone.extrmtasks.picture.Ivtools.loadingImageWithPath;
 import static com.deone.extrmtasks.tools.Other.formatLaDate;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
 import static com.deone.extrmtasks.tools.Other.rvLayoutManager;
@@ -35,7 +35,7 @@ import com.deone.extrmtasks.adapters.Sadapter;
 import com.deone.extrmtasks.modeles.Signale;
 import com.deone.extrmtasks.modeles.Tache;
 import com.deone.extrmtasks.modeles.User;
-import com.deone.extrmtasks.tools.Fbtools;
+import com.deone.extrmtasks.database.Fbtools;
 import com.deone.extrmtasks.tools.Xlistener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

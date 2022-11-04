@@ -3,7 +3,7 @@ package com.deone.extrmtasks.adapters;
 import static com.deone.extrmtasks.tools.Constants.FRAGMENT_ACCOUNT;
 import static com.deone.extrmtasks.tools.Constants.IDFRAGMENT;
 import static com.deone.extrmtasks.tools.Constants.UID;
-import static com.deone.extrmtasks.tools.Ivtools.loadingImageWithPath;
+import static com.deone.extrmtasks.picture.Ivtools.loadingImageWithPath;
 import static com.deone.extrmtasks.tools.Other.formatLaDate;
 
 import android.content.Context;
@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.deone.extrmtasks.R;
 import com.deone.extrmtasks.TempActivity;
 import com.deone.extrmtasks.modeles.Commentaire;
-import com.deone.extrmtasks.tools.Fbtools;
+import com.deone.extrmtasks.database.Fbtools;
 import com.deone.extrmtasks.tools.Xlistener;
 
 import java.util.List;

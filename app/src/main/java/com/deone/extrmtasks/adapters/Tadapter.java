@@ -1,16 +1,17 @@
 package com.deone.extrmtasks.adapters;
 
-import static com.deone.extrmtasks.tools.Ivtools.loadingImageWithPath;
+import static com.deone.extrmtasks.picture.Ivtools.loadingImageWithPath;
 import static com.deone.extrmtasks.tools.Other.checkBeforeFormatData;
 import static com.deone.extrmtasks.tools.Other.formatLaDate;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.deone.extrmtasks.R;
 import com.deone.extrmtasks.modeles.Tache;
 import com.deone.extrmtasks.tools.Xlistener;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.List;
 

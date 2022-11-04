@@ -63,4 +63,18 @@ public class Constants {
     public static final int CAMERA_REQUEST_CODE = 200;
     public static final int STORAGE_REQUEST_CODE = 300;
     public static final int CONTACT_REQUEST_CODE = 400;
+    public static final int LOCATION_SERVICE_ID = 175;
+    public static final String ACTION_START_LOCATION_SERVICE_ID = "startLocationService";
+    public static final String ACTION_STOP_LOCATION_SERVICE_ID = "stopLocationService";
+    public static final String LOCATION_SERVICE_SIGNAL_LATITUDE = "location_service_signal_latitude";
+    public static final String LOCATION_SERVICE_SIGNAL_LONGITUDE = "location_service_signal_longitude";
+    public static final String LOCATION_SERVICE_SIGNAL = "location_service_signal";
+    public static final int NOTIFICATION_ID = 007;
+    public static final String NOTIFICATION_TAG = "FIREBASEOC";
+
+    // TODO: Test calcul de distance entre deux points
+
+    public static final double r2d = 180.0D / 3.141592653589793D;
+    public static final double d2r = 3.141592653589793D / 180.0D;
+    public static final double d2km = 111189.57696D * r2d;
 }

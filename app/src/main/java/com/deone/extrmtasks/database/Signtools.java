@@ -1,28 +1,15 @@
-package com.deone.extrmtasks.tools;
+package com.deone.extrmtasks.database;
 
-import static com.deone.extrmtasks.tools.Constants.APP_PREFS_CAMERA;
-import static com.deone.extrmtasks.tools.Constants.APP_PREFS_LOCATION;
-import static com.deone.extrmtasks.tools.Constants.APP_PREFS_STORAGE;
 import static com.deone.extrmtasks.tools.Constants.AVATAR;
 import static com.deone.extrmtasks.tools.Constants.DATABASE;
 import static com.deone.extrmtasks.tools.Constants.USERS;
 import static com.deone.extrmtasks.tools.Other.buildPathWithSlash;
-import static com.deone.extrmtasks.tools.Other.checkCameraPermissions;
-import static com.deone.extrmtasks.tools.Other.checkContactPermissions;
-import static com.deone.extrmtasks.tools.Other.checkLocationPermissions;
-import static com.deone.extrmtasks.tools.Other.checkStoragePermissions;
 import static com.deone.extrmtasks.tools.Other.getXtimestamp;
 import static com.deone.extrmtasks.tools.Other.gotohome;
 import static com.deone.extrmtasks.tools.Other.gotonew;
 import static com.deone.extrmtasks.tools.Other.isNewAccountMain;
-import static com.deone.extrmtasks.tools.Other.requestCameraPermissions;
-import static com.deone.extrmtasks.tools.Other.requestContactPermissions;
-import static com.deone.extrmtasks.tools.Other.requestLocationPermissions;
-import static com.deone.extrmtasks.tools.Other.requestStoragePermissions;
 import static com.deone.extrmtasks.tools.Other.showDialog;
-import static com.deone.extrmtasks.tools.Sptools.writeBooleanData;
 
-import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;

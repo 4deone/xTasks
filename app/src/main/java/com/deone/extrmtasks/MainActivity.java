@@ -11,12 +11,12 @@ import static com.deone.extrmtasks.tools.Other.gotonew;
 import static com.deone.extrmtasks.tools.Other.initLLanguage;
 import static com.deone.extrmtasks.tools.Other.initThemeMode;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
-import static com.deone.extrmtasks.tools.Signtools.checkEmailStatus;
-import static com.deone.extrmtasks.tools.Sptools.readIntData;
-import static com.deone.extrmtasks.tools.Sptools.readStringData;
-import static com.deone.extrmtasks.tools.Sptools.removeAllData;
-import static com.deone.extrmtasks.tools.Sptools.writeIntData;
-import static com.deone.extrmtasks.tools.Sptools.writeStringData;
+import static com.deone.extrmtasks.database.Signtools.checkEmailStatus;
+import static com.deone.extrmtasks.preference.Sptools.readIntData;
+import static com.deone.extrmtasks.preference.Sptools.readStringData;
+import static com.deone.extrmtasks.preference.Sptools.removeAllData;
+import static com.deone.extrmtasks.preference.Sptools.writeIntData;
+import static com.deone.extrmtasks.preference.Sptools.writeStringData;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -28,8 +28,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.deone.extrmtasks.modeles.User;
-import com.deone.extrmtasks.tools.Signtools;
-import com.deone.extrmtasks.tools.Sptools;
+import com.deone.extrmtasks.database.Signtools;
+import com.deone.extrmtasks.preference.Sptools;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 

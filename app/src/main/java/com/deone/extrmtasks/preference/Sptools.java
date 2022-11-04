@@ -1,4 +1,4 @@
-package com.deone.extrmtasks.tools;
+package com.deone.extrmtasks.preference;
 
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS;
 

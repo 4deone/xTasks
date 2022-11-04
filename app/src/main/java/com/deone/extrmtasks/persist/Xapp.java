@@ -1,4 +1,4 @@
-package com.deone.extrmtasks.tools;
+package com.deone.extrmtasks.persist;
 
 import android.app.Application;
 

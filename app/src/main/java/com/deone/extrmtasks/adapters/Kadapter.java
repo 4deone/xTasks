@@ -1,15 +1,12 @@
 package com.deone.extrmtasks.adapters;
 
-import static com.deone.extrmtasks.tools.Constants.APP_PREFS_LANGUE;
 import static com.deone.extrmtasks.tools.Constants.KEYS;
 import static com.deone.extrmtasks.tools.Constants.USERS;
-import static com.deone.extrmtasks.tools.Fbtools.deleteKey;
+import static com.deone.extrmtasks.database.Fbtools.deleteKey;
 import static com.deone.extrmtasks.tools.Other.buildPathWithSlash;
-import static com.deone.extrmtasks.tools.Other.selectedLangue;
-import static com.deone.extrmtasks.tools.Sptools.readStringData;
+import static com.deone.extrmtasks.preference.Sptools.readStringData;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

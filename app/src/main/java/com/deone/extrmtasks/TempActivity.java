@@ -11,30 +11,41 @@ import static com.deone.extrmtasks.tools.Constants.FRAGMENT_NOT;
 import static com.deone.extrmtasks.tools.Constants.FRAGMENT_STOCKAGE;
 import static com.deone.extrmtasks.tools.Constants.IDFRAGMENT;
 import static com.deone.extrmtasks.tools.Constants.UID;
+import static com.deone.extrmtasks.tools.Lctools.requestAccessFineLocationPermissions;
 import static com.deone.extrmtasks.tools.Other.gotomain;
 import static com.deone.extrmtasks.tools.Other.initLLanguage;
 import static com.deone.extrmtasks.tools.Other.initThemeMode;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
-import static com.deone.extrmtasks.tools.Sptools.readIntData;
-import static com.deone.extrmtasks.tools.Sptools.readStringData;
+import static com.deone.extrmtasks.preference.Sptools.readIntData;
+import static com.deone.extrmtasks.preference.Sptools.readStringData;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Looper;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.deone.extrmtasks.tools.Fbtools;
-import com.deone.extrmtasks.tools.Sptools;
+import com.deone.extrmtasks.database.Fbtools;
+import com.deone.extrmtasks.preference.Sptools;
 import com.deone.extrmtasks.vues.AccountFragment;
 import com.deone.extrmtasks.vues.ConfidentialityFragment;
 import com.deone.extrmtasks.vues.GroupFragment;
 import com.deone.extrmtasks.vues.KeyFragment;
 import com.deone.extrmtasks.vues.NotificationFragment;
 import com.deone.extrmtasks.vues.StockageFragment;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 
 public class TempActivity extends AppCompatActivity {
 
@@ -105,5 +116,6 @@ public class TempActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.frameLayoutTemp, fragment);
         fragmentTransaction.commit(); // save the changes
     }
+
 
 }

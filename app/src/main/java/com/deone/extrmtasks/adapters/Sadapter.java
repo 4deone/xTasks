@@ -1,6 +1,6 @@
 package com.deone.extrmtasks.adapters;
 
-import static com.deone.extrmtasks.tools.Ivtools.loadingImageWithPath;
+import static com.deone.extrmtasks.picture.Ivtools.loadingImageWithPath;
 
 import android.content.Context;
 import android.view.LayoutInflater;

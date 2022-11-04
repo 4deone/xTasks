@@ -5,7 +5,6 @@ import static com.deone.extrmtasks.tools.Constants.APP_PREFS_LANGUE;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_MODE;
 import static com.deone.extrmtasks.tools.Constants.EN;
 import static com.deone.extrmtasks.tools.Constants.FRAGMENT_ACCOUNT;
-import static com.deone.extrmtasks.tools.Constants.FRAGMENT_AUTH;
 import static com.deone.extrmtasks.tools.Constants.FRAGMENT_CONF;
 import static com.deone.extrmtasks.tools.Constants.FRAGMENT_GROUP;
 import static com.deone.extrmtasks.tools.Constants.FRAGMENT_KEY;
@@ -13,8 +12,9 @@ import static com.deone.extrmtasks.tools.Constants.FRAGMENT_NOT;
 import static com.deone.extrmtasks.tools.Constants.FRAGMENT_STOCKAGE;
 import static com.deone.extrmtasks.tools.Constants.IDFRAGMENT;
 import static com.deone.extrmtasks.tools.Constants.UID;
-import static com.deone.extrmtasks.tools.Fbtools.signOut;
-import static com.deone.extrmtasks.tools.Ivtools.loadingImageWithPath;
+import static com.deone.extrmtasks.database.Fbtools.signOut;
+import static com.deone.extrmtasks.picture.Ivtools.loadingImageWithPath;
+import static com.deone.extrmtasks.tools.Lctools.requestAccessFineLocationPermissions;
 import static com.deone.extrmtasks.tools.Other.chooseDrawable;
 import static com.deone.extrmtasks.tools.Other.formatLaDate;
 import static com.deone.extrmtasks.tools.Other.gotohome;
@@ -24,16 +24,20 @@ import static com.deone.extrmtasks.tools.Other.initThemeMode;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
 import static com.deone.extrmtasks.tools.Other.safeShowValue;
 import static com.deone.extrmtasks.tools.Other.selectedLangue;
-import static com.deone.extrmtasks.tools.Sptools.readBooleanData;
-import static com.deone.extrmtasks.tools.Sptools.readIntData;
-import static com.deone.extrmtasks.tools.Sptools.readStringData;
-import static com.deone.extrmtasks.tools.Sptools.writeBooleanData;
-import static com.deone.extrmtasks.tools.Sptools.writeIntData;
+import static com.deone.extrmtasks.preference.Sptools.readBooleanData;
+import static com.deone.extrmtasks.preference.Sptools.readIntData;
+import static com.deone.extrmtasks.preference.Sptools.readStringData;
+import static com.deone.extrmtasks.preference.Sptools.writeBooleanData;
+import static com.deone.extrmtasks.preference.Sptools.writeIntData;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,10 +52,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
 import com.deone.extrmtasks.modeles.User;
-import com.deone.extrmtasks.tools.Fbtools;
-import com.deone.extrmtasks.tools.Sptools;
+import com.deone.extrmtasks.database.Fbtools;
+import com.deone.extrmtasks.preference.Sptools;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -188,6 +197,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         tvSettingsKeyList.setEnabled(swSettingsKey.isChecked());
 
         fbtools.lireUnUtilisateurSpecifique(vUser);
+
+        startLocalisation();
 
         ivSettingsAvatar.setOnClickListener(this);
         ivSettingsAvatar.setOnClickListener(this);
@@ -368,4 +379,63 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         gotomain(this);
     };
 
+    // TODO: Test
+
+    private double latitude;
+    private double longitude;
+    private LocationRequest locationRequest;
+
+    private final LocationCallback locationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(@NonNull LocationResult locationResult) {
+            super.onLocationResult(locationResult);
+            if (locationResult != null && locationResult.getLastLocation() != null) {
+                latitude = locationResult.getLastLocation().getLatitude();
+                longitude = locationResult.getLastLocation().getLongitude();
+                Log.e("LOCATION_UPDATE", latitude + ", " + longitude);
+            }
+        }
+    };
+
+    private void startLocalisation() {
+        locationRequest = new LocationRequest();
+        locationRequest.setInterval(4000);
+        locationRequest.setFastestInterval(2000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling ActivityCompat#requestPermissions
+            requestAccessFineLocationPermissions(this);
+            return;
+        }
+        LocationServices.getFusedLocationProviderClient(this)
+                .requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocationServices.getFusedLocationProviderClient(this).removeLocationUpdates(locationCallback);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LocationServices.getFusedLocationProviderClient(this).removeLocationUpdates(locationCallback);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocationServices.getFusedLocationProviderClient(this).removeLocationUpdates(locationCallback);
+    }
 }

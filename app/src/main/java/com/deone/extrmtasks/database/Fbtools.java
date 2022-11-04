@@ -1,4 +1,4 @@
-package com.deone.extrmtasks.tools;
+package com.deone.extrmtasks.database;
 
 import static com.deone.extrmtasks.tools.Constants.AVATAR;
 import static com.deone.extrmtasks.tools.Constants.COMMENTS;
@@ -9,7 +9,6 @@ import static com.deone.extrmtasks.tools.Constants.SIGNALES;
 import static com.deone.extrmtasks.tools.Constants.TACHES;
 import static com.deone.extrmtasks.tools.Constants.TID;
 import static com.deone.extrmtasks.tools.Constants.TNCOMMENTS;
-import static com.deone.extrmtasks.tools.Constants.TPAYS;
 import static com.deone.extrmtasks.tools.Constants.UAVATAR;
 import static com.deone.extrmtasks.tools.Constants.UCOVER;
 import static com.deone.extrmtasks.tools.Constants.UID;
@@ -19,7 +18,6 @@ import static com.deone.extrmtasks.tools.Constants.UNTASK;
 import static com.deone.extrmtasks.tools.Constants.USERS;
 import static com.deone.extrmtasks.tools.Other.buildPathWithSlash;
 import static com.deone.extrmtasks.tools.Other.decrementValue;
-import static com.deone.extrmtasks.tools.Other.genHashMapComment;
 import static com.deone.extrmtasks.tools.Other.getXtimestamp;
 import static com.deone.extrmtasks.tools.Other.gotohome;
 import static com.deone.extrmtasks.tools.Other.gotomain;
@@ -30,7 +28,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 

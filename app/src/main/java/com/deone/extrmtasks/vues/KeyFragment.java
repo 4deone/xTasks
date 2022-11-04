@@ -1,13 +1,8 @@
 package com.deone.extrmtasks.vues;
 
-import static com.deone.extrmtasks.tools.Constants.KEYS;
 import static com.deone.extrmtasks.tools.Constants.UID;
-import static com.deone.extrmtasks.tools.Constants.USERS;
-import static com.deone.extrmtasks.tools.Fbtools.deleteKey;
-import static com.deone.extrmtasks.tools.Fbtools.ecrireUneNouvelleKey;
-import static com.deone.extrmtasks.tools.Fbtools.lireUnUtilisateurSpecifique;
-import static com.deone.extrmtasks.tools.Fbtools.lireUnUtilisateurkeys;
-import static com.deone.extrmtasks.tools.Other.buildPathWithSlash;
+import static com.deone.extrmtasks.database.Fbtools.ecrireUneNouvelleKey;
+import static com.deone.extrmtasks.database.Fbtools.lireUnUtilisateurkeys;
 import static com.deone.extrmtasks.tools.Other.buildProgressDialog;
 import static com.deone.extrmtasks.tools.Other.getXtimestamp;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
@@ -19,7 +14,6 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,23 +27,16 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.deone.extrmtasks.HomeActivity;
 import com.deone.extrmtasks.R;
 import com.deone.extrmtasks.adapters.Kadapter;
-import com.deone.extrmtasks.adapters.Tadapter;
 import com.deone.extrmtasks.modeles.Key;
-import com.deone.extrmtasks.modeles.Tache;
-import com.deone.extrmtasks.modeles.User;
-import com.deone.extrmtasks.tools.Fbtools;
+import com.deone.extrmtasks.database.Fbtools;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
-import kotlin.UInt;
 
 /**
  * A simple {@link Fragment} subclass.

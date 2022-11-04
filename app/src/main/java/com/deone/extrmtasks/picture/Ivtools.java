@@ -1,4 +1,4 @@
-package com.deone.extrmtasks.tools;
+package com.deone.extrmtasks.picture;
 
 import static com.deone.extrmtasks.tools.Constants.CAMERA_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.STORAGE_REQUEST_CODE;
@@ -11,14 +11,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -180,7 +178,7 @@ public class Ivtools {
      */
     public static void loadingImageWithPath(ImageView iv, int draw, String image) {
         if (!isStringEmpty(image))
-            Picasso.get().load(image).placeholder(draw).into(iv);
+            Picasso.get().load(image).placeholder(draw).noFade().into(iv);
     }
 
 }
