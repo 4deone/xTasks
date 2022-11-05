@@ -11,6 +11,8 @@ public class Constants {
     public static final String APP_PREFS_CAMERA = "App_prefs_camera";
     public static final String APP_PREFS_GALLERY = "App_prefs_gallery";
     public static final String APP_PREFS_KEY = "App_prefs_key";
+    public static final String APP_PREFS_CURRENT_POSITION = "App_prefs_current_position";
+    public static final String APP_PREFS_CURRENT_POSITION_PRIORITY = "App_prefs_current_position_priority";
     public static final String APP_PREFS_LOCALISATION = "App_prefs_localisation";
     public static final String APP_PREFS_CONTACT = "App_prefs_contact";
     public static final String APP_PREFS_STORAGE = "App_prefs_camera";
@@ -71,6 +73,11 @@ public class Constants {
     public static final String LOCATION_SERVICE_SIGNAL = "location_service_signal";
     public static final int NOTIFICATION_ID = 007;
     public static final String NOTIFICATION_TAG = "FIREBASEOC";
+
+    public static final String HOME_SERVICE_TAG = "Home service";
+    public static final String HOME_SERVICE_TAG_LOCALISATION = "Home service localisation";
+    public static final String HOME_SERVICE_TAG_FILTER = "Home service filter";
+    public static final String HOME_SERVICE_TAG_LIST = "Home service list";
 
     // TODO: Test calcul de distance entre deux points
 

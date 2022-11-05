@@ -4,14 +4,12 @@ import static com.deone.extrmtasks.tools.Constants.APP_PREFS_LANGUE;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_MODE;
 import static com.deone.extrmtasks.tools.Constants.CAMERA_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.EN;
-import static com.deone.extrmtasks.tools.Constants.LOCATION_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.STORAGE_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Lctools.checkAccessFineLocationPermissions;
 import static com.deone.extrmtasks.tools.Lctools.displayTaskLocation;
 import static com.deone.extrmtasks.tools.Lctools.requestAccessFineLocationPermissions;
 import static com.deone.extrmtasks.tools.Other.buildProgressDialog;
 import static com.deone.extrmtasks.tools.Other.getXtimestamp;
-import static com.deone.extrmtasks.tools.Other.gotomain;
 import static com.deone.extrmtasks.tools.Other.initLLanguage;
 import static com.deone.extrmtasks.tools.Other.initThemeMode;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
@@ -52,17 +50,54 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 public class AddActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
-
+    // TODO: Initialisation des variables
     private Fbtools fbtools;
     private Ivtools ivtools;
     private FusedLocationProviderClient fusedLocationProviderClient;
-    private ImageView ivAddTachesLogo;
+    private ImageView ivAddTachesCover;
     private EditText edtvAddTitre;
     private EditText edtvAddDescription;
     private Uri imageUri;
     private Tache tache;
-    private User user;
+    private User userCreator;
 
+    // TODO: Les écouteurs vUser pour firebase
+    private final ValueEventListener vUserCreator = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            showUserInformation(snapshot);
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+            Toast.makeText(AddActivity.this, getString(R.string.database_error), Toast.LENGTH_SHORT).show();
+        }
+    };
+    // TODO: Les écouteurs selectCoverListener pour ivAddImage
+    private final DialogInterface.OnClickListener selectCoverListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+            switch (i) {
+                case 0:
+                    if (!ivtools.checkCameraPermissions()) {
+                        ivtools.requestCameraPermissions();
+                    } else {
+                        ivtools.pickFromCamera();
+                    }
+                    break;
+                case 1:
+                    if (!ivtools.checkStoragePermissions()) {
+                        ivtools.requestStoragePermissions();
+                    } else {
+                        ivtools.pickFromGallery();
+                    }
+                    break;
+                default:
+            }
+        }
+    };
+
+    // TODO: Override methods for AddActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         initApp();
@@ -81,47 +116,19 @@ public class AddActivity extends AppCompatActivity implements View.OnClickListen
                 imageUri = ivtools.getImageUri();
             }
 
-            ivAddTachesLogo.setImageURI(imageUri);
+            ivAddTachesCover.setImageURI(imageUri);
 
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == CAMERA_REQUEST_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, getString(R.string.enabled_camera_permissions), Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(this, getString(R.string.enable_camera_permissions), Toast.LENGTH_LONG).show();
-            }
-        } else if (requestCode == STORAGE_REQUEST_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, getString(R.string.enabled_storage_permissions), Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(this, getString(R.string.enable_storage_permissions), Toast.LENGTH_LONG).show();
-            }
-        } else if (requestCode == LOCATION_REQUEST_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, getString(R.string.enabled_location_permissions), Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(this, getString(R.string.enable_location_permissions), Toast.LENGTH_LONG).show();
-            }
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    @Override
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.btAddTask)
-            verifDataBeforeAddProcess();
+            this.verifDataBeforeAddProcess();
         else if (id == R.id.ivAddImage) {
-            AlertDialog.Builder builderCoverImage = new AlertDialog.Builder(this);
-            builderCoverImage.setTitle(getString(R.string.app_name_lite));
-            builderCoverImage.setItems(getResources().getStringArray(R.array.select_place), selectCoverListener);
-            builderCoverImage.create().show();
+            this.askWhereUserSelectPhoto();
         }
     }
 
@@ -130,14 +137,17 @@ public class AddActivity extends AppCompatActivity implements View.OnClickListen
         int id = compoundButton.getId();
         if (id == R.id.swAddLocate) {
             if (b) {
-                if (checkAccessFineLocationPermissions(AddActivity.this))
+                if (checkAccessFineLocationPermissions(AddActivity.this)){
+                    fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
                     showLocation();
+                }
                 else
                     requestAccessFineLocationPermissions(AddActivity.this);
             }
         }
     }
 
+    // TODO: onCreate  methods
     /**
      *
      */
@@ -157,7 +167,8 @@ public class AddActivity extends AppCompatActivity implements View.OnClickListen
      */
     private void checkUser() {
         if (isStringEmpty(fbtools.getId())) {
-            gotomain(this);
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
         } else {
             initViews();
         }
@@ -168,18 +179,43 @@ public class AddActivity extends AppCompatActivity implements View.OnClickListen
      */
     private void initViews() {
         setContentView(R.layout.activity_add);
-        ivAddTachesLogo = findViewById(R.id.ivAddTachesLogo);
-        edtvAddTitre = findViewById(R.id.edtvAddTitre);
-        edtvAddDescription = findViewById(R.id.edtvAddDescription);
-        SwitchCompat swAddLocate = findViewById(R.id.swAddLocate);
-        fbtools.lireUnUtilisateurSpecifique(vUser);
+        this.initAddTachesCover();
+        this.initAddTitre();
+        this.initAddDescription();
+        this.initSwAddLocate();
+        this.initIvAddImage();
+        this.initBtAddTask();
+        fbtools.lireUnUtilisateurSpecifique(vUserCreator);
         tache = new Tache();
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        findViewById(R.id.ivAddImage).setOnClickListener(this);
-        findViewById(R.id.btAddTask).setOnClickListener(this);
+    }
+
+    // TODO: initViews methods
+    private void initAddTachesCover() {
+        ivAddTachesCover = findViewById(R.id.ivAddTachesCover);
+    }
+
+    private void initAddTitre() {
+        edtvAddTitre = findViewById(R.id.edtvAddTitre);
+    }
+
+    private void initAddDescription() {
+        edtvAddDescription = findViewById(R.id.edtvAddDescription);
+    }
+
+    private void initSwAddLocate() {
+        SwitchCompat swAddLocate = findViewById(R.id.swAddLocate);
         swAddLocate.setOnCheckedChangeListener(this);
     }
 
+    private void initIvAddImage() {
+        findViewById(R.id.ivAddImage).setOnClickListener(this);
+    }
+
+    private void initBtAddTask() {
+        findViewById(R.id.btAddTask).setOnClickListener(this);
+    }
+
+    // TODO: onClick methods
     /**
      *
      */
@@ -204,16 +240,27 @@ public class AddActivity extends AppCompatActivity implements View.OnClickListen
         tache.setTtitre("" + title);
         tache.setTdescription("" + description);
         tache.setTdate("" + timestamp);
-        tache.setUid("" + user.getUid());
-        tache.setUnoms("" + user.getUnoms());
-        tache.setUavatar("" + user.getUavatar());
+        tache.setUid("" + userCreator.getUid());
+        tache.setUnoms("" + userCreator.getUnoms());
+        tache.setUavatar("" + userCreator.getUavatar());
         if (imageUri != null) {
             pd.setMessage(getString(R.string.save_task_image));
-            fbtools.ecrireUneNouvelleTacheApresMajPhotoUtilisateur(pd, imageUri, tache, user.getUntask());
+            fbtools.ecrireUneNouvelleTacheApresMajPhotoUtilisateur(pd, imageUri, tache, userCreator.getUntask());
         } else
-            fbtools.ecrireUneNouvelleTacheEtMajLutilisateur(pd, tache, user.getUntask());
+            fbtools.ecrireUneNouvelleTacheEtMajLutilisateur(pd, tache, userCreator.getUntask());
     }
 
+    /**
+     *
+     */
+    private void askWhereUserSelectPhoto() {
+        AlertDialog.Builder builderCoverImage = new AlertDialog.Builder(this);
+        builderCoverImage.setTitle(getString(R.string.app_name_lite));
+        builderCoverImage.setItems(getResources().getStringArray(R.array.select_place), selectCoverListener);
+        builderCoverImage.create().show();
+    }
+
+    // TODO: onCheckedChanged methods
     /**
      *
      */
@@ -226,7 +273,7 @@ public class AddActivity extends AppCompatActivity implements View.OnClickListen
         fusedLocationProviderClient.getLastLocation().addOnCompleteListener(task -> {
             Location location = task.getResult();
             if (location != null){
-                displayTaskLocation(AddActivity.this, location, tache);
+                tache.setLocalize(displayTaskLocation(AddActivity.this, location));
                 Toast.makeText(AddActivity.this, ""+tache.toString(), Toast.LENGTH_SHORT).show();
             }
             else
@@ -234,52 +281,18 @@ public class AddActivity extends AppCompatActivity implements View.OnClickListen
         });
     }
 
+    // TODO: vUserCreator methods
     /**
      *
      * @param snapshot
      */
     private void showUserInformation(DataSnapshot snapshot) {
         for (DataSnapshot ds : snapshot.getChildren()) {
-            user = ds.getValue(User.class);
+            userCreator = ds.getValue(User.class);
         }
     }
 
-    // TODO: Les écouteurs vUser & selectCoverListener
 
-    private final ValueEventListener vUser = new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot snapshot) {
-            showUserInformation(snapshot);
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-            Toast.makeText(AddActivity.this, getString(R.string.database_error), Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    private final DialogInterface.OnClickListener selectCoverListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialogInterface, int i) {
-            switch (i) {
-                case 0:
-                    if (!ivtools.checkCameraPermissions()) {
-                        ivtools.requestCameraPermissions();
-                    } else {
-                        ivtools.pickFromCamera();
-                    }
-                    break;
-                case 1:
-                    if (!ivtools.checkStoragePermissions()) {
-                        ivtools.requestStoragePermissions();
-                    } else {
-                        ivtools.pickFromGallery();
-                    }
-                    break;
-                default:
-            }
-        }
-    };
 
 
 }

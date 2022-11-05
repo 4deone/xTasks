@@ -1,5 +1,14 @@
 package com.deone.extrmtasks;
 
+import static com.deone.extrmtasks.database.Fbtools.signOut;
+import static com.deone.extrmtasks.picture.Ivtools.loadingImageWithPath;
+import static com.deone.extrmtasks.preference.Sptools.readBooleanData;
+import static com.deone.extrmtasks.preference.Sptools.readIntData;
+import static com.deone.extrmtasks.preference.Sptools.readStringData;
+import static com.deone.extrmtasks.preference.Sptools.writeBooleanData;
+import static com.deone.extrmtasks.preference.Sptools.writeIntData;
+import static com.deone.extrmtasks.tools.Constants.APP_PREFS_CURRENT_POSITION;
+import static com.deone.extrmtasks.tools.Constants.APP_PREFS_CURRENT_POSITION_PRIORITY;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_KEY;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_LANGUE;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_MODE;
@@ -12,9 +21,6 @@ import static com.deone.extrmtasks.tools.Constants.FRAGMENT_NOT;
 import static com.deone.extrmtasks.tools.Constants.FRAGMENT_STOCKAGE;
 import static com.deone.extrmtasks.tools.Constants.IDFRAGMENT;
 import static com.deone.extrmtasks.tools.Constants.UID;
-import static com.deone.extrmtasks.database.Fbtools.signOut;
-import static com.deone.extrmtasks.picture.Ivtools.loadingImageWithPath;
-import static com.deone.extrmtasks.tools.Lctools.requestAccessFineLocationPermissions;
 import static com.deone.extrmtasks.tools.Other.chooseDrawable;
 import static com.deone.extrmtasks.tools.Other.formatLaDate;
 import static com.deone.extrmtasks.tools.Other.gotohome;
@@ -24,20 +30,11 @@ import static com.deone.extrmtasks.tools.Other.initThemeMode;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
 import static com.deone.extrmtasks.tools.Other.safeShowValue;
 import static com.deone.extrmtasks.tools.Other.selectedLangue;
-import static com.deone.extrmtasks.preference.Sptools.readBooleanData;
-import static com.deone.extrmtasks.preference.Sptools.readIntData;
-import static com.deone.extrmtasks.preference.Sptools.readStringData;
-import static com.deone.extrmtasks.preference.Sptools.writeBooleanData;
-import static com.deone.extrmtasks.preference.Sptools.writeIntData;
 
-import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Looper;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,15 +49,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 
-import com.deone.extrmtasks.modeles.User;
 import com.deone.extrmtasks.database.Fbtools;
+import com.deone.extrmtasks.modeles.User;
 import com.deone.extrmtasks.preference.Sptools;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -76,6 +68,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private TextView tvSettingsDisplayMode;
     private TextView tvSettingsLanguage;
     private TextView tvSettingsKeyList;
+    private TextView tvSettingsLocPriority;
+    private SwitchCompat swSettingsKey;
+    private SwitchCompat swSettingsCurrentPostion;
     private String myuid;
 
     @Override
@@ -94,12 +89,16 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.itAccount){
-            Intent intent = new Intent(this, TempActivity.class);
-            intent.putExtra(UID, myuid);
-            intent.putExtra(IDFRAGMENT, FRAGMENT_ACCOUNT);
-            startActivity(intent);
+            openTempActivity();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openTempActivity() {
+        Intent intent = new Intent(this, TempActivity.class);
+        intent.putExtra(UID, myuid);
+        intent.putExtra(IDFRAGMENT, FRAGMENT_ACCOUNT);
+        startActivity(intent);
     }
 
     @Override
@@ -112,9 +111,15 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         int id = compoundButton.getId();
         if (id == R.id.swSettingsKey){
-                tvSettingsKeyList.setEnabled(b);
-                writeBooleanData(APP_PREFS_KEY, b);
+            saveViewPreferences(tvSettingsKeyList, APP_PREFS_KEY, b);
+        } else if (id == R.id.swSettingsCurrentPostion){
+            saveViewPreferences(tvSettingsLocPriority, APP_PREFS_CURRENT_POSITION, b);
         }
+    }
+
+    private void saveViewPreferences(View view, String appPrefsKey, boolean bol) {
+        view.setEnabled(bol);
+        writeBooleanData(appPrefsKey, bol);
     }
 
     @Override
@@ -128,6 +133,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             gotoUserDetails();
         else if (id == R.id.tvSettingsKeyList)
             showKeyList();
+        else if (id == R.id.tvSettingsLocPriority)
+            showKeyLocPriority();
         else if (id == R.id.tvSettingsNotification)
             showNotification();
         else if (id == R.id.tvSettingsDisplayMode)
@@ -179,40 +186,131 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
      */
     private void initViews() {
         setContentView(R.layout.activity_settings);
+        this.initToolbar();
+        this.initCover();
+        this.initAvatar();
+        this.initDate();
+        this.initName();
+        this.initPhone();
+        this.initSettingsKey();
+        this.initSettingsKeyList();
+        this.initSettingsCurrentPosition();
+        this.initSettingsCurrentPositionPriority();
+        this.initDisplayMode();
+        this.initSettingsLanguage();
+        this.initSettingsNotification();
+        this.initSettingsConfidentialite();
+        this.initSettingsDataStockage();
+        this.initSettingsGroupe();
+        this.initSettingsFaq();
+        this.initSettingsAbout();
+        this.initSettingsSignOut();
+        fbtools.lireUnUtilisateurSpecifique(vUser);
+    }
+
+    private void initToolbar() {
         Toolbar toolbarSettings = findViewById(R.id.toolbarSettings);
         toolbarSettings.setTitle(getString(R.string.parametres));
         toolbarSettings.setSubtitle(getString(R.string.param_your_app));
         setSupportActionBar(toolbarSettings);
+    }
 
+    private void initCover() {
         ivSettingsCover = findViewById(R.id.ivSettingsCover);
-        ivSettingsAvatar = findViewById(R.id.ivSettingsAvatar);
-        tvSettingsDate = findViewById(R.id.tvSettingsDate);
-        tvSettingsCompteName = findViewById(R.id.tvSettingsCompteName);
-        tvSettingsComptePhone = findViewById(R.id.tvSettingsComptePhone);
-        SwitchCompat swSettingsKey = findViewById(R.id.swSettingsKey);
-        swSettingsKey.setChecked(readBooleanData(APP_PREFS_KEY, false));
-        tvSettingsDisplayMode = findViewById(R.id.tvSettingsDisplayMode);
-        tvSettingsLanguage = findViewById(R.id.tvSettingsLanguage);
+    }
+
+    private void initSettingsSignOut() {
+        findViewById(R.id.tvSettingsSignOut).setOnClickListener(this);
+    }
+
+    private void initSettingsAbout() {
+        findViewById(R.id.tvSettingsAbout).setOnClickListener(this);
+    }
+
+    private void initSettingsFaq() {
+        findViewById(R.id.tvSettingsFaq).setOnClickListener(this);
+    }
+
+    private void initSettingsGroupe() {
+        findViewById(R.id.tvSettingsGroupe).setOnClickListener(this);
+    }
+
+    private void initSettingsDataStockage() {
+        findViewById(R.id.tvSettingsDataStockage).setOnClickListener(this);
+    }
+
+    private void initSettingsConfidentialite() {
+        findViewById(R.id.tvSettingsConfidentialite).setOnClickListener(this);
+    }
+
+    private void initSettingsNotification() {
+        findViewById(R.id.tvSettingsNotification).setOnClickListener(this);
+    }
+
+    private void initSettingsKeyList() {
         tvSettingsKeyList = findViewById(R.id.tvSettingsKeyList);
         tvSettingsKeyList.setEnabled(swSettingsKey.isChecked());
-
-        fbtools.lireUnUtilisateurSpecifique(vUser);
-
-        startLocalisation();
-
-        ivSettingsAvatar.setOnClickListener(this);
-        ivSettingsAvatar.setOnClickListener(this);
-        tvSettingsDisplayMode.setOnClickListener(this);
-        tvSettingsLanguage.setOnClickListener(this);
         tvSettingsKeyList.setOnClickListener(this);
-        findViewById(R.id.tvSettingsNotification).setOnClickListener(this);
-        findViewById(R.id.tvSettingsConfidentialite).setOnClickListener(this);
-        findViewById(R.id.tvSettingsDataStockage).setOnClickListener(this);
-        findViewById(R.id.tvSettingsGroupe).setOnClickListener(this);
-        findViewById(R.id.tvSettingsFaq).setOnClickListener(this);
-        findViewById(R.id.tvSettingsAbout).setOnClickListener(this);
-        findViewById(R.id.tvSettingsSignOut).setOnClickListener(this);
+    }
+
+    private void initSettingsCurrentPositionPriority() {
+        tvSettingsLocPriority = findViewById(R.id.tvSettingsLocPriority);
+        tvSettingsLocPriority.setText(formatPriority(readIntData(APP_PREFS_CURRENT_POSITION_PRIORITY, -1)));
+        tvSettingsLocPriority.setEnabled(swSettingsCurrentPostion.isChecked());
+        tvSettingsLocPriority.setOnClickListener(this);
+    }
+
+    private String formatPriority(int priority) {
+        if (priority == 0)
+            return getString(R.string.priority_custom, getString(R.string.adresse));
+        else if (priority == 1)
+            return getString(R.string.priority_custom, getString(R.string.codepostal));
+        else if (priority == 2)
+            return getString(R.string.priority_custom, getString(R.string.pays));
+        else if (priority == 3)
+            return getString(R.string.priority_custom, getString(R.string.ville));
+        else if (priority == 4)
+            return getString(R.string.priority_custom, getString(R.string.state));
+        return getString(R.string.priority_custom, getString(R.string.by_default));
+    }
+
+    private void initSettingsLanguage() {
+        tvSettingsLanguage = findViewById(R.id.tvSettingsLanguage);
+        tvSettingsLanguage.setOnClickListener(this);
+    }
+
+    private void initDisplayMode() {
+        tvSettingsDisplayMode = findViewById(R.id.tvSettingsDisplayMode);
+        tvSettingsDisplayMode.setOnClickListener(this);
+    }
+
+    private void initSettingsKey() {
+        swSettingsKey = findViewById(R.id.swSettingsKey);
+        swSettingsKey.setChecked(readBooleanData(APP_PREFS_KEY, false));
         swSettingsKey.setOnCheckedChangeListener(this);
+    }
+
+    private void initSettingsCurrentPosition() {
+        swSettingsCurrentPostion = findViewById(R.id.swSettingsCurrentPostion);
+        swSettingsCurrentPostion.setChecked(readBooleanData(APP_PREFS_CURRENT_POSITION, false));
+        swSettingsCurrentPostion.setOnCheckedChangeListener(this);
+    }
+
+    private void initPhone() {
+        tvSettingsComptePhone = findViewById(R.id.tvSettingsComptePhone);
+    }
+
+    private void initName() {
+        tvSettingsCompteName = findViewById(R.id.tvSettingsCompteName);
+    }
+
+    private void initDate() {
+        tvSettingsDate = findViewById(R.id.tvSettingsDate);
+    }
+
+    private void initAvatar() {
+        ivSettingsAvatar = findViewById(R.id.ivSettingsAvatar);
+        ivSettingsAvatar.setOnClickListener(this);
     }
 
     // TODO: Goto user details
@@ -257,6 +355,22 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         }
     };
 
+    // TODO: Display Location priority
+
+    private void showKeyLocPriority() {
+        String[] priorities = {
+                getString(R.string.adresse),
+                getString(R.string.codepostal),
+                getString(R.string.pays),
+                getString(R.string.ville),
+                getString(R.string.state)};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.app_name_lite));
+        builder.setMessage(getString(R.string.choisir_mode));
+        builder.setSingleChoiceItems(priorities, readIntData(APP_PREFS_CURRENT_POSITION_PRIORITY, 0), priorityListener);
+        builder.create().show();
+    }
+
     // TODO: Display key word
 
     private void showKeyList() {
@@ -292,6 +406,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             tvSettingsDisplayMode.setCompoundDrawablesRelativeWithIntrinsicBounds(chooseDrawable(i), 0, 0, 0);
         }
     };
+
+    // TODO: Choose priority
+
+    private final DialogInterface.OnClickListener priorityListener = (dialogInterface, i) ->
+            writeIntData(APP_PREFS_CURRENT_POSITION_PRIORITY, i);
 
     // TODO: Display choose language
 
@@ -379,63 +498,4 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         gotomain(this);
     };
 
-    // TODO: Test
-
-    private double latitude;
-    private double longitude;
-    private LocationRequest locationRequest;
-
-    private final LocationCallback locationCallback = new LocationCallback() {
-        @Override
-        public void onLocationResult(@NonNull LocationResult locationResult) {
-            super.onLocationResult(locationResult);
-            if (locationResult != null && locationResult.getLastLocation() != null) {
-                latitude = locationResult.getLastLocation().getLatitude();
-                longitude = locationResult.getLastLocation().getLongitude();
-                Log.e("LOCATION_UPDATE", latitude + ", " + longitude);
-            }
-        }
-    };
-
-    private void startLocalisation() {
-        locationRequest = new LocationRequest();
-        locationRequest.setInterval(4000);
-        locationRequest.setFastestInterval(2000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling ActivityCompat#requestPermissions
-            requestAccessFineLocationPermissions(this);
-            return;
-        }
-        LocationServices.getFusedLocationProviderClient(this)
-                .requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        LocationServices.getFusedLocationProviderClient(this).removeLocationUpdates(locationCallback);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        LocationServices.getFusedLocationProviderClient(this).removeLocationUpdates(locationCallback);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        LocationServices.getFusedLocationProviderClient(this).removeLocationUpdates(locationCallback);
-    }
 }

@@ -230,4 +230,12 @@
     <string name="only_this_time">only this time</string>
     <string name="while_using_the_app">while using the app</string>
     <string name="loc_error">Location null error</string>
+    <string name="use_my_current_position">Use my current position</string>
+    <string name="priority_custom">Priority(%s)</string>
+    <string name="by_default">Default</string>
+    <string name="welcome_xtask">Welcome to xTasks!</string>
+    <string name="home">Home</string>
+    <string name="one_task">Une tâche</string>
+    <string name="open_one_task">Ouverture d\'une tâche</string>
+    <string name="enter_your_search">What do research ?</string>
 </resources>

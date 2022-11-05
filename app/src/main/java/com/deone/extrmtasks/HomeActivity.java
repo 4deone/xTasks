@@ -5,40 +5,26 @@ import static com.deone.extrmtasks.database.Fbtools.liretouteslestaches;
 import static com.deone.extrmtasks.preference.Sptools.readBooleanData;
 import static com.deone.extrmtasks.preference.Sptools.readIntData;
 import static com.deone.extrmtasks.preference.Sptools.readStringData;
-import static com.deone.extrmtasks.tools.Constants.ACTION_START_LOCATION_SERVICE_ID;
-import static com.deone.extrmtasks.tools.Constants.ACTION_STOP_LOCATION_SERVICE_ID;
+import static com.deone.extrmtasks.tools.Constants.APP_PREFS_CURRENT_POSITION;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_KEY;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_LANGUE;
 import static com.deone.extrmtasks.tools.Constants.APP_PREFS_MODE;
 import static com.deone.extrmtasks.tools.Constants.EN;
-import static com.deone.extrmtasks.tools.Constants.LOCATION_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.TID;
 import static com.deone.extrmtasks.tools.Constants.UID;
-import static com.deone.extrmtasks.tools.Lctools.checkAccessFineLocationPermissions;
+import static com.deone.extrmtasks.tools.Lctools.displayTaskLocation;
 import static com.deone.extrmtasks.tools.Lctools.requestAccessFineLocationPermissions;
-import static com.deone.extrmtasks.tools.Other.gotoTask;
-import static com.deone.extrmtasks.tools.Other.gotoaddtask;
-import static com.deone.extrmtasks.tools.Other.gotomain;
-import static com.deone.extrmtasks.tools.Other.gotosettings;
 import static com.deone.extrmtasks.tools.Other.initLLanguage;
 import static com.deone.extrmtasks.tools.Other.initThemeMode;
 import static com.deone.extrmtasks.tools.Other.isContains;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
-import static com.deone.extrmtasks.tools.Other.orderListByKeyWords;
 import static com.deone.extrmtasks.tools.Other.rvLayoutManager;
 
 import android.Manifest;
-import android.app.ActivityManager;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -47,7 +33,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SearchView;
@@ -59,10 +44,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.deone.extrmtasks.adapters.Tadapter;
 import com.deone.extrmtasks.database.Fbtools;
 import com.deone.extrmtasks.modeles.Key;
+import com.deone.extrmtasks.modeles.Localize;
 import com.deone.extrmtasks.modeles.Tache;
-import com.deone.extrmtasks.preference.Sptools;
-import com.deone.extrmtasks.tools.LocService;
 import com.deone.extrmtasks.tools.Xlistener;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -70,188 +55,37 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
+    // TODO: Les variables de notre activité
     private Fbtools fbtools;
-    private Sptools sptools ;
-    private RecyclerView rvTachesHome;
+    private String ma_recherche;
     private List<Tache> tacheList;
     private List<Key> keyList;
-    private String ma_recherche;
+    private RecyclerView rvTachesHome;
+    private Localize localize;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        initApp();
-        super.onCreate(savedInstanceState);
-        checkUser();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.home_menu, menu);
-        MenuItem searchItem = menu.findItem(R.id.itSearch);
-        final SearchView searchView = (SearchView) searchItem.getActionView();
-        searchView.setOnQueryTextListener(searchManage);
-        searchView.setOnQueryTextFocusChangeListener(searchQueryTextFocusChange);
-        searchView.setOnCloseListener(searchClose);
-        searchView.setOnSuggestionListener(searchSuggestion);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.itParametres){
-            gotosettings(this);
+    // TODO: Les écouteurs du menu de HomeActivity
+    private final SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            searchAndFindTasks(query);
+            return false;
         }
-        return super.onOptionsItemSelected(item);
-    }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        if (requestCode == LOCATION_REQUEST_CODE && grantResults.length > 0)
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                startLocationService();
-            else
-                Toast.makeText(this, "Permission denied!", Toast.LENGTH_SHORT).show();
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    @Override
-    public void onClick(View view) {
-        int id = view.getId();
-        if (id == R.id.fabAddTachesHome)
-            gotoaddtask(this);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        /*if (checkAccessFineLocationPermissions(HomeActivity.this))
-            startLocationService();
-        else
-            requestAccessFineLocationPermissions(HomeActivity.this);*/
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        /*if (checkAccessFineLocationPermissions(HomeActivity.this))
-            startLocationService();
-        else
-            requestAccessFineLocationPermissions(HomeActivity.this);*/
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        //stopLocationService();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        //stopLocationService();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        //stopLocationService();
-    }
-
-    /**
-     *
-     */
-    private void initApp() {
-        fbtools = Fbtools.getInstance(this);
-        sptools = Sptools.getInstance(this);
-        initThemeMode(readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
-        initLLanguage(this, readStringData(APP_PREFS_LANGUE, EN));
-        /*if (checkAccessFineLocationPermissions(HomeActivity.this))
-            startLocationService();
-        else
-            requestAccessFineLocationPermissions(HomeActivity.this);*/
-    }
-
-    /**
-     *
-     */
-    private void checkUser() {
-        if(isStringEmpty(fbtools.getId())){
-            gotomain(this);
-        }else {
-            initViews();
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            searchAndFindTasks(newText);
+            return false;
         }
-    }
+    };
 
-    /**
-     *
-     */
-    private void initViews() {
-        setContentView(R.layout.activity_home);
-        Toolbar toolbarHome = findViewById(R.id.toolbarHome);
-        setSupportActionBar(toolbarHome);
-        rvTachesHome = findViewById(R.id.rvTachesHome);
-        rvTachesHome.setLayoutManager(rvLayoutManager(this, 0, LinearLayoutManager.VERTICAL));
-        tacheList = new ArrayList<>();
-        keyList = new ArrayList<>();
-        if (readBooleanData(APP_PREFS_KEY, false))
-            lireUnUtilisateurkeys(vKeys, fbtools.getId());
-        liretouteslestaches(vTaches);
-        findViewById(R.id.fabAddTachesHome).setOnClickListener(this);
-    }
-
-    /**
-     *
-     * @param snapshot
-     */
-    private void showToutesMesTaches(DataSnapshot snapshot) {
-        tacheList.clear();
-        for (DataSnapshot ds : snapshot.getChildren()){
-            Tache tache = ds.getValue(Tache.class);
-            tacheList.add(tache);
-            Tadapter tadapter = new Tadapter(HomeActivity.this, orderListByKeyWords(tacheList, keyList));
-            rvTachesHome.setAdapter(tadapter);
-            tadapter.setListener(xListener);
-        }
-    }
-
-    /**
-     *
-     * @param snapshot
-     */
-    private void showToutesMesRechercheDeTaches(DataSnapshot snapshot) {
-        tacheList.clear();
-        for (DataSnapshot ds : snapshot.getChildren()){
-            Tache tache = ds.getValue(Tache.class);
-            assert tache != null;
-            if (isContains(ma_recherche, tache.getTtitre())||isContains(ma_recherche, tache.getTdescription())){
-                tacheList.add(tache);
-            }
-            Tadapter tadapter = new Tadapter(HomeActivity.this, orderListByKeyWords(tacheList, keyList));
-            rvTachesHome.setAdapter(tadapter);
-            tadapter.setListener(xListener);
-        }
-    }
-
-    /**
-     *
-     * @param query
-     */
-    private void makeAndFindYourSearch(String query) {
-        if (!TextUtils.isEmpty(query)){
-            ma_recherche = query;
-            liretouteslestaches(vSearchTaches);
-        }else {
-            liretouteslestaches(vTaches);
-        }
-    }
-
-    // TODO: Les écouteurs vTaches, vSearchTaches, vKeys & xListener
-
-    private final ValueEventListener vTaches  = new ValueEventListener() {
+    // TODO: Les écouteurs de firebase pour HomeActivity
+    private final ValueEventListener vTaches = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             showToutesMesTaches(snapshot);
@@ -259,127 +93,239 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onCancelled(@NonNull DatabaseError error) {
-            Toast.makeText(HomeActivity.this, ""+error.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("XtremTasks", error.getMessage());
         }
     };
-
-    private final ValueEventListener vSearchTaches  = new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot snapshot) {
-            showToutesMesRechercheDeTaches(snapshot);
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-            //Toast.makeText(HomeActivity.this, getString(R.string.database_error), Toast.LENGTH_SHORT).show();
-            Toast.makeText(HomeActivity.this, ""+error.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    };
-
     private final ValueEventListener vKeys = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
-            keyList.clear();
-            for (DataSnapshot ds : snapshot.getChildren()){
-                keyList.add(ds.getValue(Key.class));
-            }
+            loadMyKeys(snapshot);
         }
 
         @Override
         public void onCancelled(@NonNull DatabaseError error) {
-
+            Log.e("XtremTasks", error.getMessage());
         }
     };
 
+    // TODO: Les écouteurs de l'adaptateur Tadapter
     private final Xlistener xListener = new Xlistener() {
         @Override
         public void onItemClick(View view, int position) {
-            gotoTask(HomeActivity.this, TID, tacheList.get(position).getTid(), UID, tacheList.get(position).getUid());
+            Intent intent = new Intent(HomeActivity.this, TaskActivity.class);
+            intent.putExtra(TID, tacheList.get(position).getTid());
+            intent.putExtra(UID, tacheList.get(position).getUid());
+            startActivity(intent);
         }
 
         @Override
         public void onLongItemClick(View view, int position) {
-
+            Log.e("XtremTasks", "onLongItemClick on rv position " + position);
         }
     };
 
-    // TODO: Les écouteurs SearchView : searchManage, searchClose, searchQueryTextFocusChange & searchSuggestion
+    // TODO: Les méthodes Override
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        this.initApp();
+        super.onCreate(savedInstanceState);
+        this.checkUser();
+    }
 
-    private final SearchView.OnQueryTextListener searchManage = new SearchView.OnQueryTextListener() {
-        @Override
-        public boolean onQueryTextSubmit(String query) {
-            makeAndFindYourSearch(query);
-            return false;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home_menu, menu);
+        this.initSearchItem(menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        this.chooseSettings(item);
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        if (id == R.id.fabAddTachesHome) {
+            startActivity(new Intent(this, AddActivity.class));
         }
+    }
 
-        @Override
-        public boolean onQueryTextChange(String newText) {
-            makeAndFindYourSearch(newText);
-            return false;
+    // TODO: Les méthodes d'initialisation de l'activité
+    private void initApp() {
+        fbtools = Fbtools.getInstance(this);
+        initThemeMode(readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
+        initLLanguage(this, readStringData(APP_PREFS_LANGUE, EN));
+    }
+
+    private void checkUser() {
+        if(isStringEmpty(fbtools.getId())){
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        } else {
+            initViews();
         }
-    };
+    }
 
-    private final SearchView.OnCloseListener searchClose = new SearchView.OnCloseListener() {
-        @Override
-        public boolean onClose() {
-            return false;
+    private void initViews() {
+        setContentView(R.layout.activity_home);
+        this.initToolbar();
+        tacheList = new ArrayList<>();
+        tacheList.add(new Tache("String tid", "String ttitre", "String tdescription"));
+        keyList = new ArrayList<>();
+        this.initRecycleview();
+        this.initFab();
+        if (readBooleanData(APP_PREFS_KEY, false))
+            lireUnUtilisateurkeys(vKeys, fbtools.getId());
+        if (readBooleanData(APP_PREFS_CURRENT_POSITION, false)){
+            showLocation();
+        } else
+            liretouteslestaches(vTaches);
+    }
+
+    // TODO: Les méthodes de initViews
+    private void initToolbar() {
+        Toolbar toolbarHome = findViewById(R.id.toolbarHome);
+        toolbarHome.setTitle(getString(R.string.home));
+        toolbarHome.setSubtitle(getString(R.string.welcome_xtask));
+        setSupportActionBar(toolbarHome);
+    }
+
+    private void initRecycleview() {
+        rvTachesHome = findViewById(R.id.rvTachesHome);
+        rvTachesHome.setLayoutManager(rvLayoutManager(this, 0, LinearLayoutManager.VERTICAL));
+    }
+
+    private void initFab() {
+        findViewById(R.id.fabAddTachesHome).setOnClickListener(this);
+    }
+
+    private void launchMyLocationBackground() {
+        Log.e("HomeActivity", "launchMyLocationBackground");
+        new Thread(){
+            @Override
+            public void run() {
+                Log.e("HomeActivity", "Thread run");
+                showLocation();
+            }
+        }.start();
+    }
+
+    /*private void initFusedLocationProviderClient() {
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        checkPositionPermission();
+    }*/
+
+    // TODO: showToutesMesTaches methods
+    private void showLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling ActivityCompat#requestPermissions
+            requestAccessFineLocationPermissions(this);
+            return;
         }
-    };
-
-    private final View.OnFocusChangeListener searchQueryTextFocusChange = new View.OnFocusChangeListener() {
-        @Override
-        public void onFocusChange(View view, boolean b) {
-
-        }
-    };
-
-    private final SearchView.OnSuggestionListener searchSuggestion = new SearchView.OnSuggestionListener() {
-        @Override
-        public boolean onSuggestionSelect(int position) {
-            return false;
-        }
-
-        @Override
-        public boolean onSuggestionClick(int position) {
-            return false;
-        }
-    };
-
-    // TODO: Location service
-    private boolean isLocationServiceRunning(){
-        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        if (activityManager != null){
-            for (ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)){
-                if (LocationServices.class.getName().equals(service.service.getClassName())){
-                    if (service.foreground)
-                        return true;
+        FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(HomeActivity.this);
+        fusedLocationProviderClient.getLastLocation().addOnCompleteListener(task -> {
+            Location location = task.getResult();
+            if (location != null){
+                localize = displayTaskLocation(HomeActivity.this, location);
+                if (localize != null) {
+                    liretouteslestaches(vTaches);
                 }
             }
-            return false;
+            else
+                Toast.makeText(HomeActivity.this, ""+getString(R.string.loc_error), Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    // TODO: Les méthodes d'initialisation du menu de HomeActivity
+    private void initSearchItem(Menu menu) {
+        MenuItem searchItem = menu.findItem(R.id.itSearch);
+        final SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener(onQueryTextListener);
+        searchView.setQueryHint(getString(R.string.enter_your_search));
+    }
+
+    private void chooseSettings(MenuItem item) {
+        if (item.getItemId() == R.id.itParametres){
+            startActivity(new Intent(this, SettingsActivity.class));
+            finish();
         }
+    }
+
+    private void searchAndFindTasks(String query) {
+        if (!TextUtils.isEmpty(query))
+            ma_recherche = query;
+        liretouteslestaches(vTaches);
+    }
+
+    // TODO: Les méthodes de firebase pour HomeActivity
+    private boolean isSearchFound(Tache tache) {
+        return isContains(ma_recherche, tache.getTtitre()) ||
+                isContains(ma_recherche, tache.getTdescription());
+    }
+
+    private boolean isNotNull(String data){
+        return data != null && !data.isEmpty();
+    }
+
+    private boolean isPosititonFound(Tache tache) {
+        if (tache.getLocalize().getLatitude() != null || tache.getLocalize().getLongitude() != null)
+            return tache.getLocalize().getAddress().equals(localize.getAddress()) ||
+                    tache.getLocalize().getCodepostal().equals(localize.getCodepostal()) ||
+                    tache.getLocalize().getCity().equals(localize.getCity()) ||
+                    tache.getLocalize().getState().equals(localize.getState()) ||
+                    tache.getLocalize().getCountry().equals(localize.getCountry()) ||
+                    tache.getLocalize().getCountry().equals(localize.getLatitude()) ||
+                    tache.getLocalize().getCountry().equals(localize.getLongitude());
         return false;
     }
 
-    private void startLocationService(){
-        if (!isLocationServiceRunning()){
-            Intent intent = new Intent(getApplicationContext(), LocService.class);
-            intent.setAction(ACTION_START_LOCATION_SERVICE_ID);
-            startService(intent);
-            Toast.makeText(this, "Location service started!", Toast.LENGTH_SHORT).show();
+    private void showToutesMesTaches(DataSnapshot snapshot) {
+        // TODO: Nous collectons toutes les taches de notre base de données firebase
+        tacheList.clear();
+        for (DataSnapshot ds : snapshot.getChildren()){
+            Tache tache = ds.getValue(Tache.class);
+            tacheList.add(tache);
         }
-
+        // TODO: trions tacheList en fonction des mots clé de l'utilisateur
+        if (readBooleanData(APP_PREFS_KEY, false)){
+            List < Predicate < Tache >> prs = new ArrayList<>();
+            for (Key key : keyList){
+                Predicate<Tache> byItem = tache -> !isContains(key.getKmessage().toLowerCase(), tache.getTtitre().toLowerCase())
+                        && !isContains(key.getKmessage().toLowerCase(), tache.getTdescription().toLowerCase());
+                prs.add(byItem);
+            }
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                tacheList.removeIf(prs.stream().reduce(x -> true, Predicate::and));
+            }
+        }
+        // TODO: Filtrage de tacheList par rapport à ma recherche
+        if (!isStringEmpty(ma_recherche)) {
+            Predicate<Tache> byTitreOrDescription = tache -> !isContains(ma_recherche.toLowerCase(), tache.getTtitre().toLowerCase())
+                            && !isContains(ma_recherche.toLowerCase(), tache.getTdescription().toLowerCase());
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                tacheList.removeIf(byTitreOrDescription);
+            }
+        }
+        // TODO: Nous allons trier la liste en fonction de la dernière position de l'utilisateur
+        if (readBooleanData(APP_PREFS_CURRENT_POSITION, false)) {
+            /*if (isPosititonFound(tache)) {
+                tacheList.add(tache);
+            }*/
+        }
+        // TODO: Nous allons afficher la liste sur l'écran de l'utilisateur
+        Tadapter tadapter = new Tadapter(HomeActivity.this, tacheList);
+        rvTachesHome.setAdapter(tadapter);
+        tadapter.setListener(xListener);
     }
 
-    private void stopLocationService(){
-        if (!isLocationServiceRunning()){
-            Intent intent = new Intent(getApplicationContext(), LocService.class);
-            intent.setAction(ACTION_STOP_LOCATION_SERVICE_ID);
-            startService(intent);
-            Toast.makeText(this, "Location service stopped!", Toast.LENGTH_SHORT).show();
+    private void loadMyKeys(DataSnapshot snapshot) {
+        keyList.clear();
+        for (DataSnapshot ds : snapshot.getChildren()){
+            keyList.add(ds.getValue(Key.class));
         }
-
     }
-
-    /*Toast.makeText(context, "Latitude = " + intent.getExtras().getString(LOCATION_SERVICE_SIGNAL_LATITUDE)
-                    + ", Longitude = " + intent.getExtras().getString(LOCATION_SERVICE_SIGNAL_LONGITUDE), Toast.LENGTH_SHORT).show();*/
 }

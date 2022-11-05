@@ -53,10 +53,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service
-            android:name=".tools.LocService"
-            android:enabled="true"
-            android:exported="false" />
     </application>
 
 </manifest>

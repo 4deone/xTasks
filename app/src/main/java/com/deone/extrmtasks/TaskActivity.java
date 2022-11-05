@@ -9,7 +9,6 @@ import static com.deone.extrmtasks.tools.Constants.CAMERA_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.EN;
 import static com.deone.extrmtasks.tools.Constants.FRAGMENT_ACCOUNT;
 import static com.deone.extrmtasks.tools.Constants.IDFRAGMENT;
-import static com.deone.extrmtasks.tools.Constants.LOCATION_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.STORAGE_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.TACHES;
 import static com.deone.extrmtasks.tools.Constants.TCOVER;
@@ -24,13 +23,11 @@ import static com.deone.extrmtasks.picture.Ivtools.loadingImageWithPath;
 import static com.deone.extrmtasks.tools.Lctools.checkAccessFineLocationPermissions;
 import static com.deone.extrmtasks.tools.Lctools.displayTaskLocation;
 import static com.deone.extrmtasks.tools.Lctools.requestAccessFineLocationPermissions;
-import static com.deone.extrmtasks.tools.Other.buildAlertDialog;
 import static com.deone.extrmtasks.tools.Other.buildPathWithSlash;
 import static com.deone.extrmtasks.tools.Other.buildProgressDialog;
 import static com.deone.extrmtasks.tools.Other.checkBeforeFormatData;
 import static com.deone.extrmtasks.tools.Other.formatAdresse;
 import static com.deone.extrmtasks.tools.Other.formatLaDate;
-import static com.deone.extrmtasks.tools.Other.gotohome;
 import static com.deone.extrmtasks.tools.Other.initLLanguage;
 import static com.deone.extrmtasks.tools.Other.initThemeMode;
 import static com.deone.extrmtasks.tools.Other.isStringEmpty;
@@ -74,6 +71,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.deone.extrmtasks.adapters.Cadapter;
 import com.deone.extrmtasks.modeles.Commentaire;
+import com.deone.extrmtasks.modeles.Localize;
 import com.deone.extrmtasks.modeles.Signale;
 import com.deone.extrmtasks.modeles.Tache;
 import com.deone.extrmtasks.modeles.User;
@@ -91,7 +89,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TaskActivity extends AppCompatActivity implements View.OnClickListener {
-
+    // TODO: Initialisation des variables
     private Fbtools fbtools;
     private Ivtools ivtools;
     private Uri imageUri;
@@ -109,225 +107,13 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private EditText etvTaskComment;
     private List<Commentaire> commentaireList;
     private FusedLocationProviderClient fusedLocationProviderClient;
-    private String tid;
-    private String uid;
-    private String myuid;
-    private User CurrentUser;
-    private Tache tache;
+    private String idCurrentTask;
+    private String uidCurrentTaskAdmin;
+    private String uidVisitor;
+    private User userVisitor;
+    private Tache currentTask;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        initApp();
-        super.onCreate(savedInstanceState);
-        checkUser();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.task_menu, menu);
-        MenuItem editItem = menu.findItem(R.id.itEditer);
-        editItem.setVisible(myuid.equals(uid));
-        MenuItem deleteItem = menu.findItem(R.id.itDelete);
-        deleteItem.setVisible(myuid.equals(uid));
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.itDelete && myuid.equals(tache.getUid())){
-            buildAlertDialog(
-                    this, getString(R.string.app_name),
-                    getString(R.string.delete_task_message),
-                    null, getString(R.string.non),
-                    adListener, getString(R.string.oui)).create().show();
-        }
-        if (item.getItemId() == R.id.itEditer){
-            showEditDialog();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onClick(View view) {
-        int id = view.getId();
-        if (id == R.id.ibTaskJaime)
-            likeProcess();
-        else if (id == R.id.ibTaskFavorite)
-            favorisProcess();
-        else if (id == R.id.ibTaskShare)
-            shareProcess();
-        else if (id == R.id.ibTaskSendComment)
-            verifDataBeforeSendComment();
-        else if (!myuid.equals(tache.getUid()) && (id == R.id.ivtaskAvatarUser || id == R.id.tvTaskUsername))
-            showUserDetails();
-        else if (id == R.id.tvTaskAdresse)
-            showAdresseDialog();
-        else if (id == R.id.ibTaskSignale)
-            showSignalerDialog();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (resultCode == RESULT_OK){
-            if (requestCode == STORAGE_REQUEST_CODE){
-                assert data != null;
-                imageUri = data.getData();
-            } else if (requestCode == CAMERA_REQUEST_CODE){
-                imageUri = ivtools.getImageUri();
-            }
-            ProgressDialog pd = buildProgressDialog(this, getString(R.string.app_name), getString(R.string.task_image_path));
-            pd.show();
-            fbtools.deleteOldImage(pd, imageUri, ""+ tache.getTcover(), ""+buildPathWithSlash(TACHES, tid, TCOVER));
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == LOCATION_REQUEST_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, getString(R.string.enabled_location_permissions), Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(this, getString(R.string.enable_location_permissions), Toast.LENGTH_LONG).show();
-            }
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    // TODO: Les methodes usuellles pour l'initialisation de l'activité
-
-    private void initApp() {
-
-        fbtools = Fbtools.getInstance(this);
-        myuid = fbtools.getId();
-
-        ivtools = Ivtools.getInstance(this);
-
-        tid = getIntent().getStringExtra(TID);
-        uid = getIntent().getStringExtra(UID);
-
-        initThemeMode(readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
-        initLLanguage(this, readStringData(APP_PREFS_LANGUE, EN));
-    }
-
-    private void checkUser() {
-        if(isStringEmpty(myuid)||isStringEmpty(tid)){
-            gotohome(this);
-        }else {
-            initViews();
-        }
-    }
-
-    private void initViews() {
-        setContentView(R.layout.activity_task);
-
-        Toolbar toolbarTask = findViewById(R.id.toolbarTask);
-        setSupportActionBar(toolbarTask);
-
-        ivtaskAvatarUser = findViewById(R.id.ivtaskAvatarUser);
-        tvTaskUsername = findViewById(R.id.tvTaskUsername);
-        tvTaskPublicationDate = findViewById(R.id.tvTaskPublicationDate);
-        tvTaskTitle = findViewById(R.id.tvTaskTitle);
-        tvTaskDescription = findViewById(R.id.tvTaskDescription);
-        tvTaskAdresse = findViewById(R.id.tvTaskAdresse);
-        ivTaskCover = findViewById(R.id.ivTaskCover);
-        tvTaskNcomment = findViewById(R.id.tvTaskNcomment);
-        tvTaskNjaime = findViewById(R.id.tvTaskNjaime);
-        rvTaskComments = findViewById(R.id.rvTaskComments);
-        rvTaskComments.setLayoutManager(rvLayoutManager(this, 0, LinearLayoutManager.VERTICAL));
-        commentaireList = new ArrayList<>();
-        etvTaskComment = findViewById(R.id.etvTaskComment);
-        ibTaskSignale = findViewById(R.id.ibTaskSignale);
-        ibTaskSignale.setVisibility(myuid.equals(uid)?GONE:VISIBLE);
-        fusedLocationProviderClient =  LocationServices.getFusedLocationProviderClient(this);
-        lireunetachespecifique(vCurrentUser, myuid, vTask, vComments, tid, vSignale);
-        findViewById(R.id.ibTaskJaime).setOnClickListener(this);
-        findViewById(R.id.ibTaskFavorite).setOnClickListener(this);
-        findViewById(R.id.ibTaskShare).setOnClickListener(this);
-        findViewById(R.id.ibTaskSendComment).setOnClickListener(this);
-        ibTaskSignale.setOnClickListener(this);
-        ivtaskAvatarUser.setOnClickListener(this);
-        tvTaskUsername.setOnClickListener(this);
-        tvTaskAdresse.setOnClickListener(this);
-    }
-
-    // TODO: Afficher les informations de l'utilisateur
-
-    private void showCurrentUserInformation(DataSnapshot snapshot) {
-        for (DataSnapshot ds : snapshot.getChildren()){
-            CurrentUser = ds.getValue(User.class);
-        }
-    }
-
-    private final ValueEventListener vCurrentUser = new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot snapshot) {
-            showCurrentUserInformation(snapshot);
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-            Toast.makeText(TaskActivity.this, getString(R.string.database_error), Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    // TODO: Afficher les informations de la tache
-
-    private void showTaskInformation(DataSnapshot snapshot) {
-        for (DataSnapshot ds : snapshot.getChildren()){
-            tache = ds.getValue(Tache.class);
-            assert tache != null;
-            tvTaskUsername.setText(myuid.equals(tache.getUid())?getString(R.string.you):tache.getUnoms());
-            tvTaskPublicationDate.setText(formatLaDate(tache.getTdate()));
-            tvTaskTitle.setText(tache.getTtitre());
-            tvTaskDescription.setText(tache.getTdescription());
-            tvTaskAdresse.setVisibility(isStringEmpty(tache.getTadresse())?GONE:VISIBLE);
-            tvTaskAdresse.setText(isStringEmpty(tache.getTadresse())?"":""+ tache.getTville()+", "+ tache.getTpays());
-            tvTaskNcomment.setText(checkBeforeFormatData(getString(R.string.comments), tache.getTncomment()));
-            tvTaskNjaime.setText(checkBeforeFormatData(getString(R.string.like), tache.getTnlike()));
-            loadingImageWithPath(ivTaskCover, R.drawable.wild, tache.getTcover());
-            loadingImageWithPath(ivtaskAvatarUser, R.drawable.russia, tache.getUavatar());
-        }
-    }
-
-    private final ValueEventListener vTask = new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot snapshot) {
-            showTaskInformation(snapshot);
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-            //Toast.makeText(TaskActivity.this, getString(R.string.database_error), Toast.LENGTH_SHORT).show();
-            Toast.makeText(TaskActivity.this, ""+error.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    // TODO: Afficher les commentaires de la tache
-
-    private void showTaskComments(DataSnapshot snapshot) {
-        commentaireList.clear();
-        for (DataSnapshot ds : snapshot.getChildren()){
-            Commentaire commentaire = ds.getValue(Commentaire.class);
-            commentaireList.add(commentaire);
-            Cadapter cadapter = new Cadapter(TaskActivity.this, commentaireList);
-            rvTaskComments.setAdapter(cadapter);
-            cadapter.setListener(xListener);
-        }
-    }
-
-    private final ValueEventListener vComments = new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot snapshot) {
-            showTaskComments(snapshot);
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-            Toast.makeText(TaskActivity.this, getString(R.string.database_error), Toast.LENGTH_SHORT).show();
-        }
-    };
-
+    // TODO: Les écouteurs de l'adaptateur Cadapter
     private final Xlistener xListener = new Xlistener() {
         @Override
         public void onItemClick(View view, int position) {
@@ -340,89 +126,41 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    // TODO:
-
-    private void showUserDetails() {
-        Intent intent = new Intent(this, TempActivity.class);
-        intent.putExtra(UID, uid);
-        intent.putExtra(IDFRAGMENT, FRAGMENT_ACCOUNT);
-        startActivity(intent);
-    }
-
-    // TODO: Liker la tache
-
-    private void likeProcess() {
-    }
-
-    // TODO: Rendre favorite la tache
-
-    private void favorisProcess() {
-    }
-
-    // TODO: Partager la tache
-
-    private void shareProcess() {
-    }
-
-    // TODO: Formater l'adresse de la tache
-
-    private void showAdresseDialog() {
-        AlertDialog.Builder alertDialog=new AlertDialog.Builder(this);
-        alertDialog.setTitle(getString(R.string.position_tache));
-        alertDialog.setMessage(formatAdresse(
-                getString(R.string.ville) + " : " + tache.getTville(),
-                getString(R.string.state) + " : " + tache.getTstate(),
-                getString(R.string.pays) + " : " + tache.getTpays(),
-                getString(R.string.codepostal) + " : " + tache.getTcodepostal(),
-                getString(R.string.adresse) + " : " + tache.getTadresse()));
-        alertDialog.setPositiveButton(getString(R.string.ok), (dialog, which) -> dialog.cancel());
-        alertDialog.setCancelable(false);
-        AlertDialog alert=alertDialog.create();
-        alert.show();
-    }
-
-    // TODO: Ajouter un commentaire
-
-    private void verifDataBeforeSendComment() {
-        String comment = etvTaskComment.getText().toString().trim();
-        if (isStringEmpty(comment)){
-            Toast.makeText(this, getString(R.string.comment_error), Toast.LENGTH_SHORT).show();
-            return;
+    // TODO: Les écouteurs firebase
+    private final ValueEventListener vCurrentUser = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            showCurrentUserInformation(snapshot);
         }
-        ProgressDialog pd = buildProgressDialog(this, getString(R.string.app_name), getString(R.string.traitement_encours));
-        pd.show();
-        Commentaire commentaire = new Commentaire(comment, tid, CurrentUser.getUid(), CurrentUser.getUnoms(), CurrentUser.getUavatar());
-        ecrireUnNouveauCommentaire(pd, commentaire, tache.getTncomment(), CurrentUser.getUncomments());
-        etvTaskComment.setText(null);
-    }
 
-    // TODO:
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+            Toast.makeText(TaskActivity.this, getString(R.string.database_error), Toast.LENGTH_SHORT).show();
+        }
+    };
+    private final ValueEventListener vCurrentTask = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            showTaskInformation(snapshot);
+        }
 
-    private void showSignalerDialog() {
-        final Dialog dialogSignaler = new Dialog(this);
-        dialogSignaler.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialogSignaler.setContentView(R.layout.dialod_signal);
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+            //Toast.makeText(TaskActivity.this, getString(R.string.database_error), Toast.LENGTH_SHORT).show();
+            Toast.makeText(TaskActivity.this, ""+error.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    };
+    private final ValueEventListener vCurrentTaskComments = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            showTaskComments(snapshot);
+        }
 
-        TextView tvSignalTitle = dialogSignaler.findViewById(R.id.tvSignalTitle);
-        tvSignalTitle.setText(getString(R.string.signaler_la_tache, tache.getTtitre()));
-        EditText edtSignalRaison =  dialogSignaler.findViewById(R.id.edtSignalRaison);
-
-        Button btSendSignal = dialogSignaler.findViewById(R.id.btSendSignal);
-        btSendSignal.setOnClickListener(v -> {
-            String value = edtSignalRaison.getText().toString().trim();
-            if (isStringEmpty(value)){
-                Toast.makeText(TaskActivity.this, getString(R.string.reason_error), Toast.LENGTH_SHORT).show();
-                return;
-            }
-            Signale signale = new Signale(""+CurrentUser.getUid(), ""+value, "", ""+tache.getTid(),
-                    ""+tache.getTtitre(), ""+tache.getTcover(), ""+tache.getTdescription(),
-                    ""+CurrentUser.getUid(), ""+CurrentUser.getUnoms(), ""+CurrentUser.getUavatar());
-            ecrireUnSignalementDeTache(signale, ibTaskSignale);
-            dialogSignaler.dismiss();
-        });
-        dialogSignaler.show();
-    }
-
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+            Toast.makeText(TaskActivity.this, getString(R.string.database_error), Toast.LENGTH_SHORT).show();
+        }
+    };
     private final ValueEventListener vSignale = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -435,15 +173,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    // TODO: Modifier la tache
-
-    private void showEditDialog() {
-        AlertDialog.Builder builderEdit = new AlertDialog.Builder(this);
-        builderEdit.setTitle(getString(R.string.app_name_lite));
-        builderEdit.setItems(getResources().getStringArray(R.array.edit_task), optionEditListener);
-        builderEdit.create().show();
-    }
-
+    // TODO: DialogInterface OnClickListener
     private final DialogInterface.OnClickListener coverListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
@@ -466,30 +196,401 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     };
-
-    private final DialogInterface.OnClickListener optionEditListener = (dialogInterface, i) -> {
+    private final DialogInterface.OnClickListener chooseOptionEditListener = (dialogInterface, i) -> {
         switch (i) {
             case 0: // cover
-                updateCoverDialog();
+                this.updateCoverDialog();
                 break;
             case 1: // titre
-                updateTitreOrDescription(getString(R.string.titre), i);
+                this.updateTitreOrDescription(getString(R.string.titre), i);
                 break;
             case 2: // description
-                updateTitreOrDescription(getString(R.string.description), i);
+                this.updateTitreOrDescription(getString(R.string.description), i);
                 break;
             case 3: // localisation
-                if (checkAccessFineLocationPermissions(TaskActivity.this))
-                    showLocation();
-                else
+                if (checkAccessFineLocationPermissions(TaskActivity.this)){
+                    this.initFusedLocationProviderClient();
+                    this.checkUserLocation();
+                } else
                     requestAccessFineLocationPermissions(TaskActivity.this);
-                Toast.makeText(this, ""+tache.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, ""+ currentTask.toString(), Toast.LENGTH_SHORT).show();
                 break;
         }
     };
+    private final DialogInterface.OnClickListener yesDeleteTaskListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+            ProgressDialog pd = buildProgressDialog(TaskActivity.this, getString(R.string.app_name), getString(R.string.traitement_encours));
+            pd.show();
+            fbtools.deleteTask(pd, idCurrentTask, uidVisitor, userVisitor.getUntask(), userVisitor.getUncomments());
+        }
+    };
 
-    private void showLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+    // TODO: Override methods for TaskActivity
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        this.initApp();
+        super.onCreate(savedInstanceState);
+        this.checkUser();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.task_menu, menu);
+        this.initMenuItem(menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.itDelete && uidVisitor.equals(currentTask.getUid())){
+            this.showDeleteDialog();
+        }
+        if (item.getItemId() == R.id.itEditer){
+            this.showEditDialog();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        if (id == R.id.ibTaskJaime)
+            likeProcess();
+        else if (id == R.id.ibTaskFavorite)
+            favorisProcess();
+        else if (id == R.id.ibTaskShare)
+            shareProcess();
+        else if (id == R.id.ibTaskSendComment)
+            verifDataBeforeSendComment();
+        else if (!uidVisitor.equals(currentTask.getUid()) && (id == R.id.ivtaskAvatarUser || id == R.id.tvTaskUsername))
+            openTempActivityAndShowUserDetails();
+        else if (id == R.id.tvTaskAdresse)
+            showAdresseDialog();
+        else if (id == R.id.ibTaskSignale)
+            showSignalerDialog();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (resultCode == RESULT_OK){
+            this.updateTaskCover(requestCode, data);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    // TODO: onCreate  methods
+    private void initApp() {
+
+        fbtools = Fbtools.getInstance(this);
+        uidVisitor = fbtools.getId();
+
+        ivtools = Ivtools.getInstance(this);
+
+        idCurrentTask = getIntent().getStringExtra(TID);
+        uidCurrentTaskAdmin = getIntent().getStringExtra(UID);
+
+        initThemeMode(readIntData(APP_PREFS_MODE, AppCompatDelegate.MODE_NIGHT_NO));
+        initLLanguage(this, readStringData(APP_PREFS_LANGUE, EN));
+    }
+
+    private void checkUser() {
+        if(isStringEmpty(uidVisitor)||isStringEmpty(idCurrentTask)){
+            startActivity(new Intent(this, HomeActivity.class));
+            finish();
+        }else {
+            initViews();
+        }
+    }
+
+    private void initViews() {
+        setContentView(R.layout.activity_task);
+        this.initToolbarTask();
+        this.initIvtaskAvatarUser();
+        this.initTaskUsername();
+        this.initTaskPublicationDate();
+        this.initTaskTitle();
+        this.initTaskDescription();
+        this.initTaskAdresse();
+        this.initTaskCover();
+        this.initTaskNcomment();
+        this.initTaskNjaime();
+        this.initRvTaskComments();
+        this.initTaskComment();
+        this.initTaskSignale();
+        this.initIbTaskJaime();
+        this.initIbTaskFavorite();
+        this.initIbTaskShare();
+        this.initIbTaskSendComment();
+        lireunetachespecifique(vCurrentUser, uidVisitor, vCurrentTask, vCurrentTaskComments, idCurrentTask, vSignale);
+    }
+
+    // TODO: initViews methods
+    private void initToolbarTask() {
+        Toolbar toolbarTask = findViewById(R.id.toolbarTask);
+        toolbarTask.setTitle(getString(R.string.one_task));
+        toolbarTask.setSubtitle(getString(R.string.open_one_task));
+        setSupportActionBar(toolbarTask);
+    }
+
+    private void initIvtaskAvatarUser() {
+        ivtaskAvatarUser = findViewById(R.id.ivtaskAvatarUser);
+        ivtaskAvatarUser.setOnClickListener(this);
+    }
+
+    private void initTaskUsername() {
+        tvTaskUsername = findViewById(R.id.tvTaskUsername);
+        tvTaskUsername.setOnClickListener(this);
+    }
+
+    private void initTaskPublicationDate() {
+        tvTaskPublicationDate = findViewById(R.id.tvTaskPublicationDate);
+    }
+
+    private void initTaskTitle() {
+        tvTaskTitle = findViewById(R.id.tvTaskTitle);
+    }
+
+    private void initTaskDescription() {
+        tvTaskDescription = findViewById(R.id.tvTaskDescription);
+    }
+
+    private void initTaskAdresse() {
+        tvTaskAdresse = findViewById(R.id.tvTaskAdresse);
+        tvTaskAdresse.setOnClickListener(this);
+    }
+
+    private void initTaskCover() {
+        ivTaskCover = findViewById(R.id.ivTaskCover);
+    }
+
+    private void initTaskNcomment() {
+        tvTaskNcomment = findViewById(R.id.tvTaskNcomment);
+    }
+
+    private void initTaskNjaime() {
+        tvTaskNjaime = findViewById(R.id.tvTaskNjaime);
+    }
+
+    private void initRvTaskComments() {
+        rvTaskComments = findViewById(R.id.rvTaskComments);
+        rvTaskComments.setLayoutManager(rvLayoutManager(this, 0, LinearLayoutManager.VERTICAL));
+    }
+
+    private void initTaskComment() {
+        commentaireList = new ArrayList<>();
+        etvTaskComment = findViewById(R.id.etvTaskComment);
+    }
+
+    private void initFusedLocationProviderClient() {
+        fusedLocationProviderClient =  LocationServices.getFusedLocationProviderClient(this);
+    }
+
+    private void initIbTaskJaime() {
+        findViewById(R.id.ibTaskJaime).setOnClickListener(this);
+    }
+
+    private void initIbTaskFavorite() {
+        findViewById(R.id.ibTaskFavorite).setOnClickListener(this);
+    }
+
+    private void initIbTaskShare() {
+        findViewById(R.id.ibTaskShare).setOnClickListener(this);
+    }
+
+    private void initIbTaskSendComment() {
+        findViewById(R.id.ibTaskSendComment).setOnClickListener(this);
+    }
+
+    private void initTaskSignale() {
+        ibTaskSignale = findViewById(R.id.ibTaskSignale);
+        ibTaskSignale.setVisibility(uidVisitor.equals(uidCurrentTaskAdmin)?GONE:VISIBLE);
+        ibTaskSignale.setOnClickListener(this);
+    }
+
+    // TODO: onCreateOptionsMenu methods
+    private void initMenuItem(Menu menu) {
+        MenuItem editItem = menu.findItem(R.id.itEditer);
+        editItem.setVisible(uidVisitor.equals(uidCurrentTaskAdmin));
+        MenuItem deleteItem = menu.findItem(R.id.itDelete);
+        deleteItem.setVisible(uidVisitor.equals(uidCurrentTaskAdmin));
+    }
+
+    private void showDeleteDialog() {
+        AlertDialog.Builder builderDelete = new AlertDialog.Builder(this);
+        builderDelete.setTitle(getString(R.string.app_name_lite));
+        builderDelete.setMessage(getString(R.string.delete_task_message));
+        builderDelete.setNegativeButton(getString(R.string.non), null);
+        builderDelete.setPositiveButton(getString(R.string.oui), yesDeleteTaskListener);
+        builderDelete.create().show();
+    }
+
+    private void showEditDialog() {
+        AlertDialog.Builder builderEdit = new AlertDialog.Builder(this);
+        builderEdit.setTitle(getString(R.string.app_name_lite));
+        builderEdit.setItems(getResources().getStringArray(R.array.edit_task), chooseOptionEditListener);
+        builderEdit.create().show();
+    }
+
+    // TODO: onClick methods
+    private void openTempActivityAndShowUserDetails() {
+        Intent intent = new Intent(this, TempActivity.class);
+        intent.putExtra(UID, uidCurrentTaskAdmin);
+        intent.putExtra(IDFRAGMENT, FRAGMENT_ACCOUNT);
+        startActivity(intent);
+    }
+
+    private void likeProcess() {
+    }
+
+    private void favorisProcess() {
+    }
+
+    private void shareProcess() {
+    }
+
+    private void showAdresseDialog() {
+        AlertDialog.Builder alertDialog=new AlertDialog.Builder(this);
+        alertDialog.setTitle(getString(R.string.position_tache));
+        alertDialog.setMessage(formatAdresse(
+                getString(R.string.ville) + " : " + currentTask.getLocalize().getCity(),
+                getString(R.string.state) + " : " + currentTask.getLocalize().getState(),
+                getString(R.string.pays) + " : " + currentTask.getLocalize().getCountry(),
+                getString(R.string.codepostal) + " : " + currentTask.getLocalize().getCodepostal(),
+                getString(R.string.adresse) + " : " + currentTask.getLocalize().getAddress()));
+        alertDialog.setPositiveButton(getString(R.string.ok), (dialog, which) -> dialog.cancel());
+        alertDialog.setCancelable(false);
+        AlertDialog alert=alertDialog.create();
+        alert.show();
+    }
+
+    private void showSignalerDialog() {
+        final Dialog dialogSignaler = new Dialog(this);
+        dialogSignaler.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogSignaler.setContentView(R.layout.dialod_signal);
+
+        TextView tvSignalTitle = dialogSignaler.findViewById(R.id.tvSignalTitle);
+        tvSignalTitle.setText(getString(R.string.signaler_la_tache, currentTask.getTtitre()));
+        EditText edtSignalRaison =  dialogSignaler.findViewById(R.id.edtSignalRaison);
+
+        Button btSendSignal = dialogSignaler.findViewById(R.id.btSendSignal);
+        btSendSignal.setOnClickListener(v -> {
+            String value = edtSignalRaison.getText().toString().trim();
+            if (isStringEmpty(value)){
+                Toast.makeText(TaskActivity.this, getString(R.string.reason_error), Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Signale signale = new Signale(""+ userVisitor.getUid(), ""+value, "", ""+ currentTask.getTid(),
+                    ""+ currentTask.getTtitre(), ""+ currentTask.getTcover(), ""+ currentTask.getTdescription(),
+                    ""+ userVisitor.getUid(), ""+ userVisitor.getUnoms(), ""+ userVisitor.getUavatar());
+            ecrireUnSignalementDeTache(signale, ibTaskSignale);
+            dialogSignaler.dismiss();
+        });
+        dialogSignaler.show();
+    }
+
+    private void verifDataBeforeSendComment() {
+        String comment = etvTaskComment.getText().toString().trim();
+        if (isStringEmpty(comment)){
+            Toast.makeText(this, getString(R.string.comment_error), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        ProgressDialog pd = buildProgressDialog(this, getString(R.string.app_name), getString(R.string.traitement_encours));
+        pd.show();
+        Commentaire commentaire = new Commentaire(comment, idCurrentTask, userVisitor.getUid(), userVisitor.getUnoms(), userVisitor.getUavatar());
+        ecrireUnNouveauCommentaire(pd, commentaire, currentTask.getTncomment(), userVisitor.getUncomments());
+        etvTaskComment.setText(null);
+    }
+
+    // TODO: onActivityResult methods
+    private void updateTaskCover(int requestCode, Intent data) {
+        if (requestCode == STORAGE_REQUEST_CODE && data != null){
+            imageUri = data.getData();
+        } else if (requestCode == CAMERA_REQUEST_CODE && data != null){
+            imageUri = ivtools.getImageUri();
+        }
+        ProgressDialog pd = buildProgressDialog(this, getString(R.string.app_name), getString(R.string.task_image_path));
+        pd.show();
+        fbtools.deleteOldImage(pd, imageUri, ""+ currentTask.getTcover(), ""+buildPathWithSlash(TACHES, idCurrentTask, TCOVER));
+    }
+
+    // TODO: Afficher les informations de l'utilisateur
+    private void showCurrentUserInformation(DataSnapshot snapshot) {
+        for (DataSnapshot ds : snapshot.getChildren()){
+            userVisitor = ds.getValue(User.class);
+        }
+    }
+
+    // TODO: Afficher les informations de la tache
+    private void showTaskInformation(DataSnapshot snapshot) {
+        for (DataSnapshot ds : snapshot.getChildren()){
+            currentTask = ds.getValue(Tache.class);
+            if (currentTask != null){
+                this.showUserName(currentTask.getUid(), currentTask.getUnoms());
+                this.showPublicationDate(currentTask.getTdate());
+                this.showTitle(currentTask.getTtitre());
+                this.showDescription(currentTask.getTdescription());
+                this.showAddress(currentTask.getLocalize());
+                this.showATaskNcomment(currentTask.getTncomment());
+                this.showATaskNjaime(currentTask.getTnlike());
+                loadingImageWithPath(ivTaskCover, R.drawable.wild, currentTask.getTcover());
+                loadingImageWithPath(ivtaskAvatarUser, R.drawable.russia, currentTask.getUavatar());
+
+            }
+        }
+    }
+
+    // TODO: showTaskInformation methods
+    private void showUserName(String uid, String unoms) {
+        tvTaskUsername.setText(uidVisitor.equals(uid) ? getString(R.string.you) : unoms);
+    }
+
+    private void showPublicationDate(String tdate) {
+        tvTaskPublicationDate.setText(formatLaDate(tdate));
+    }
+
+    private void showTitle(String titre) {
+        tvTaskTitle.setText(titre);
+    }
+
+    private void showDescription(String description) {
+        tvTaskDescription.setText(description);
+    }
+
+    private void showAddress(Localize localize) {
+        tvTaskAdresse.setVisibility(this.isLocalize(localize) ? VISIBLE : GONE);
+        tvTaskAdresse.setText(this.isLocalize(localize) ? ""+localize.getCity()+", "+localize.getCountry() : "");
+    }
+
+    private boolean isLocalize(Localize localize) {
+        return localize != null && !isStringEmpty(localize.getAddress());
+    }
+
+    private void showATaskNcomment(String tncomment) {
+        tvTaskNcomment.setText(checkBeforeFormatData(getString(R.string.comments), tncomment));
+    }
+
+    private void showATaskNjaime(String tnlike) {
+        tvTaskNjaime.setText(checkBeforeFormatData(getString(R.string.like), currentTask.getTnlike()));
+    }
+
+    // TODO: Afficher les commentaires de la tache
+    private void showTaskComments(DataSnapshot snapshot) {
+        commentaireList.clear();
+        for (DataSnapshot ds : snapshot.getChildren()){
+            Commentaire commentaire = ds.getValue(Commentaire.class);
+            commentaireList.add(commentaire);
+            Cadapter cadapter = new Cadapter(TaskActivity.this, commentaireList);
+            rvTaskComments.setAdapter(cadapter);
+            cadapter.setListener(xListener);
+        }
+    }
+
+    // TODO: chooseOptionEditListener methods
+    private void checkUserLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling ActivityCompat#requestPermissions
             requestAccessFineLocationPermissions(this);
             return;
@@ -497,7 +598,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         fusedLocationProviderClient.getLastLocation().addOnCompleteListener(task -> {
             Location location = task.getResult();
             if (location != null){
-                displayTaskLocation(TaskActivity.this, location, tache);
+                currentTask.setLocalize(displayTaskLocation(TaskActivity.this, location));
                 updateLocalisationDialog();
             }
             else
@@ -551,10 +652,10 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             }
             switch (i) {
                 case 1: // titre
-                    fbtools.ecrireDansUnChamp(buildPathWithSlash(TACHES, tid, TTITRE), value);
+                    fbtools.ecrireDansUnChamp(buildPathWithSlash(TACHES, idCurrentTask, TTITRE), value);
                     break;
                 case 2: // description
-                    fbtools.ecrireDansUnChamp(buildPathWithSlash(TACHES, tid, TDESCRIPTION), value);
+                    fbtools.ecrireDansUnChamp(buildPathWithSlash(TACHES, idCurrentTask, TDESCRIPTION), value);
                     break;
             }
             dialog.dismiss();
@@ -568,21 +669,10 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         builder.setTitle(getString(R.string.app_name_lite));
         builder.setMessage(getString(R.string.loc_message));
         builder.setPositiveButton(getText(R.string.ok), (dialogInterface, i) -> {
-            fbtools.ecrireunenouvelletache(tache);
+            fbtools.ecrireunenouvelletache(currentTask);
             dialogInterface.dismiss();
         });
         builder.create().show();
     }
-
-    // TODO: Suppression de la tache
-
-    private final DialogInterface.OnClickListener adListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialogInterface, int i) {
-            ProgressDialog pd = buildProgressDialog(TaskActivity.this, getString(R.string.app_name), getString(R.string.traitement_encours));
-            pd.show();
-            fbtools.deleteTask(pd,tid, myuid, CurrentUser.getUntask(), CurrentUser.getUncomments());
-        }
-    };
 
 }

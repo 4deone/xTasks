@@ -1,6 +1,8 @@
 package com.deone.extrmtasks.tools;
 
+import static com.deone.extrmtasks.preference.Sptools.readIntData;
 import static com.deone.extrmtasks.tools.Constants.APP;
+import static com.deone.extrmtasks.tools.Constants.APP_PREFS_CURRENT_POSITION_PRIORITY;
 import static com.deone.extrmtasks.tools.Constants.CAMERA_REQUEST_CODE;
 import static com.deone.extrmtasks.tools.Constants.CONDITIONS;
 import static com.deone.extrmtasks.tools.Constants.FORMAT_DATE;
@@ -40,7 +42,9 @@ import com.deone.extrmtasks.NewActivity;
 import com.deone.extrmtasks.R;
 import com.deone.extrmtasks.SettingsActivity;
 import com.deone.extrmtasks.TaskActivity;
+import com.deone.extrmtasks.adapters.Tadapter;
 import com.deone.extrmtasks.modeles.Key;
+import com.deone.extrmtasks.modeles.Localize;
 import com.deone.extrmtasks.modeles.Tache;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.SignInMethodQueryResult;
@@ -136,43 +140,7 @@ public class Other {
         ((Activity) appContext).finish();
     }
 
-    /**
-     *
-     * @param appContext
-     */
-    public static void gotoaddtask(Context appContext) {
-        appContext.startActivity(new Intent(appContext, AddActivity.class));
-    }
 
-    /**
-     *
-     * @param appContext
-     */
-    public static void gotosettings(Context appContext) {
-        appContext.startActivity(new Intent(appContext, SettingsActivity.class));
-        ((Activity) appContext).finish();
-    }
-
-    public static void gotoaccount(Context appContext, String myuid) {
-        Intent intent = new Intent(appContext, TempActivity.class);
-        intent.putExtra(UID, myuid);
-        appContext.startActivity(intent);
-    }
-
-    /**
-     *
-     * @param appContext
-     * @param nameTui
-     * @param valueTui
-     * @param nameUid
-     * @param valueUid
-     */
-    public static void gotoTask(Context appContext, String nameTui, String valueTui, String nameUid, String valueUid) {
-        Intent intent = new Intent(appContext, TaskActivity.class);
-        intent.putExtra(nameTui, valueTui);
-        intent.putExtra(nameUid, valueUid);
-        appContext.startActivity(intent);
-    }
 
     /**
      *
@@ -214,86 +182,6 @@ public class Other {
             count++;
         }
         return sb.toString();
-    }
-
-    /**
-     *
-     * @param uid
-     * @param fullname
-     * @param avatar
-     * @param telephone
-     * @param email
-     * @param timestamp
-     * @return
-     */
-    public static HashMap<String, String> genHashMapUser(
-            String uid,
-            String fullname,
-            String avatar,
-            String telephone,
-            String email,
-            String timestamp,
-            String ville,
-            String pays) {
-        HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("uid", uid);
-        hashMap.put("unoms", fullname);
-        if(isStringEmpty(avatar))
-            hashMap.put("uavatar", avatar);
-        hashMap.put("utelephone", telephone);
-        hashMap.put("uemail", email);
-        hashMap.put("udate", timestamp);
-        hashMap.put("ucity", ville);
-        hashMap.put("ucountry", pays);
-        return hashMap;
-    }
-
-    /**
-     *
-     * @param uid
-     * @param titre
-     * @param description
-     * @param timestamp
-     * @return
-     */
-    public static HashMap<String, String> genHashMapTask(
-            String uid,
-            String tcover,
-            String titre,
-            String description,
-            String unoms,
-            String uavatar,
-            String timestamp,
-            String tpays) {
-        HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("tid", timestamp);
-        hashMap.put("tcover", tcover);
-        hashMap.put("ttitre", titre);
-        hashMap.put("tdescription", description);
-        hashMap.put("tdate", timestamp);
-        hashMap.put("uid", uid);
-        hashMap.put("unoms", unoms);
-        hashMap.put("uavatar", uavatar);
-        hashMap.put("tpays", tpays);
-        return hashMap;
-    }
-
-    public static HashMap<String, String> genHashMapComment(
-            String comment,
-            String timestamp,
-            String tid,
-            String uid,
-            String unoms,
-            String uavatar) {
-        HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("cid", timestamp);
-        hashMap.put("cmessage", comment);
-        hashMap.put("cdate", timestamp);
-        hashMap.put("tid", tid);
-        hashMap.put("uid", uid);
-        hashMap.put("unoms", unoms);
-        hashMap.put("uavatar", uavatar);
-        return hashMap;
     }
 
     /**
@@ -412,54 +300,6 @@ public class Other {
         return pd;
     }
 
-    /**
-     *
-     * @param appContext
-     * @param title
-     * @param message
-     * @param noListener
-     * @param noTitle
-     * @param okListener
-     * @param okTitle
-     * @return
-     */
-    public static AlertDialog.Builder buildAlertDialog(Context appContext, String title, String message,
-                                                       DialogInterface.OnClickListener noListener, String noTitle,
-                                                       DialogInterface.OnClickListener okListener, String okTitle) {
-        AlertDialog.Builder ad = new AlertDialog.Builder(appContext);
-        ad.setTitle(title);
-        ad.setMessage(message);
-        ad.setNegativeButton(noTitle, noListener);
-        ad.setPositiveButton(okTitle, okListener);
-        return ad;
-    }
-
-    /**
-     *
-     * @param appContext
-     * @param title
-     * @param listener
-     * @param items
-     * @return
-     */
-    public static AlertDialog.Builder buildAlertDialogForSelectOption(Context appContext, String title,
-                                                                      DialogInterface.OnClickListener listener,
-                                                                      String[] items) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(appContext);
-        builder.setTitle(title);
-        builder.setItems(items, listener);
-        return builder;
-    }
-
-    public static AlertDialog.Builder buildAlertDialogForSingleSelectOption(Context appContext, String title,
-                                                                            DialogInterface.OnClickListener listener,
-                                                                            String[] items, int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(appContext);
-        builder.setTitle(title);
-        builder.setSingleChoiceItems(items, position, listener);
-        return builder;
-    }
-
     public static String createTitle(Context appContext, String field) {
         switch (field) {
             case UNOMS:
@@ -475,51 +315,6 @@ public class Other {
     public static void toutesLesConditions(ValueEventListener vConditions) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(APP);
         ref.child(CONDITIONS).addValueEventListener(vConditions);
-    }
-
-    public static boolean checkCameraPermissions(Context appContext) {
-        boolean result = ContextCompat.checkSelfPermission(appContext, Manifest.permission.CAMERA)
-                == (PackageManager.PERMISSION_GRANTED);
-        boolean result1 = ContextCompat.checkSelfPermission(appContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == (PackageManager.PERMISSION_GRANTED);
-        return result && result1;
-    }
-
-    public static void requestCameraPermissions(Context appContext, String[] cameraPermissions) {
-        ActivityCompat.requestPermissions((Activity) appContext, cameraPermissions, CAMERA_REQUEST_CODE);
-    }
-
-    public static boolean checkStoragePermissions(Context appContext) {
-        return ContextCompat.checkSelfPermission(appContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == (PackageManager.PERMISSION_GRANTED);
-    }
-
-    public static void requestStoragePermissions(Context appContext, String[] storagePermissions) {
-        ActivityCompat.requestPermissions((Activity) appContext, storagePermissions, STORAGE_REQUEST_CODE);
-    }
-
-    public static boolean checkLocationPermissions(Context appContext) {
-        boolean result = ContextCompat.checkSelfPermission(appContext, Manifest.permission.ACCESS_FINE_LOCATION)
-                == (PackageManager.PERMISSION_GRANTED);
-        boolean result1 = ContextCompat.checkSelfPermission(appContext, Manifest.permission.ACCESS_COARSE_LOCATION)
-                == (PackageManager.PERMISSION_GRANTED);
-        return result && result1;
-    }
-
-    public static boolean checkContactPermissions(Context appContext) {
-        boolean result = ContextCompat.checkSelfPermission(appContext, Manifest.permission.READ_CONTACTS)
-                == (PackageManager.PERMISSION_GRANTED);
-        boolean result1 = ContextCompat.checkSelfPermission(appContext, Manifest.permission.WRITE_CONTACTS)
-                == (PackageManager.PERMISSION_GRANTED);
-        return result && result1;
-    }
-
-    public static void requestLocationPermissions(Context appContext, String[] locationPermissions) {
-        ActivityCompat.requestPermissions((Activity) appContext, locationPermissions, LOCATION_REQUEST_CODE);
-    }
-
-    public static void requestContactPermissions(Context appContext, String[] contactPermissions) {
-        ActivityCompat.requestPermissions((Activity) appContext, contactPermissions, CONTACT_REQUEST_CODE);
     }
 
     public static boolean isContains(String contenu, String contenant) {
@@ -540,15 +335,38 @@ public class Other {
         return sb.toString();
     }
 
-    public static List<Tache> orderListByKeyWords(List<Tache> tacheList, List<Key> keyList) {
-        if (keyList.size() == 0)
-            return tacheList;
-        else {
+    //
+
+    public static List<Tache> orderListByPriority(Localize localize, List<Tache> tacheList) {
+        int priority = readIntData(APP_PREFS_CURRENT_POSITION_PRIORITY, -1);
+        if (priority != -1){
+            List<Tache> temp = new ArrayList<>();
+            for (Tache tache : tacheList) {
+                if (priority == 0 && tache.getLocalize().getAddress().equals(localize.getAddress())) {
+                    temp.add(tache);
+                } else if (priority == 1 && tache.getLocalize().getCodepostal().equals(localize.getCodepostal())) {
+                    temp.add(tache);
+                } else if (priority == 2 && tache.getLocalize().getCountry().equals(localize.getCountry())) {
+                    temp.add(tache);
+                } else if (priority == 3 && tache.getLocalize().getCity().equals(localize.getCity())) {
+                    temp.add(tache);
+                } else if (priority == 4 && tache.getLocalize().getState().equals(localize.getState())) {
+                    temp.add(tache);
+                }
+            }
+            return temp;
+        }
+        return tacheList;
+    }
+
+    public static List<Tache> orderListByKeyWords(Localize localize, List<Tache> tacheList, List<Key> keyList) {
+        //List<Tache> taches = orderListByPriority(localize, tacheList);
+        List<Tache> taches = tacheList;
+        if (keyList.size() != 0){
             List<Tache> temp = new ArrayList<>();
             for (Key key : keyList) {
-                for (Tache tache : tacheList){
-                    if (isContains(""+key.getKmessage(), ""+tache.getTtitre())
-                            ||
+                for (Tache tache : taches){
+                    if (isContains(""+key.getKmessage(), ""+tache.getTtitre()) ||
                             isContains(""+key.getKmessage(), ""+tache.getTdescription())){
                         temp.add(tache);
                     }
@@ -556,6 +374,7 @@ public class Other {
             }
             return temp;
         }
+        return taches;
     }
 
     public static String tacheToString(Tache tache) {
@@ -566,19 +385,19 @@ public class Other {
         sb.append(";\n");
         sb.append(tache.getTdescription());
         sb.append(";\n");
-        sb.append(tache.getTpays());
+        sb.append(tache.getLocalize().getCountry());
         sb.append(";\n");
-        sb.append(tache.getTville());
+        sb.append(tache.getLocalize().getCity());
         sb.append(";\n");
-        sb.append(tache.getTcodepostal());
+        sb.append(tache.getLocalize().getCodepostal());
         sb.append(";\n");
-        sb.append(tache.getTlatitude());
+        sb.append(tache.getLocalize().getLatitude());
         sb.append(";\n");
-        sb.append(tache.getTlongitude());
+        sb.append(tache.getLocalize().getLongitude());
         sb.append(";\n");
-        sb.append(tache.getTstate());
+        sb.append(tache.getLocalize().getState());
         sb.append(";\n");
-        sb.append(tache.getTadresse());
+        sb.append(tache.getLocalize().getAddress());
         return sb.toString();
     }
 

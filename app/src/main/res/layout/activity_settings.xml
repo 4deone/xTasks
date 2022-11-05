@@ -137,11 +137,47 @@
 
             </RelativeLayout>
 
+            <RelativeLayout
+                android:id="@+id/rlSettingsLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rlSettingsKeywords"
+                android:layout_marginTop="3dp"
+                android:background="@color/white"
+                android:padding="20dp">
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/swSettingsCurrentPostion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="10dp"
+                    android:text="@string/use_my_current_position"
+                    android:background="@color/white"
+                    android:textColor="@color/black"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    app:drawableStartCompat="@drawable/ic_action_localise" />
+
+                <TextView
+                    android:id="@+id/tvSettingsLocPriority"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:layout_below="@+id/swSettingsCurrentPostion"
+                    android:layout_marginTop="5dp"
+                    android:drawablePadding="10dp"
+                    android:text="@string/priority_custom"
+                    android:textColor="@color/black"
+                    android:textSize="17sp"
+                    app:drawableStartCompat="@drawable/ic_action_signaler_priority" />
+
+            </RelativeLayout>
+
             <TextView
                 android:id="@+id/tvSettingsNotification"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/rlSettingsKeywords"
+                android:layout_below="@+id/rlSettingsLocation"
                 android:layout_marginTop="3dp"
                 android:background="@color/white"
                 android:drawablePadding="10dp"
